@@ -79,9 +79,6 @@ var ListaDePreciosServicio = (function () {
         try {
             var sql_3 = "";
             SONDA_DB_Session.transaction(function (trans) {
-                sql_3 = "DELETE FROM PRICE_LIST_BY_SKU_PACK_SCALE WHERE CODE_PRICE_LIST = '" + paqueteDeListaDePrecios[0].CODE_PRICE_LIST + "'";
-                console.log(sql_3);
-                trans.executeSql(sql_3);
                 for (var i = 0; i < paqueteDeListaDePrecios.length; i++) {
                     var listaDePrecio = paqueteDeListaDePrecios[i];
                     sql_3 = " INSERT INTO PRICE_LIST_BY_SKU_PACK_SCALE(";

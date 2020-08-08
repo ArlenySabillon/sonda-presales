@@ -35,7 +35,8 @@
             "cordova-plugin-badge": {},
             "phonegap-plugin-barcodescanner": {},
             "cordova-plugin-bluetooth-serial": {},
-            "nl.x-services.plugins.toast": {}
+            "nl.x-services.plugins.toast": {},
+            "cordova-plugin-barcodescanner": {}
         }
     },
     "dependencies": {
@@ -44,6 +45,7 @@
         "cordova-android": "^6.2.3",
         "cordova-plugin-android-gpsdetect": "0.0.3",
         "cordova-plugin-badge": "^0.8.8",
+        "cordova-plugin-barcodescanner": "^0.7.4",
         "cordova-plugin-battery-status": "^1.1.2",
         "cordova-plugin-bluetooth-serial": "^0.4.7",
         "cordova-plugin-camera": "^2.1.1",
@@ -67,8 +69,8 @@
         "cr.encke.WazeLink": "1.0.1",
         "de.appplant.cordova.plugin.badge": "^0.7.1",
         "es6-promise-plugin": "^3.0.2",
+        "nl.x-services.plugins.toast": "2.0.4",
         "phonegap-plugin-barcodescanner": "^6.0.8",
-        "uk.co.workingedge.phonegap.plugin.launchnavigator": "^2.9.7",
-        "nl.x-services.plugins.toast": "2.0.4"
+        "uk.co.workingedge.phonegap.plugin.launchnavigator": "^2.9.7"
     }
 }

@@ -7,6 +7,10 @@ var OrdenDeVentaDetalle = (function () {
         this.typeOfDiscountByFamily = "";
         this.typeOfDiscountByGeneralAmount = "";
         this.typeOfDiscountByFamilyAndPaymentType = "";
+        this.codeFamilySku = "";
+        this.basePrice = 0;
+        this.uniqueDiscountByScaleAplied = 0;
+        this.applyDiscountBySpecialPrice = 0;
     }
     return OrdenDeVentaDetalle;
 }());

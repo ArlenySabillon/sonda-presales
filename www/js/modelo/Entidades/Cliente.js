@@ -7,6 +7,18 @@ var Cliente = (function () {
         this.estaEnModificacionObligatoria = false;
         this.isPostedOffLine = 0;
         this.deviceNetworkType = "";
+        this.spcialPriceListId = 0;
+        this.lastPurchaseDate = null;
+        this.discountByFamilyAndPaymentTypeListId = null;
+        this.overdueInvoices = [];
+        this.totalAmountPayedOfOverdueInvoices = 0;
+        this.totalAmountOfOpenInvoices = 0;
+        this.creditAmount = 0;
+        this.cashAmount = 0;
+        this.currentAccountingInformation = new CuentaCorrienteDeCliente();
+        this.canBuyOnCredit = false;
+        this.invoiceDueDate = new Date();
+        this.outStandingBalance = 0;
         this.clientId = null;
         this.clientName = null;
         this.clientNewName = null;
@@ -19,7 +31,7 @@ var Cliente = (function () {
         this.discountMax = null;
         this.discount = null;
         this.appliedDiscount = null;
-        this.cuentaCorriente = null;
+        this.cuentaCorriente = new CuentaCorriente();
         this.totalAmout = null;
         this.priceListId = null;
         this.skus = null;
@@ -41,6 +53,8 @@ var Cliente = (function () {
         this.lastPurchase = null;
         this.isPostedOffLine = 0;
         this.deviceNetworkType = "";
+        this.channel = "";
+        this.outStandingBalance = 0;
     }
     return Cliente;
 }());

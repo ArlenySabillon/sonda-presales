@@ -18,6 +18,7 @@ var ResumenOrdenDeVentaControlador = (function () {
         this.listaDeSkuParaBonificacionFinal = Array();
         this.usuarioPuedeModificarBonificacionDeCombo = false;
         this.isImpresoraZebra = (localStorage.getItem("isPrinterZebra") === "1");
+        this.totalDeLaOrden = 0;
         this.mostrarImagenDeVerificacionDePosteoEnBo = false;
     }
     ResumenOrdenDeVentaControlador.prototype.clienteEntregado = function (mensaje, subcriber) {
@@ -137,7 +138,6 @@ var ResumenOrdenDeVentaControlador = (function () {
                 $.mobile.changePage("#taskdetail_page", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
             }, function (resultado) {
@@ -246,6 +246,7 @@ var ResumenOrdenDeVentaControlador = (function () {
     ResumenOrdenDeVentaControlador.prototype.obtenerOrdeDeVenta = function (callback, errCallBack) {
         var _this = this;
         try {
+            this.totalDeLaOrden = 0;
             this.tarea = new Tarea();
             this.tarea.taskId = gtaskid;
             this.tarea.taskType = gTaskType;
@@ -258,6 +259,7 @@ var ResumenOrdenDeVentaControlador = (function () {
                 _this.mostarDatosDeOrdenDeVenta(ordenDeVenta);
                 _this.listaDeSkuDeVenta = [];
                 _this.listaDeSkuParaBonificacion = new Array();
+                _this.totalDeLaOrden = ordenDeVenta.totalAmountDisplay;
                 for (var i = 0; i < ordenDeVenta.ordenDeVentaDetalle.length; i++) {
                     var detalleOrdenDeVentaDetalle = ordenDeVenta.ordenDeVentaDetalle[i];
                     var sku = new Sku();
@@ -281,6 +283,7 @@ var ResumenOrdenDeVentaControlador = (function () {
                     else {
                         sku.dimension = 0;
                     }
+                    sku.totalCD = detalleOrdenDeVentaDetalle.totalAmountDisplay;
                     (sku.isBonus === 0) ? _this.listaDeSkuDeVenta.push(sku) : _this.listaDeSkuParaBonificacion.push(sku);
                 }
                 callback();
@@ -743,31 +746,7 @@ var ResumenOrdenDeVentaControlador = (function () {
             var li = "";
             for (i = 0; i < this.listaDeSkuDeVenta.length; i++) {
                 sku = this.listaDeSkuDeVenta[i];
-                var totalDescuento = sku.total;
-                switch (sku.discountType) {
-                    case TiposDeDescuento.Porcentaje.toString():
-                        totalDescuento = trunc_number((totalDescuento - ((sku.appliedDiscount * totalDescuento) / 100)), this.configuracionDecimales.defaultCalculationsDecimals);
-                        break;
-                    case TiposDeDescuento.Monetario.toString():
-                        totalDescuento = trunc_number((totalDescuento - sku.appliedDiscount), this.configuracionDecimales.defaultCalculationsDecimals);
-                        break;
-                }
-                switch (sku.typeOfDiscountByFamily) {
-                    case TiposDeDescuento.Porcentaje.toString():
-                        totalDescuento = trunc_number((totalDescuento - ((sku.discountByFamily * totalDescuento) / 100)), this.configuracionDecimales.defaultCalculationsDecimals);
-                        break;
-                    case TiposDeDescuento.Monetario.toString():
-                        totalDescuento = trunc_number((totalDescuento - sku.discountByFamily), this.configuracionDecimales.defaultCalculationsDecimals);
-                        break;
-                }
-                switch (sku.typeOfDiscountByFamilyAndPaymentType) {
-                    case TiposDeDescuento.Porcentaje.toString():
-                        totalDescuento = trunc_number((totalDescuento - ((sku.discountByFamilyAndPaymentType * totalDescuento) / 100)), this.configuracionDecimales.defaultCalculationsDecimals);
-                        break;
-                    case TiposDeDescuento.Monetario.toString():
-                        totalDescuento = trunc_number((totalDescuento - sku.discountByFamilyAndPaymentType), this.configuracionDecimales.defaultCalculationsDecimals);
-                        break;
-                }
+                var totalDescuento = sku.totalCD;
                 if (sku.dimensions.length > 0) {
                     for (var _i = 0, _a = sku.dimensions; _i < _a.length; _i++) {
                         var skuConDimension = _a[_i];
@@ -1010,7 +989,6 @@ var ResumenOrdenDeVentaControlador = (function () {
         $.mobile.changePage("UiPageCustomerInfo", {
             transition: "flow",
             reverse: true,
-            changeHash: false,
             showLoadMsg: false,
             data: {
                 "cliente": this.cliente,
@@ -1037,38 +1015,7 @@ var ResumenOrdenDeVentaControlador = (function () {
         }
     };
     ResumenOrdenDeVentaControlador.prototype.obtenerTotalDeOrdenDeVenta = function (descuento, listaDeSku) {
-        var total = 0;
-        for (var i = 0; i < listaDeSku.length; i++) {
-            var sku = listaDeSku[i];
-            var totalSku = sku.total;
-            switch (sku.discountType) {
-                case TiposDeDescuento.Porcentaje.toString():
-                    totalSku = (sku.appliedDiscount !== 0 ? (totalSku - ((sku.appliedDiscount * totalSku) / 100)) : totalSku);
-                    break;
-                case TiposDeDescuento.Monetario.toString():
-                    totalSku = (sku.appliedDiscount !== 0 ? (totalSku - sku.appliedDiscount) : totalSku);
-                    break;
-            }
-            switch (sku.typeOfDiscountByFamily) {
-                case TiposDeDescuento.Porcentaje.toString():
-                    totalSku = (sku.discountByFamily !== 0 ? (totalSku - ((sku.discountByFamily * totalSku) / 100)) : totalSku);
-                    break;
-                case TiposDeDescuento.Monetario.toString():
-                    totalSku = (sku.discountByFamily !== 0 ? (totalSku - sku.discountByFamily) : totalSku);
-                    break;
-            }
-            switch (sku.typeOfDiscountByFamilyAndPaymentType) {
-                case TiposDeDescuento.Porcentaje.toString():
-                    totalSku = (sku.discountByFamilyAndPaymentType !== 0 ? (totalSku - ((sku.discountByFamilyAndPaymentType * totalSku) / 100)) : totalSku);
-                    break;
-                case TiposDeDescuento.Monetario.toString():
-                    totalSku = (sku.discountByFamilyAndPaymentType !== 0 ? (totalSku - sku.discountByFamilyAndPaymentType) : totalSku);
-                    break;
-            }
-            total += totalSku;
-        }
-        total = (descuento !== 0 ? (total - ((descuento * total) / 100)) : total);
-        return total;
+        return this.totalDeLaOrden;
     };
     ResumenOrdenDeVentaControlador.prototype.obtenerFormatosDeImpresion = function (cliente, ordenDeVenta, pago, esOrdenDeVentaParaCobrar, callback, callbackError) {
         var _this = this;
@@ -1158,7 +1105,6 @@ var ResumenOrdenDeVentaControlador = (function () {
         $.mobile.changePage("#UiPagePayment", {
             transition: "flow",
             reverse: true,
-            changeHash: false,
             showLoadMsg: false
         });
     };

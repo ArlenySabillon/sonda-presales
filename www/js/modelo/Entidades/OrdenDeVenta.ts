@@ -53,4 +53,5 @@
     discountByGeneralAmountApplied: number;
     isPostedOffLine: number = 0;
     deviceNetworkType: string = "";
+    goalHeaderId: number = 0;
 }

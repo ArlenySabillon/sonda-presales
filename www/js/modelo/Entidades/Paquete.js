@@ -9,6 +9,14 @@ var Paquete = (function () {
         this.discountType = "";
         this.promoDescuento = new Promo();
         this.promoVentaPorMultiplo = new Promo();
+        this.codeFamily = "";
+        this.isUniqueDiscountScale = false;
+        this.basePrice = 0;
+        this.specialPrice = new PrecioEspecial();
+        this.lastCodePackUnitSold = "";
+        this.lastPriceSold = 0;
+        this.lastSaleDate = "";
+        this.originalPrice = 0;
     }
     return Paquete;
 }());

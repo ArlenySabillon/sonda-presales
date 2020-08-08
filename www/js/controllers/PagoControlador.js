@@ -73,13 +73,12 @@ var PagoControlador = (function () {
         var uiTextoNumeroDeDocumentoDeCheque = $("#UiTextoNumeroDeDocumentoDeCheque");
         var uiEtiquetaFormaDePagoSeleccionada = $("#UiEtiquetaFormaDePagoSeleccionada");
         uiTextoNumeroDeDocumentoDeCheque.text("");
-        uiEtiquetaFormaDePagoSeleccionada.text('Efectivo');
+        uiEtiquetaFormaDePagoSeleccionada.text("Efectivo");
         switch ($.mobile.activePage[0].id) {
             case "UiPagePayment":
                 $.mobile.changePage("#SalesOrderSummaryPage", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
                 break;
@@ -88,15 +87,15 @@ var PagoControlador = (function () {
         uiEtiquetaFormaDePagoSeleccionada = null;
     };
     PagoControlador.prototype.obtenerConfiguracionDeDecimales = function () {
-        var _this = this;
+        var _this_1 = this;
         this.manejoDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(function (decimales) {
-            _this.configuracionDecimales = decimales;
+            _this_1.configuracionDecimales = decimales;
         }, function (operacion) {
             notify(operacion.mensaje);
         });
     };
     PagoControlador.prototype.usuarioSeleccionoFormaDePago = function () {
-        var _this = this;
+        var _this_1 = this;
         var listaDeUnidadesDeMedida = [];
         listaDeUnidadesDeMedida.push({
             text: "Efectivo",
@@ -113,12 +112,14 @@ var PagoControlador = (function () {
             cancelButtonLabel: "Cancelar"
         };
         ShowListPicker(configoptions, function (item) {
-            _this.mostrarOpcionDeTipoDePago(item.toString(), '');
+            _this_1.mostrarOpcionDeTipoDePago(item.toString(), "");
         });
     };
     PagoControlador.prototype.usuarioSelecionoAceptarFormaDePago = function (_this) {
         var uiTextoNumeroDeDocumentoDeCheque = $("#UiTextoNumeroDeDocumentoDeCheque");
-        if (_this.tipoDePago === TipoDePago.Cheque && (uiTextoNumeroDeDocumentoDeCheque.val().trim() === '' || _this.imagen1 === null)) {
+        if (_this.tipoDePago === TipoDePago.Cheque &&
+            (uiTextoNumeroDeDocumentoDeCheque.val().trim() === "" ||
+                _this.imagen1 === null)) {
             notify("Debe ingresar el numero de documento y tomar la imagen frontal");
         }
         else {
@@ -133,7 +134,6 @@ var PagoControlador = (function () {
                     $.mobile.changePage("#SalesOrderSummaryPage", {
                         transition: "flow",
                         reverse: true,
-                        changeHash: false,
                         showLoadMsg: false
                     });
                     uiTextoNumeroDeDocumentoDeCheque.val("");
@@ -163,7 +163,6 @@ var PagoControlador = (function () {
                 $.mobile.changePage("#SalesOrderSummaryPage", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
                 uiTextoNumeroDeDocumentoDeCheque.val("");
@@ -194,7 +193,7 @@ var PagoControlador = (function () {
         switch (tipoDePago) {
             case TipoDePago.Efectivo.toString():
                 this.tipoDePago = TipoDePago.Efectivo;
-                uiEtiquetaFormaDePagoSeleccionada.text('Efectivo');
+                uiEtiquetaFormaDePagoSeleccionada.text("Efectivo");
                 uiListaDePagoConCheque.hide();
                 break;
             case TipoDePago.Cheque.toString():
@@ -210,7 +209,7 @@ var PagoControlador = (function () {
     };
     PagoControlador.prototype.usuarioDeseaTomarImagen = function (tipoDeFoto, controlador) {
         navigator.camera.getPicture(function (imageUri) {
-            $("#uiFotoTomada").attr('src', "data:image/jpeg;base64," + imageUri);
+            $("#uiFotoTomada").attr("src", "data:image/jpeg;base64," + imageUri);
             $("#uiDivFotoTomada").css("visibility", "visible");
             switch (tipoDeFoto) {
                 case TipoDeFoto.Frontal:
@@ -227,7 +226,7 @@ var PagoControlador = (function () {
             targetWidth: 350,
             targetHeight: 350,
             saveToPhotoAlbum: false,
-            sourceType: (Camera.PictureSourceType.CAMERA),
+            sourceType: Camera.PictureSourceType.CAMERA,
             correctOrientation: true,
             destinationType: Camera.DestinationType.DATA_URL
         });
@@ -244,7 +243,7 @@ var PagoControlador = (function () {
             _this.tipoDePago = _this.pago.pagoDetalle[0].paymentType;
         }
         if (_this.pago === null || _this.pago === undefined) {
-            _this.mostrarOpcionDeTipoDePago(TipoDePago.Efectivo.toString(), '');
+            _this.mostrarOpcionDeTipoDePago(TipoDePago.Efectivo.toString(), "");
         }
         else {
             _this.mostrarOpcionDeTipoDePago(_this.pago.pagoDetalle[0].paymentType, _this.pago.pagoDetalle[0].documentNumber);

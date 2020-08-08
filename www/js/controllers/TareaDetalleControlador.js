@@ -1,6 +1,5 @@
 var timerElapsed = false;
 var emitCompleted = false;
-var interval = 0;
 var socketTareaDetalle;
 var tareaDetalleControlador;
 var TareaDetalleControlador = (function () {
@@ -18,23 +17,25 @@ var TareaDetalleControlador = (function () {
         this.tarea = new Tarea();
         this.cliente = new Cliente();
         this.contadorDeIteraciones = 0;
+        this.encuestaServicio = new EncuestaServicio();
+        this.cuentaCorrienteServicio = new CuentaCorrienteServicio();
         this.tokenProcesarTipoTarea = mensajero.subscribe(this.tipoDeTareaEntregado, getType(ProcesarTipoDeTareaMensaje), this);
     }
     TareaDetalleControlador.prototype.delegadoTareaDetalleControlador = function () {
-        var _this = this;
+        var _this_1 = this;
         tareaDetalleControlador = this;
-        $("#btnAcceptThisTask").bind("touchstart", function () {
-            _this.obtenerDatosDeTarea(function () {
-                _this.usuarioDeseaAceptarLaTarea();
+        $("#btnAcceptThisTask").on("click", function () {
+            _this_1.obtenerDatosDeTarea(function () {
+                _this_1.usuarioDeseaAceptarLaTarea();
             });
         });
         $("#taskdetail_page").on("pageshow", function () {
-            _this.obtenerConfiguracionDeDecimales(function () {
-                _this.limpiarCamposDetalleTarea();
-                _this.obtenerDatosDeTarea(function () {
-                    _this.draftServicio.obtenerDraftsOrdenDeVenta(function (ordenes) {
-                        _this.draftServicio.obtenerDetalleDeOrdenDeVentaDraft(ordenes, function (ordenes) {
-                            _this.actualizarTareaIdABorradorOrdeDeVenta(ordenes);
+            _this_1.obtenerConfiguracionDeDecimales(function () {
+                _this_1.limpiarCamposDetalleTarea();
+                _this_1.obtenerDatosDeTarea(function () {
+                    _this_1.draftServicio.obtenerDraftsOrdenDeVenta(function (ordenes) {
+                        _this_1.draftServicio.obtenerDetalleDeOrdenDeVentaDraft(ordenes, function (ordenes) {
+                            _this_1.actualizarTareaIdABorradorOrdeDeVenta(ordenes);
                         }, function (resultadoN1) {
                             console.log(resultadoN1.mensaje);
                         });
@@ -49,17 +50,20 @@ var TareaDetalleControlador = (function () {
         $("#taskdetail_page").swipe({
             swipe: function (event, direction, distance, duration, fingerCount, fingerData) {
                 if (fingerCount === 1 && direction === "right") {
-                    var myPanel = $.mobile.activePage.children('[id="UiPanelDerrechoAceptarTarea"]');
+                    var myPanel = ($.mobile.activePage.children('[id="UiPanelDerrechoAceptarTarea"]'));
                     myPanel.panel("toggle");
                 }
             }
         });
         $("#UIBotonModificarClienteDesdeAceptarTarea").bind("touchstart", function () {
-            _this.usuarioDeseaModifcarCliente();
+            _this_1.usuarioDeseaModifcarCliente();
+        });
+        $("#UiBotonPromocionesTareaDetalle").bind("touchstart", function () {
+            _this_1.usuarioDeseaVerPromocionesDisponibles();
         });
     };
     TareaDetalleControlador.prototype.delegarSockets = function (socketIo) {
-        var _this = this;
+        var _this_1 = this;
         socketTareaDetalle = socketIo;
         socketIo.on("GetCurrentAccountByCustomer_Request", function (data) {
             switch (data.option) {
@@ -68,8 +72,8 @@ var TareaDetalleControlador = (function () {
                     console.log("Validando Saldo desde: " + data.source);
                     switch (data.source) {
                         case OpcionValidarSaldoCliente.EjecutarTarea:
-                            _this.obtenerDatosDeTarea(function () {
-                                _this.seguirOrdenDeVenta(_this.cliente);
+                            _this_1.obtenerDatosDeTarea(function () {
+                                _this_1.seguirOrdenDeVenta(_this_1.cliente);
                             });
                             break;
                     }
@@ -80,11 +84,11 @@ var TareaDetalleControlador = (function () {
             switch (data.option) {
                 case "add_price_list_by_sku_using_customerid":
                     if (!timerElapsed) {
-                        _this.tarea = JSON.parse(JSON.stringify(data.tarea));
-                        _this.listaDePreciosServicio.agregarPaqueteDeListaDePreciosPorSku(data.recordset, data.cliente, function (clienteRespuesta) {
+                        _this_1.tarea = JSON.parse(JSON.stringify(data.tarea));
+                        _this_1.listaDePreciosServicio.agregarPaqueteDeListaDePreciosPorSku(data.recordset, data.cliente, function (clienteRespuesta) {
                             emitCompleted = true;
                             var client = JSON.parse(JSON.stringify(clienteRespuesta));
-                            _this.procesarClienteParaOrdenDeVenta(client);
+                            _this_1.procesarClienteParaOrdenDeVenta(client);
                         }, function (resultado) {
                             emitCompleted = true;
                             notify(resultado.mensaje);
@@ -97,20 +101,20 @@ var TareaDetalleControlador = (function () {
                     break;
                 case "no_found_price_list_by_sku_using_customerid":
                     emitCompleted = true;
-                    _this.establecerListaDePreciosAClienteYProcesarlo(data.cliente);
+                    _this_1.establecerListaDePreciosAClienteYProcesarlo(data.cliente);
                     break;
             }
         });
     };
     TareaDetalleControlador.prototype.actualizarTareaIdABorradorOrdeDeVenta = function (ordenesDeVentaDraft) {
-        var _this = this;
+        var _this_1 = this;
         try {
             for (var i = 0; i < ordenesDeVentaDraft.length; i++) {
                 if (ordenesDeVentaDraft[i].taskId === 0) {
                     this.draftServicio.obtenerTaskIdParaBorradorDeOrdenDeVenta(ordenesDeVentaDraft[i], i, function (ordenDeVenta, indice) {
                         ordenesDeVentaDraft[indice] = ordenDeVenta;
                         if (ordenesDeVentaDraft[indice].taskId !== 0) {
-                            _this.draftServicio.actualizarTareaIdParaBorradorDeOrdenDeVenta(ordenesDeVentaDraft[indice], function () {
+                            _this_1.draftServicio.actualizarTareaIdParaBorradorDeOrdenDeVenta(ordenesDeVentaDraft[indice], function () {
                             }, function (resultado) {
                                 notify(resultado.mensaje);
                             });
@@ -131,21 +135,31 @@ var TareaDetalleControlador = (function () {
         var uiLblSaldoDisponibleTarea = $("#UiLblSaldoDisponibleTarea");
         var uiLblDiasDeCredito = $("#UiLblDiasDeCredito");
         var uiLblUltimaCompra = $("#UiLblUltimaCompra");
+        var uiLblFechaUltimaCompra = $("#UiLblFechaUltimaCompra");
         var uiTxtTareaDesc = $("#UiTxtTareaDesc");
         var uiLblSaldoTareaFooter = $("#UiLblSaldoTareaFooter");
         var uiLblTotalSaldoTareaFooter = $("#UiLblTotalSaldoTareaFooter");
-        var disponible = cliente.cuentaCorriente.limiteDeCredito - cliente.previousBalance;
-        uiLblLimiteDeCredito.text(format_number(cliente.cuentaCorriente.limiteDeCredito, this.configuracionDecimales.defaultDisplayDecimals));
-        uiLblSaldoVencido.text(format_number(cliente.previousBalance, this.configuracionDecimales.defaultDisplayDecimals));
-        uiLblSaldoDisponibleTarea.text(format_number(disponible, this.configuracionDecimales.defaultDisplayDecimals));
+        var disponible = !cliente.cuentaCorriente.limiteDeCredito ||
+            cliente.cuentaCorriente.limiteDeCredito <= 0
+            ? 0
+            : cliente.cuentaCorriente.limiteDeCredito - cliente.previousBalance;
+        uiLblLimiteDeCredito.text("" + this.configuracionDecimales.currencySymbol + format_number(cliente.cuentaCorriente.limiteDeCredito, this.configuracionDecimales.defaultDisplayDecimals));
+        uiLblSaldoVencido.text("" + this.configuracionDecimales.currencySymbol + format_number(cliente.previousBalance, this.configuracionDecimales.defaultDisplayDecimals));
+        uiLblSaldoDisponibleTarea.text("" + this.configuracionDecimales.currencySymbol + format_number(disponible, this.configuracionDecimales.defaultDisplayDecimals));
         uiLblDiasDeCredito.text(cliente.cuentaCorriente.diasCredito);
-        uiLblUltimaCompra.text(format_number(cliente.lastPurchase, this.configuracionDecimales.defaultDisplayDecimals));
+        if (cliente.lastPurchase && cliente.lastPurchase > 0) {
+            uiLblFechaUltimaCompra.text("(" + cliente.lastPurchaseDate + ")");
+        }
+        else {
+            uiLblFechaUltimaCompra.text("");
+        }
+        uiLblUltimaCompra.text("" + this.configuracionDecimales.currencySymbol + format_number(cliente.lastPurchase, this.configuracionDecimales.defaultDisplayDecimals));
         uiTxtTareaDesc.val("Tarea Generada para Cliente: " + cliente.clientName);
         uiLblSaldoTareaFooter.text(format_number(cliente.previousBalance, this.configuracionDecimales.defaultDisplayDecimals));
         uiLblTotalSaldoTareaFooter.text(format_number(disponible, this.configuracionDecimales.defaultDisplayDecimals));
     };
     TareaDetalleControlador.prototype.obtenerDatosDeTarea = function (callback) {
-        var _this = this;
+        var _this_1 = this;
         try {
             this.tarea.taskId = gtaskid;
             this.tarea.taskType = gTaskType;
@@ -168,18 +182,23 @@ var TareaDetalleControlador = (function () {
             this.configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(function (decimales) {
                 var cliente = new Cliente();
                 cliente.clientId = gClientID;
-                _this.configuracionDecimales = decimales;
-                _this.clienteServicio.obtenerCliente(cliente, decimales, function (clienteFiltrado) {
-                    _this.cliente = clienteFiltrado;
-                    _this.comboServicio.obtenerCombosPorCliente(clienteFiltrado, function (clienteConCombos) {
-                        _this.obtenerHistoricodePromo(function (listaDeHistoricoDePromos) {
-                            _this.validarSiAplicaLasBonificacionesPorCombo(clienteFiltrado.bonoPorCombos, 0, listaDeHistoricoDePromos, function (listaDeBonificaciones) {
-                                _this.cliente.bonoPorCombos = listaDeBonificaciones;
-                                _this.cliente.cuentaCorriente = new CuentaCorriente();
-                                _this.clienteServicio.obtenerCuentaCorriente(clienteConCombos, _this.configuracionDecimales, function (clienteConCuentaCorriente) {
-                                    _this.cliente = clienteConCuentaCorriente;
-                                    _this.desplegarDatosCliente(clienteConCuentaCorriente);
-                                    callback();
+                _this_1.configuracionDecimales = decimales;
+                _this_1.clienteServicio.obtenerCliente(cliente, decimales, function (clienteFiltrado) {
+                    _this_1.cliente = clienteFiltrado;
+                    _this_1.comboServicio.obtenerCombosPorCliente(clienteFiltrado, function (clienteConCombos) {
+                        _this_1.obtenerHistoricodePromo(function (listaDeHistoricoDePromos) {
+                            _this_1.validarSiAplicaLasBonificacionesPorCombo(clienteFiltrado.bonoPorCombos, 0, listaDeHistoricoDePromos, function (listaDeBonificaciones) {
+                                _this_1.cliente.bonoPorCombos = listaDeBonificaciones;
+                                _this_1.cliente.cuentaCorriente = new CuentaCorriente();
+                                _this_1.clienteServicio.obtenerCuentaCorriente(clienteConCombos, _this_1.configuracionDecimales, function (clienteConCuentaCorriente) {
+                                    _this_1.cliente = clienteConCuentaCorriente;
+                                    _this_1.desplegarDatosCliente(clienteConCuentaCorriente);
+                                    _this_1.encuestaServicio.obtenerEncuestas(_this_1.cliente, function (encuestas) {
+                                        _this_1.tarea.microsurveys = encuestas;
+                                        callback();
+                                    }, function (error) {
+                                        notify(error.mensaje);
+                                    });
                                 }, function (resultado) {
                                     notify(resultado.mensaje);
                                 });
@@ -213,14 +232,15 @@ var TareaDetalleControlador = (function () {
             uiClientAddress = null;
         }
         catch (e) {
-            notify("No se han podido limpiar los campos de detalle de la tarea actual debido a: " + e.message);
+            notify("No se han podido limpiar los campos de detalle de la tarea actual debido a: " +
+                e.message);
         }
     };
     TareaDetalleControlador.prototype.usuarioDeseaCargarTarea = function () {
-        var _this = this;
+        var _this_1 = this;
         try {
             this.obtenerDatosDeTarea(function () {
-                _this.prosesarTipoTarea();
+                _this_1.prosesarTipoTarea();
             });
         }
         catch (err) {
@@ -241,17 +261,17 @@ var TareaDetalleControlador = (function () {
         }
     };
     TareaDetalleControlador.prototype.prosesarTipoTarea = function () {
-        var _this = this;
+        var _this_1 = this;
         try {
             this.limpiarVariablesGlobales();
             switch (this.tarea.taskType) {
                 case TareaTipo.Entrega:
                     this.tareaServicio.actualizarTareaEstado(this.tarea, function () {
-                        _this.configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(function (decimales) {
+                        _this_1.configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(function (decimales) {
                             var cliente = new Cliente();
                             cliente.clientId = gClientID;
-                            _this.clienteServicio.obtenerCliente(cliente, decimales, function (clienteFiltrado) {
-                                actualizarListadoDeTareas(_this.tarea.taskId, _this.tarea.taskType, _this.tarea.taskStatus, clienteFiltrado.clientId, clienteFiltrado.clientName, clienteFiltrado.address, 0, gtaskStatus, clienteFiltrado.rgaCode);
+                            _this_1.clienteServicio.obtenerCliente(cliente, decimales, function (clienteFiltrado) {
+                                actualizarListadoDeTareas(_this_1.tarea.taskId, _this_1.tarea.taskType, _this_1.tarea.taskStatus, clienteFiltrado.clientId, clienteFiltrado.clientName, clienteFiltrado.address, 0, gtaskStatus, clienteFiltrado.rgaCode);
                                 gotomyDelivery();
                             }, function (operacion) {
                                 notify(operacion.mensaje);
@@ -264,10 +284,10 @@ var TareaDetalleControlador = (function () {
                     });
                     break;
                 case TareaTipo.Preventa:
-                    this.ejecutarTareaDePreventa();
+                    this.realizarCobroDeFacturasYProcesarTarea();
                     break;
                 case TareaTipo.Borrador:
-                    this.ejecutarTareaDePreventa();
+                    this.realizarCobroDeFacturasYProcesarTarea();
                     break;
                 case TareaTipo.Venta:
                     EjecutarTareaDeVenta(gClientID);
@@ -280,8 +300,8 @@ var TareaDetalleControlador = (function () {
                     this.tareaServicio.actualizarTareaEstado(this.tarea, function () {
                         var cliente = new Cliente();
                         cliente.clientId = gClientID;
-                        _this.clienteServicio.obtenerCliente(cliente, _this.configuracionDecimales, function (cliente) {
-                            actualizarListadoDeTareas(_this.tarea.taskId, _this.tarea.taskType, _this.tarea.taskStatus, cliente.clientId, cliente.clientName, cliente.address, 0, gtaskStatus, cliente.rgaCode);
+                        _this_1.clienteServicio.obtenerCliente(cliente, _this_1.configuracionDecimales, function (cliente) {
+                            actualizarListadoDeTareas(_this_1.tarea.taskId, _this_1.tarea.taskType, _this_1.tarea.taskStatus, cliente.clientId, cliente.clientName, cliente.address, 0, gtaskStatus, cliente.rgaCode);
                         }, function (resultado) {
                             my_dialog("", "", "closed");
                             notify(resultado.mensaje);
@@ -312,41 +332,38 @@ var TareaDetalleControlador = (function () {
         }
     };
     TareaDetalleControlador.prototype.ejecutarTareaDePreventa = function () {
-        var _this = this;
         var este = this;
         var cliente = new Cliente();
         cliente.clientId = gClientID;
-        this.clienteServicio.obtenerCliente(cliente, this.configuracionDecimales, function (clienteFiltrado) {
-            _this.comboServicio.obtenerCombosPorCliente(clienteFiltrado, function (clienteConCombos) {
+        este.clienteServicio.obtenerCliente(cliente, este.configuracionDecimales, function (clienteFiltrado) {
+            este.comboServicio.obtenerCombosPorCliente(clienteFiltrado, function (clienteConCombos) {
                 este.cliente = clienteConCombos;
-                _this.obtenerHistoricodePromo(function (listaHistoricoDePromos) {
-                    _this.validarSiAplicaLasBonificacionesPorCombo(este.cliente.bonoPorCombos, 0, listaHistoricoDePromos, function (listaDeBonificaciones) {
+                este.obtenerHistoricodePromo(function (listaHistoricoDePromos) {
+                    este.validarSiAplicaLasBonificacionesPorCombo(este.cliente.bonoPorCombos, 0, listaHistoricoDePromos, function (listaDeBonificaciones) {
                         este.cliente.bonoPorCombos = listaDeBonificaciones;
-                        _this.tareaServicio.obtenerRegla("ValidarListaDePreciosConServidor", function (listaDeReglasValidarListaDePreciosConServidor) {
-                            if (_this.validarSiSeAplicaLaRegla(listaDeReglasValidarListaDePreciosConServidor)) {
-                                if (este.cliente.priceListId === null || este.cliente.priceListId === "") {
-                                    if (!este.cliente.isNew) {
-                                    }
-                                    _this.establecerListaDePreciosAClienteYProcesarlo(este.cliente);
+                        este.tareaServicio.obtenerRegla("ValidarListaDePreciosConServidor", function (listaDeReglasValidarListaDePreciosConServidor) {
+                            if (este.validarSiSeAplicaLaRegla(listaDeReglasValidarListaDePreciosConServidor)) {
+                                if (este.cliente.priceListId === null ||
+                                    este.cliente.priceListId === "") {
+                                    este.establecerListaDePreciosAClienteYProcesarlo(este.cliente);
                                 }
                                 else {
-                                    _this.skuServicio.verificarCantidadDeSkusDisponiblesParaCliente(este.cliente, function (cantidadSkus, clienteVerificado) {
-                                        _this.cliente = clienteVerificado;
+                                    este.skuServicio.verificarCantidadDeSkusDisponiblesParaCliente(este.cliente, function (cantidadSkus, clienteVerificado) {
+                                        este.cliente = clienteVerificado;
                                         if (cantidadSkus > 0) {
                                             este.procesarClienteParaOrdenDeVenta(clienteVerificado);
                                         }
                                         else {
                                             if (gIsOnline === 1) {
-                                                tareaDetalleControlador = _this;
+                                                tareaDetalleControlador = este;
                                                 var data = {
-                                                    'loginid': gLastLogin,
-                                                    'dbuser': gdbuser,
-                                                    'dbuserpass': gdbuserpass,
-                                                    'cliente': clienteVerificado,
-                                                    'routeid': gCurrentRoute,
-                                                    'tarea': _this.tarea
+                                                    loginid: gLastLogin,
+                                                    dbuser: gdbuser,
+                                                    dbuserpass: gdbuserpass,
+                                                    cliente: clienteVerificado,
+                                                    routeid: gCurrentRoute,
+                                                    tarea: este.tarea
                                                 };
-                                                console.log("Obteniendo lista de precios por sku de cliente fuera de ruta");
                                                 socketTareaDetalle.emit("GetPriceListBySkuUsingCustomerId", data);
                                                 BloquearPantalla();
                                                 interval = setInterval(function () {
@@ -356,9 +373,6 @@ var TareaDetalleControlador = (function () {
                                                         DesBloquearPantalla();
                                                         timerElapsed = true;
                                                         if (!emitCompleted) {
-                                                            if (clienteVerificado.priceListId !==
-                                                                localStorage.getItem("gDefaultPriceList")) {
-                                                            }
                                                             este.establecerListaDePreciosAClienteYProcesarlo(clienteVerificado);
                                                         }
                                                         clearInterval(interval);
@@ -370,8 +384,7 @@ var TareaDetalleControlador = (function () {
                                                     localStorage.getItem("gDefaultPriceList")) {
                                                     notify("No se encontró conexión al Servidor, la lista de precios a utilizar será la Lista por Defecto.");
                                                 }
-                                                este
-                                                    .establecerListaDePreciosAClienteYProcesarlo(clienteVerificado);
+                                                este.establecerListaDePreciosAClienteYProcesarlo(clienteVerificado);
                                             }
                                         }
                                     }, function (resultado) {
@@ -381,14 +394,11 @@ var TareaDetalleControlador = (function () {
                                 }
                             }
                             else {
-                                _this.skuServicio.verificarCantidadDeSkusDisponiblesParaCliente(clienteConCombos, function (cantidadSkus, clienteVerificado) {
+                                este.skuServicio.verificarCantidadDeSkusDisponiblesParaCliente(clienteConCombos, function (cantidadSkus, clienteVerificado) {
                                     if (cantidadSkus > 0) {
                                         este.procesarClienteParaOrdenDeVenta(clienteVerificado);
                                     }
                                     else {
-                                        if (clienteVerificado.priceListId !==
-                                            localStorage.getItem("gDefaultPriceList")) {
-                                        }
                                         este.establecerListaDePreciosAClienteYProcesarlo(clienteVerificado);
                                     }
                                 }, function (resultado) {
@@ -430,6 +440,18 @@ var TareaDetalleControlador = (function () {
     };
     TareaDetalleControlador.prototype.usuarioDeseaVerOpcionesDeTipoDeOrdenesDeVenta = function (callback) {
         try {
+            if (this.tarea.hasDraft) {
+                gSalesOrderType = this.tarea.salesOrderType;
+                switch (gSalesOrderType) {
+                    case OrdenDeVentaTipo.Contado:
+                        ToastThis("Orden de Venta de Tipo: Contado");
+                        break;
+                    case OrdenDeVentaTipo.Credito:
+                        ToastThis("Orden de Venta de Tipo: Credito");
+                        break;
+                }
+                return callback();
+            }
             var config = {
                 title: "Tipo de Orden de Venta",
                 items: [
@@ -451,6 +473,14 @@ var TareaDetalleControlador = (function () {
                         ToastThis("Orden de Venta de Tipo: Credito");
                         callback();
                         break;
+                    default:
+                        InteraccionConUsuarioServicio.desbloquearPantalla();
+                        break;
+                }
+            }, function (error) {
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                if (error != "Error") {
+                    notify(error);
                 }
             });
         }
@@ -459,53 +489,77 @@ var TareaDetalleControlador = (function () {
         }
     };
     TareaDetalleControlador.prototype.seguirOrdenDeVenta = function (cliente) {
-        var _this = this;
+        var _this_1 = this;
         try {
-            this.verificarSiDebeModificarCliente(function (debeValidarCliente) {
-                if (debeValidarCliente && _this.tarea.taskType === TareaTipo.Preventa && gTaskIsFrom === TareaEstado.Asignada) {
-                    cliente.origen = "TareaDetalleControlador";
-                    cliente.estaEnModificacionObligatoria = true;
-                    _this.cliente = cliente;
-                    if (_this.pregutarTipoOrdenDeVenta === 1) {
-                        _this.usuarioDeseaVerOpcionesDeTipoDeOrdenesDeVenta(function () {
-                            _this.mostrarPantallaDeModificacionDeCliente();
-                            my_dialog("", "", "closed");
-                        });
-                    }
-                    else {
-                        _this.mostrarPantallaDeModificacionDeCliente();
-                        my_dialog("", "", "closed");
-                    }
-                }
-                else {
-                    _this.cliente.estaEnModificacionObligatoria = false;
-                    _this.tareaServicio.actualizarTareaEstado(_this.tarea, function () {
-                        actualizarListadoDeTareas(_this.tarea.taskId, _this.tarea.taskType, _this.tarea.taskStatus, cliente.clientId, cliente.clientName, cliente.address, 0, gtaskStatus, _this.cliente.rgaCode);
-                        if (_this.pregutarTipoOrdenDeVenta === 1) {
-                            _this.usuarioDeseaVerOpcionesDeTipoDeOrdenesDeVenta(function () {
-                                if (_this.tarea.hasDraft) {
-                                    _this.motrarPantallaOrdenDeVenta();
-                                }
-                                else {
-                                    _this.mostrarPantallaDeListadoDeSkus();
-                                }
+            var procesarOrdenDeVentaDeCliente = function () {
+                _this_1.verificarSiDebeModificarCliente(function (debeValidarCliente) {
+                    if (debeValidarCliente &&
+                        _this_1.tarea.taskType === TareaTipo.Preventa &&
+                        gTaskIsFrom === TareaEstado.Asignada) {
+                        cliente.origen = "TareaDetalleControlador";
+                        cliente.estaEnModificacionObligatoria = true;
+                        _this_1.cliente = cliente;
+                        if (_this_1.pregutarTipoOrdenDeVenta === 1) {
+                            _this_1.usuarioDeseaVerOpcionesDeTipoDeOrdenesDeVenta(function () {
+                                _this_1.mostrarPantallaDeModificacionDeCliente();
+                                my_dialog("", "", "closed");
                             });
                         }
                         else {
-                            if (_this.tarea.hasDraft) {
-                                _this.motrarPantallaOrdenDeVenta();
+                            _this_1.mostrarPantallaDeModificacionDeCliente();
+                            my_dialog("", "", "closed");
+                        }
+                    }
+                    else {
+                        _this_1.cliente.estaEnModificacionObligatoria = false;
+                        _this_1.tareaServicio.actualizarTareaEstado(_this_1.tarea, function () {
+                            actualizarListadoDeTareas(_this_1.tarea.taskId, _this_1.tarea.taskType, _this_1.tarea.taskStatus, cliente.clientId, cliente.clientName, cliente.address, 0, gtaskStatus, _this_1.cliente.rgaCode);
+                            if (_this_1.pregutarTipoOrdenDeVenta === 1) {
+                                _this_1.usuarioDeseaVerOpcionesDeTipoDeOrdenesDeVenta(function () {
+                                    if (_this_1.tarea.hasDraft) {
+                                        _this_1.motrarPantallaOrdenDeVenta();
+                                    }
+                                    else {
+                                        _this_1.mostrarPantallaDeListadoDeSkus();
+                                    }
+                                });
                             }
                             else {
-                                _this.mostrarPantallaDeListadoDeSkus();
+                                if (_this_1.tarea.hasDraft) {
+                                    _this_1.motrarPantallaOrdenDeVenta();
+                                }
+                                else {
+                                    _this_1.mostrarPantallaDeListadoDeSkus();
+                                }
                             }
-                        }
-                    }, function (resultado) {
-                        notify(resultado.mensaje);
+                        }, function (resultado) {
+                            notify(resultado.mensaje);
+                        });
+                    }
+                }, function (error) {
+                    notify(error.mensaje);
+                });
+            };
+            var encuestasAEjecutarEnInicioDeTarea = this.encuestaServicio.filtrarEncuestasPorDisparador(this.tarea.microsurveys, DisparadorDeEncuesta.InicioDeTarea);
+            if (encuestasAEjecutarEnInicioDeTarea &&
+                encuestasAEjecutarEnInicioDeTarea.length > 0) {
+                BloquearPantalla();
+                this.encuestaServicio.procesarEncuestasDeCliente(encuestasAEjecutarEnInicioDeTarea, 0, this.tarea.hasDraft, procesarOrdenDeVentaDeCliente, function (error) {
+                    notify(error.mensaje);
+                });
+                var timeOut_1 = setTimeout(function () {
+                    $.mobile.changePage("#UiSurveyPage", {
+                        transition: "flow",
+                        reverse: true,
+                        changeHash: true,
+                        showLoadMsg: false
                     });
-                }
-            }, function (error) {
-                notify(error.mensaje);
-            });
+                    clearTimeout(timeOut_1);
+                }, 1000);
+            }
+            else {
+                procesarOrdenDeVentaDeCliente();
+            }
         }
         catch (err) {
             notify("Error al seguir orden de venta: " + err.message);
@@ -519,10 +573,10 @@ var TareaDetalleControlador = (function () {
                 changeHash: true,
                 showLoadMsg: false,
                 data: {
-                    "cliente": this.cliente,
-                    "tarea": this.tarea,
-                    "configuracionDecimales": this.configuracionDecimales,
-                    "esPrimeraVez": true
+                    cliente: this.cliente,
+                    tarea: this.tarea,
+                    configuracionDecimales: this.configuracionDecimales,
+                    esPrimeraVez: true
                 }
             });
             my_dialog("", "", "closed");
@@ -539,12 +593,12 @@ var TareaDetalleControlador = (function () {
                 changeHash: true,
                 showLoadMsg: false,
                 data: {
-                    "cliente": this.cliente,
-                    "tarea": this.tarea,
-                    "configuracionDecimales": this.configuracionDecimales,
-                    "listaSku": new Array(),
-                    "esPrimeraVez": true,
-                    "listaDeSkuOrdenDeVenta": new Array()
+                    cliente: this.cliente,
+                    tarea: this.tarea,
+                    configuracionDecimales: this.configuracionDecimales,
+                    listaSku: new Array(),
+                    esPrimeraVez: true,
+                    listaDeSkuOrdenDeVenta: new Array()
                 }
             });
             my_dialog("", "", "closed");
@@ -554,21 +608,21 @@ var TareaDetalleControlador = (function () {
         }
     };
     TareaDetalleControlador.prototype.irDirectoAOrdenDeVenta = function (cliente, lstSku) {
-        var _this = this;
+        var _this_1 = this;
         if (this.tarea.taskType === TareaTipo.Preventa) {
             this.obtenerOrdenDeVenta(cliente, function (cliente, ordenDeVenta, publicarOrdenDeVenta) {
                 cliente.fotoDeInicioDeVisita = ordenDeVenta.image3;
-                if (_this.tarea.taskId !== 0) {
-                    _this.publicarListaDeSkuOrdenDeVenta();
+                if (_this_1.tarea.taskId !== 0) {
+                    _this_1.publicarListaDeSkuOrdenDeVenta();
                 }
                 if (publicarOrdenDeVenta) {
-                    _this.tarea.hasDraft = true;
-                    _this.publicarOrdenDeVentaDraf(ordenDeVenta);
+                    _this_1.tarea.hasDraft = true;
+                    _this_1.publicarOrdenDeVentaDraf(ordenDeVenta);
                 }
                 else {
-                    _this.tarea.hasDraft = false;
+                    _this_1.tarea.hasDraft = false;
                 }
-                _this.seguirOrdenDeVenta(cliente);
+                _this_1.seguirOrdenDeVenta(cliente);
             });
         }
         else {
@@ -579,52 +633,55 @@ var TareaDetalleControlador = (function () {
         }
     };
     TareaDetalleControlador.prototype.irAOrdenDeVentaValidandoCuentaCorriente = function (cliente, lstSku) {
-        var _this = this;
+        var _this_1 = this;
         this.clienteServicio.validarDatosGeneralesCuentaCorriente(cliente, function (cliente) {
-            _this.tareaServicio.obtenerRegla("ValidarConServidorAntiguedadDeSaldos", function (listaDeReglasValidarConServidorAntiguedadDeSaldos) {
-                if (gIsOnline === EstaEnLinea.No || (listaDeReglasValidarConServidorAntiguedadDeSaldos.length === 0 || listaDeReglasValidarConServidorAntiguedadDeSaldos[0].enabled.toUpperCase() === 'NO')) {
-                    _this.clienteServicio.validarCuentaCorriente(cliente, lstSku, gSalesOrderType, _this.configuracionDecimales, function (cliente) {
-                        if (_this.tarea.taskType === TareaTipo.Preventa) {
-                            _this.obtenerOrdenDeVenta(cliente, function (cliente, ordenDeVenta, publicarOrdenDeVenta) {
-                                if (_this.tarea.taskId !== 0) {
-                                    _this.publicarListaDeSkuOrdenDeVenta();
+            _this_1.tareaServicio.obtenerRegla("ValidarConServidorAntiguedadDeSaldos", function (listaDeReglasValidarConServidorAntiguedadDeSaldos) {
+                if (gIsOnline === EstaEnLinea.No ||
+                    (listaDeReglasValidarConServidorAntiguedadDeSaldos.length === 0 ||
+                        listaDeReglasValidarConServidorAntiguedadDeSaldos[0].enabled.toUpperCase() ===
+                            "NO")) {
+                    _this_1.clienteServicio.validarCuentaCorriente(cliente, lstSku, gSalesOrderType, _this_1.configuracionDecimales, function (cliente) {
+                        if (_this_1.tarea.taskType === TareaTipo.Preventa) {
+                            _this_1.obtenerOrdenDeVenta(cliente, function (cliente, ordenDeVenta, publicarOrdenDeVenta) {
+                                if (_this_1.tarea.taskId !== 0) {
+                                    _this_1.publicarListaDeSkuOrdenDeVenta();
                                 }
                                 if (publicarOrdenDeVenta) {
-                                    _this.tarea.hasDraft = true;
-                                    _this.publicarOrdenDeVentaDraf(ordenDeVenta);
+                                    _this_1.tarea.hasDraft = true;
+                                    _this_1.publicarOrdenDeVentaDraf(ordenDeVenta);
                                 }
                                 else {
-                                    _this.tarea.hasDraft = false;
+                                    _this_1.tarea.hasDraft = false;
                                 }
-                                _this.seguirOrdenDeVenta(cliente);
+                                _this_1.seguirOrdenDeVenta(cliente);
                             });
                         }
                         else {
-                            if (_this.tarea.taskId !== 0) {
-                                _this.publicarListaDeSkuOrdenDeVenta();
+                            if (_this_1.tarea.taskId !== 0) {
+                                _this_1.publicarListaDeSkuOrdenDeVenta();
                             }
-                            _this.seguirOrdenDeVenta(cliente);
+                            _this_1.seguirOrdenDeVenta(cliente);
                         }
                     }, function (resultado) {
                         notify(resultado.mensaje);
                     });
                 }
                 else {
-                    _this.clienteServicio.enviarSolicitudParaObtenerCuentaCorriente(socketTareaDetalle, cliente, OpcionValidarSaldoCliente.EjecutarTarea, gSalesOrderType, function (cliente) {
-                        _this.cliente = cliente;
-                        if (_this.tarea.taskType === TareaTipo.Preventa) {
-                            _this.obtenerOrdenDeVenta(cliente, function (cliente, ordenDeVenta, publicarOrdenDeVenta) {
-                                if (_this.tarea.taskId !== 0) {
-                                    _this.publicarListaDeSkuOrdenDeVenta();
+                    _this_1.clienteServicio.enviarSolicitudParaObtenerCuentaCorriente(socketTareaDetalle, cliente, OpcionValidarSaldoCliente.EjecutarTarea, gSalesOrderType, function (cliente) {
+                        _this_1.cliente = cliente;
+                        if (_this_1.tarea.taskType === TareaTipo.Preventa) {
+                            _this_1.obtenerOrdenDeVenta(cliente, function (cliente, ordenDeVenta, publicarOrdenDeVenta) {
+                                if (_this_1.tarea.taskId !== 0) {
+                                    _this_1.publicarListaDeSkuOrdenDeVenta();
                                 }
                                 if (publicarOrdenDeVenta) {
-                                    _this.publicarOrdenDeVentaDraf(ordenDeVenta);
+                                    _this_1.publicarOrdenDeVentaDraf(ordenDeVenta);
                                 }
                             });
                         }
                         else {
-                            if (_this.tarea.taskId !== 0) {
-                                _this.publicarListaDeSkuOrdenDeVenta();
+                            if (_this_1.tarea.taskId !== 0) {
+                                _this_1.publicarListaDeSkuOrdenDeVenta();
                             }
                         }
                     }, function (resultado) {
@@ -647,12 +704,14 @@ var TareaDetalleControlador = (function () {
         this.mensajero.publish(msg, getType(OrdenDeVentaDraftMensaje));
     };
     TareaDetalleControlador.prototype.obtenerOrdenDeVenta = function (cliente, callback) {
+        var _this_1 = this;
         try {
             this.ordenDeVentaServicio.obtenerOrdenDeVentaPorTarea(this.tarea, this.configuracionDecimales, function (ordenDeVenta) {
                 if (ordenDeVenta.ordenDeVentaDetalle.length >= 1) {
                     if (ordenDeVenta.isDraft === 1) {
                         cliente.deliveryDate = ordenDeVenta.deliveryDate;
                         cliente.totalAmout = ordenDeVenta.totalAmount;
+                        _this_1.tarea.salesOrderType = ordenDeVenta.salesOrderType;
                         callback(cliente, ordenDeVenta, true);
                     }
                     else {
@@ -671,9 +730,9 @@ var TareaDetalleControlador = (function () {
         }
     };
     TareaDetalleControlador.prototype.obtenerConfiguracionDeDecimales = function (callback, errCallback) {
-        var _this = this;
+        var _this_1 = this;
         this.configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(function (decimales) {
-            _this.configuracionDecimales = decimales;
+            _this_1.configuracionDecimales = decimales;
             callback();
         }, function (operacion) {
             errCallback(operacion);
@@ -702,61 +761,68 @@ var TareaDetalleControlador = (function () {
         this.mostrarPantallaDeModificacionDeCliente();
     };
     TareaDetalleControlador.prototype.procesarClienteParaOrdenDeVenta = function (cliente) {
-        var _this = this;
+        var _this_1 = this;
         this.cliente = cliente;
         var sku = new Sku();
         sku.sku = "";
         sku.onHand = 0;
         var lstSku = [];
-        localStorage.setItem("LISTA_TIPO_FAMILIA_SKU", "ALL");
         this.clienteServicio.obtenerCuentaCorriente(cliente, tareaDetalleControlador.configuracionDecimales, function (cliente) {
-            _this.tareaServicio.obtenerRegla("tipoOrdenDeVenta", function (listaDeReglasTipoOrdenDeVenta) {
-                _this.tareaServicio.obtenerRegla("AplicarReglasComerciales", function (listaDeReglasAplicarReglasComerciales) {
-                    if (listaDeReglasAplicarReglasComerciales.length > 0 && listaDeReglasAplicarReglasComerciales[0].enabled === 'Si') {
+            _this_1.tareaServicio.obtenerRegla("tipoOrdenDeVenta", function (listaDeReglasTipoOrdenDeVenta) {
+                _this_1.tareaServicio.obtenerRegla("AplicarReglasComerciales", function (listaDeReglasAplicarReglasComerciales) {
+                    if (listaDeReglasAplicarReglasComerciales.length > 0 &&
+                        listaDeReglasAplicarReglasComerciales[0].enabled === "Si") {
                         my_dialog("Validando crédito y saldo", "Espere...", "open");
-                        _this.tareaServicio.obtenerRegla("NoValidarAntiguedadDeSaldos", function (listaDeReglasValidarAntiguedadDeSaldos) {
-                            if (listaDeReglasValidarAntiguedadDeSaldos.length > 0 && listaDeReglasValidarAntiguedadDeSaldos[0].enabled === 'Si' || listaDeReglasValidarAntiguedadDeSaldos[0].enabled === 'SI') {
+                        _this_1.tareaServicio.obtenerRegla("NoValidarAntiguedadDeSaldos", function (listaDeReglasValidarAntiguedadDeSaldos) {
+                            if ((listaDeReglasValidarAntiguedadDeSaldos.length > 0 &&
+                                listaDeReglasValidarAntiguedadDeSaldos[0].enabled ===
+                                    "Si") ||
+                                listaDeReglasValidarAntiguedadDeSaldos[0].enabled ===
+                                    "SI") {
                                 gSalesOrderType = OrdenDeVentaTipo.Contado;
-                                _this.pregutarTipoOrdenDeVenta = 0;
-                                _this.irDirectoAOrdenDeVenta(cliente, lstSku);
+                                _this_1.pregutarTipoOrdenDeVenta = 0;
+                                _this_1.irDirectoAOrdenDeVenta(cliente, lstSku);
                             }
                             else {
-                                _this.tareaServicio.obtenerRegla("LimiteDeCreditoCero", function (listaDeReglasLimiteDeCredito) {
-                                    if (listaDeReglasLimiteDeCredito.length >= 1 && listaDeReglasTipoOrdenDeVenta.length >= 1) {
+                                _this_1.tareaServicio.obtenerRegla("LimiteDeCreditoCero", function (listaDeReglasLimiteDeCredito) {
+                                    if (listaDeReglasLimiteDeCredito.length >= 1 &&
+                                        listaDeReglasTipoOrdenDeVenta.length >= 1) {
                                         if (cliente.cuentaCorriente.limiteDeCredito === 0) {
                                             notify("Creando Orden de Venta de Tipo Contado");
                                             gSalesOrderType = OrdenDeVentaTipo.Contado;
-                                            _this.pregutarTipoOrdenDeVenta = 0;
-                                            _this.irDirectoAOrdenDeVenta(cliente, lstSku);
+                                            _this_1.pregutarTipoOrdenDeVenta = 0;
+                                            _this_1.irDirectoAOrdenDeVenta(cliente, lstSku);
                                         }
                                         else {
                                             gSalesOrderType = OrdenDeVentaTipo.Credito;
-                                            _this.pregutarTipoOrdenDeVenta = 1;
-                                            _this.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
+                                            _this_1.pregutarTipoOrdenDeVenta = 1;
+                                            _this_1.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
                                         }
                                     }
-                                    else if (listaDeReglasLimiteDeCredito.length >= 1 && listaDeReglasTipoOrdenDeVenta.length === 0) {
+                                    else if (listaDeReglasLimiteDeCredito.length >= 1 &&
+                                        listaDeReglasTipoOrdenDeVenta.length === 0) {
                                         if (cliente.cuentaCorriente.limiteDeCredito === 0) {
                                             notify("Creando Orden de Venta de Tipo Contado");
                                             gSalesOrderType = OrdenDeVentaTipo.Contado;
-                                            _this.pregutarTipoOrdenDeVenta = 0;
-                                            _this.irDirectoAOrdenDeVenta(cliente, lstSku);
+                                            _this_1.pregutarTipoOrdenDeVenta = 0;
+                                            _this_1.irDirectoAOrdenDeVenta(cliente, lstSku);
                                         }
                                         else {
                                             gSalesOrderType = OrdenDeVentaTipo.Credito;
-                                            _this.pregutarTipoOrdenDeVenta = 0;
-                                            _this.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
+                                            _this_1.pregutarTipoOrdenDeVenta = 0;
+                                            _this_1.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
                                         }
                                     }
-                                    else if (listaDeReglasLimiteDeCredito.length === 0 && listaDeReglasTipoOrdenDeVenta.length >= 1) {
+                                    else if (listaDeReglasLimiteDeCredito.length === 0 &&
+                                        listaDeReglasTipoOrdenDeVenta.length >= 1) {
                                         gSalesOrderType = OrdenDeVentaTipo.Credito;
-                                        _this.pregutarTipoOrdenDeVenta = 1;
-                                        _this.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
+                                        _this_1.pregutarTipoOrdenDeVenta = 1;
+                                        _this_1.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
                                     }
                                     else {
                                         gSalesOrderType = OrdenDeVentaTipo.Credito;
-                                        _this.pregutarTipoOrdenDeVenta = 0;
-                                        _this.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
+                                        _this_1.pregutarTipoOrdenDeVenta = 0;
+                                        _this_1.irAOrdenDeVentaValidandoCuentaCorriente(cliente, lstSku);
                                     }
                                 }, function (resultado) {
                                     notify(resultado.mensaje);
@@ -770,13 +836,14 @@ var TareaDetalleControlador = (function () {
                     }
                     else {
                         gSalesOrderType = OrdenDeVentaTipo.Credito;
-                        if (listaDeReglasTipoOrdenDeVenta.length > 0 && listaDeReglasTipoOrdenDeVenta[0].enabled === 'Si') {
-                            _this.pregutarTipoOrdenDeVenta = 1;
+                        if (listaDeReglasTipoOrdenDeVenta.length > 0 &&
+                            listaDeReglasTipoOrdenDeVenta[0].enabled === "Si") {
+                            _this_1.pregutarTipoOrdenDeVenta = 1;
                         }
                         else {
-                            _this.pregutarTipoOrdenDeVenta = 0;
+                            _this_1.pregutarTipoOrdenDeVenta = 0;
                         }
-                        _this.irDirectoAOrdenDeVenta(cliente, lstSku);
+                        _this_1.irDirectoAOrdenDeVenta(cliente, lstSku);
                     }
                 }, function (resultado) {
                     notify(resultado.mensaje);
@@ -842,21 +909,21 @@ var TareaDetalleControlador = (function () {
         $.mobile.changePage("UiPageCustomerInfo", {
             transition: "flow",
             reverse: true,
-            changeHash: false,
             showLoadMsg: false,
             data: {
-                "cliente": this.cliente,
-                "tarea": this.tarea,
-                "configuracionDecimales": this.configuracionDecimales,
-                "esPrimeraVez": true
+                cliente: this.cliente,
+                tarea: this.tarea,
+                configuracionDecimales: this.configuracionDecimales,
+                esPrimeraVez: true
             }
         });
     };
     TareaDetalleControlador.prototype.validarSiAplicaLasBonificacionesPorCombo = function (listaDeBonificaciones, indiceDeListaDeBonificacion, listaHistoricoDePromos, callBack, errCallback) {
-        var _this = this;
+        var _this_1 = this;
         try {
             if (listaHistoricoDePromos.length > 0) {
-                if (listaDeBonificaciones.length > 0 && listaDeBonificaciones.length > indiceDeListaDeBonificacion) {
+                if (listaDeBonificaciones.length > 0 &&
+                    listaDeBonificaciones.length > indiceDeListaDeBonificacion) {
                     var bonificacionAValidar_1 = listaDeBonificaciones[indiceDeListaDeBonificacion];
                     var resultadoDePromoHistorico_1 = listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === bonificacionAValidar_1.promoId;
@@ -869,10 +936,11 @@ var TareaDetalleControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico_1, function (aplicaPromo) {
                             if (!aplicaPromo) {
                                 listaDeBonificaciones = listaDeBonificaciones.filter(function (bonificacion) {
-                                    return resultadoDePromoHistorico_1.promoId !== bonificacion.promoId;
+                                    return (resultadoDePromoHistorico_1.promoId !==
+                                        bonificacion.promoId);
                                 });
                             }
-                            _this.validarSiAplicaLasBonificacionesPorCombo(listaDeBonificaciones, indiceDeListaDeBonificacion + (aplicaPromo ? 1 : 0), listaHistoricoDePromos, function (listaDeBonificaciones) {
+                            _this_1.validarSiAplicaLasBonificacionesPorCombo(listaDeBonificaciones, indiceDeListaDeBonificacion + (aplicaPromo ? 1 : 0), listaHistoricoDePromos, function (listaDeBonificaciones) {
                                 callBack(listaDeBonificaciones);
                             }, function (resultado) {
                                 errCallback(resultado);
@@ -919,6 +987,99 @@ var TareaDetalleControlador = (function () {
                 mensaje: "Error al obtener historico de promociones: " + ex.message
             });
         }
+    };
+    TareaDetalleControlador.prototype.usuarioDeseaVerPromocionesDisponibles = function () {
+        try {
+            var _this = this;
+            $.mobile.changePage("PantallaDePromociones", {
+                transition: "flow",
+                reverse: true,
+                changeHash: true,
+                showLoadMsg: false,
+                data: {
+                    cliente: _this.cliente,
+                    configuracionDecimales: _this.configuracionDecimales
+                }
+            });
+        }
+        catch (err) {
+            notify("Error al mostrar las promos: " + err.message);
+            my_dialog("", "", "closed");
+        }
+    };
+    TareaDetalleControlador.prototype.realizarCobroDeFacturas = function (tipoDePagoDeFactura, callback) {
+        var _this_1 = this;
+        var este = this;
+        try {
+            este.debeCobrarFacturasVencidas(tipoDePagoDeFactura === TipoDePagoDeFactura.FacturaVencida
+                ? ReglaTipo.CobroDeFacturaVencida.toString()
+                : ReglaTipo.NoVenderAlContadoConLimiteExcedido.toString(), function (debeCobrarFacturas) {
+                este.visualizaListadoDeFacturasAbiertasOVencidas(function (visualizaFacturasAbiertasOVencidas) {
+                    if (debeCobrarFacturas || visualizaFacturasAbiertasOVencidas) {
+                        este.obtenerFacturasVencidas(tipoDePagoDeFactura, function (facturasVencidas) {
+                            if (!_this_1.cuentaCorrienteServicio.clienteTieneFacturasAbiertasOVencidas(facturasVencidas)) {
+                                return callback();
+                            }
+                            var actualizacionDeInformacionDePagoDeFacturasVencidasMensaje = new ActualizacionDeInformacionDePagoDeFacturasVencidasMensaje(este);
+                            actualizacionDeInformacionDePagoDeFacturasVencidasMensaje.montoCubiertoPorUltimoPagoProcesado = 0;
+                            este.mensajero.publish(actualizacionDeInformacionDePagoDeFacturasVencidasMensaje, getType(ActualizacionDeInformacionDePagoDeFacturasVencidasMensaje));
+                            var mensajeClientePagoDeFacturasVencidas = new ClienteMensaje(este);
+                            mensajeClientePagoDeFacturasVencidas.cliente = este.cliente;
+                            mensajeClientePagoDeFacturasVencidas.vistaCargandosePorPrimeraVez = true;
+                            mensajeClientePagoDeFacturasVencidas.tipoDePagoAProcesar = tipoDePagoDeFactura;
+                            mensajeClientePagoDeFacturasVencidas.funcionDeRetornoAPocesoPrincipal = callback;
+                            mensajeClientePagoDeFacturasVencidas.permitirSoloVisualizacionDeFacturasVencidasOAbiertas =
+                                visualizaFacturasAbiertasOVencidas &&
+                                    debeCobrarFacturas === false;
+                            este.mensajero.publish(mensajeClientePagoDeFacturasVencidas, getType(ClienteMensaje));
+                            $.mobile.changePage("#UiOverdueInvoicePaymentPage", {
+                                transition: "flip",
+                                reverse: false,
+                                showLoadMsg: false
+                            });
+                        });
+                    }
+                    else {
+                        callback();
+                    }
+                });
+            });
+        }
+        catch (error) {
+            notify("Error al intentar cobrar facturas vencidas debido a: " + error.message);
+        }
+    };
+    TareaDetalleControlador.prototype.debeCobrarFacturasVencidas = function (reglaTipoDeFactura, callBack) {
+        ObtenerReglas(reglaTipoDeFactura, function (reglas) {
+            callBack(reglas.rows.length > 0 &&
+                reglas.rows.item(0).ENABLED.toUpperCase() === "SI");
+        }, function (error) {
+            notify(error);
+        });
+    };
+    TareaDetalleControlador.prototype.visualizaListadoDeFacturasAbiertasOVencidas = function (callBack) {
+        ObtenerReglas(ReglaTipo.VisualizarFacturasAbiertasOVencidas.toString(), function (reglas) {
+            callBack(reglas.rows.length > 0 &&
+                reglas.rows.item(0).ENABLED.toUpperCase() === "SI");
+        }, function (error) {
+            notify(error);
+        });
+    };
+    TareaDetalleControlador.prototype.obtenerFacturasVencidas = function (tipoDePagoDeFactura, callback) {
+        var cliente = new Cliente();
+        cliente.clientId = this.cliente.clientId;
+        cliente.paymentType = tipoDePagoDeFactura;
+        this.cuentaCorrienteServicio.obtenerFacturasVencidasDeCliente(cliente, function (facturasVencidas) {
+            callback(facturasVencidas);
+        }, function (resultado) {
+            notify(resultado.mensaje);
+        });
+    };
+    TareaDetalleControlador.prototype.realizarCobroDeFacturasYProcesarTarea = function () {
+        var este = this;
+        este.realizarCobroDeFacturas(TipoDePagoDeFactura.FacturaVencida, function () {
+            este.ejecutarTareaDePreventa();
+        });
     };
     return TareaDetalleControlador;
 }());

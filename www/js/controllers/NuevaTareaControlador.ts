@@ -268,7 +268,7 @@
                 , Telefono: cliente.phone
                 , CodigoHH: cliente.clientId
             };
-
+            gCurrentGPS = cliente.gps;
             CrearTarea(clienteTarea, TareaTipo.Preventa, (cliente, tareaId) => {
                 this.tarea.taskId = Number(tareaId);
                 this.tarea.taskType = TareaTipo.Preventa;
@@ -286,7 +286,6 @@
                 $.mobile.changePage("#taskdetail_page", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
                 DesBloquearPantalla();
@@ -301,7 +300,6 @@
         $.mobile.changePage("#UiPageNewTask", {
             transition: "flow"
             , reverse: true
-            , changeHash: false
             , showLoadMsg: false
         });
     }
@@ -310,7 +308,6 @@
         $.mobile.changePage("#pickupplan_page", {
             transition: "flow"
             , reverse: true
-            , changeHash: false
             , showLoadMsg: false
         });
     }

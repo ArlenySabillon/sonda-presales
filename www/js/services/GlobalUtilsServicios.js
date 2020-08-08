@@ -1,7 +1,11 @@
 var GlobalUtilsServicio = (function () {
     function GlobalUtilsServicio() {
+        this.estadisticaServicio = new EstadisticaDeVentaServicio();
+        this.cuentaCorrienteServicio = new CuentaCorrienteServicio();
+        this.imagenDeSkuServicio = new ImagenDeSkuServicio();
     }
     GlobalUtilsServicio.prototype.delegarSockets = function (socketIo) {
+        var _this = this;
         try {
             socketIo.on("welcome_to_sonda", function (data) {
                 try {
@@ -14,7 +18,7 @@ var GlobalUtilsServicio = (function () {
                     gDefaultWhs = data.default_warehouse;
                     gPreSaleWhs = data.presale_warehouse;
                     localStorage.setItem("NAME_ENTERPRISE", data.name_enterprise);
-                    $("#loginimg").attr('src', data.loginimage);
+                    $("#loginimg").attr("src", data.loginimage);
                     localStorage.setItem("LOGIN_IMAGE", data.loginimage);
                     localStorage.setItem("LAST_LOGIN_NAME", data.user_name);
                     localStorage.setItem("LAST_LOGIN_ROUTE", gCurrentRoute);
@@ -25,17 +29,22 @@ var GlobalUtilsServicio = (function () {
                     gdbuserpass = data.dbuserpass;
                     $("#lblnameuser").text(data.user_name);
                     $("#lblnameuser1").text(data.user_name);
-                    console.log("welcome_to_swift");
-                    console.dir(data);
                     UpdateLoginInfo("set");
                     if (gIsOnline === 1) {
-                        console.log("welcome_to_swift.getmyrouteplan");
-                        socketIo.emit('getmyrouteplan', { 'loginid': gLastLogin, 'dbuser': gdbuser, 'dbuserpass': gdbuserpass });
-                        gTimeout = setTimeout(socketIo
-                            .emit("get_all_novisit", { 'dbuser': gdbuser, 'dbuserpass': gdbuserpass }), 1000);
+                        socketIo.emit("getmyrouteplan", {
+                            loginid: gLastLogin,
+                            dbuser: gdbuser,
+                            dbuserpass: gdbuserpass
+                        });
+                        gTimeout = setTimeout(function () {
+                            socketIo.emit("get_all_novisit", {
+                                dbuser: gdbuser,
+                                dbuserpass: gdbuserpass
+                            });
+                        }, 1000);
                         clearTimeout(gTimeout);
                     }
-                    var pPrinterAddress = '';
+                    var pPrinterAddress = "";
                     pPrinterAddress = localStorage.getItem("PRINTER_RECEIPT");
                     $(".printerclass").buttonMarkup({ icon: "delete" });
                     bluetoothSerial.connect(pPrinterAddress, function () {
@@ -52,7 +61,7 @@ var GlobalUtilsServicio = (function () {
                         $.mobile.changePage("#menu_page", {
                             transition: "flow",
                             reverse: true,
-                            showLoadMsg: true
+                            showLoadMsg: false
                         });
                     }
                 }
@@ -60,36 +69,37 @@ var GlobalUtilsServicio = (function () {
                     notify("EROOR: " + e.message);
                 }
             });
-            socketIo.on('device_autenthication_failed', function (data) {
+            socketIo.on("device_autenthication_failed", function (data) {
                 notify(data.message);
             });
-            socketIo.on('broadcast_receive', function (data) {
+            socketIo.on("broadcast_receive", function (data) {
                 navigator.geolocation.getCurrentPosition(function (position) {
-                    gCurrentGPS = position.coords.latitude + ',' + position.coords.longitude;
+                    gCurrentGPS =
+                        position.coords.latitude + "," + position.coords.longitude;
                     $(".gpsclass").text(gCurrentGPS);
-                    socketIo.emit('broadcast_response', {
-                        'sockeit': socketIo.id,
-                        'gps': gCurrentGPS,
-                        'message:': 'OK',
-                        'routeid': gCurrentRoute,
-                        'loginid': gLastLogin
+                    socketIo.emit("broadcast_response", {
+                        sockeit: socketIo.id,
+                        gps: gCurrentGPS,
+                        "message:": "OK",
+                        routeid: gCurrentRoute,
+                        loginid: gLastLogin
                     });
                 }, function (error) {
-                    socketIo.emit('broadcast_response', {
-                        'sockeit': socketIo.id,
-                        'gps': "0,0",
-                        'message:': error,
-                        'routeid': gCurrentRoute,
-                        'loginid': gLastLogin
+                    socketIo.emit("broadcast_response", {
+                        sockeit: socketIo.id,
+                        gps: "0,0",
+                        "message:": error,
+                        routeid: gCurrentRoute,
+                        loginid: gLastLogin
                     });
                 }, { timeout: 30000, enableHighAccuracy: true });
             });
             socketIo.on("add_to_getmyrouteplan", function (data) {
-                console.log("add_to_getmypickupplan.received");
                 SONDA_DB_Session.transaction(function (tx) {
                     var xdate = getDateTime();
-                    var pSQL = "DELETE FROM PRESALES_ROUTE WHERE TASK_ID = '" + data.row.TASK_ID + "'";
-                    console.log(pSQL);
+                    var pSQL = "DELETE FROM PRESALES_ROUTE WHERE TASK_ID = '" +
+                        data.row.TASK_ID +
+                        "'";
                     tx.executeSql(pSQL);
                     pSQL =
                         "INSERT INTO PRESALES_ROUTE(TASK_ID, SCHEDULE_FOR, ASSIGNED_BY, DOC_PARENT, EXPECTED_GPS, ";
@@ -98,14 +108,12 @@ var GlobalUtilsServicio = (function () {
                     pSQL += "VALUES(" + data.row.TASK_ID + ",'" + data.row.SCHEDULE_FOR + "','" + data.row.SCHEDULE_FOR + "',0";
                     pSQL += ", '" + data.row.EXPECTED_GPS + "','" + data.row.TASK_COMMENTS + "'," + data.row.TASK_SEQ + ",'" + data.row.TASK_ADDRESS + "'";
                     pSQL += ", '" + data.row.CUSTOMER_PHONE + "','" + data.row.EMAIL_TO_CONFIRM + "','" + data.row.CUSTOMER_CODE + "','" + data.row.CUSTOMER_NAME + "'," + data.row.TASK_PRIORITY + ",'" + data.row.TASK_STATUS + "', 1, 1, '" + data.row.TASK_TYPE + "'," + data.row.PICKING_NUMBER + ",1, 'BY_CALENDAR')";
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
                     var sql = "INSERT INTO CLIENTS(CLIENT_ID, CLIENT_NAME, CLIENT_TAX_ID, BASE_PRICELIST, IS_POSTED, PHONE,CLIENT_HH_ID_OLD,STATUS,NEW, CREDIT_LIMIT,EXTRADAYS) ";
                     sql += " SELECT '" + data.row.CUSTOMER_CODE + "','" + data.row.CUSTOMER_NAME + "','C.F.',0,-1,0,'" + data.row.CUSTOMER_CODE + "','NEW',0,999999,30 ";
                     sql += " WHERE NOT EXISTS(SELECT 1 FROM CLIENTS WHERE CLIENT_ID= '" + data.row.CUSTOMER_CODE + "')";
                     tx.executeSql(sql);
                     pSQL = ObtenerInsertTareaGU(data.row, data.row.TASK_ID, data.row.TASK_TYPE);
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
                     var uiTarea = $("#TAREA-" + data.row.TASK_ID);
                     if (uiTarea[0] === undefined || uiTarea[0] === null) {
@@ -113,92 +121,97 @@ var GlobalUtilsServicio = (function () {
                     }
                     uiTarea = null;
                 }, function (err) {
-                    console.dir(err);
                     my_dialog("", "", "close");
                 }, function () {
-                    socketIo.emit('task_has_been_received', { 'TASK_ID': data.row.TASK_ID });
+                    socketIo.emit("task_has_been_received", {
+                        TASK_ID: data.row.TASK_ID
+                    });
                 });
             });
             socketIo.on("you_got_a_task", function (data) {
-                console.log("you_got_a_task: to:" + data.ASSIGNED_TO + " looged as:" + gLastLogin);
-                console.log(data);
                 if (data.ASSIGNED_TO === gLastLogin.toUpperCase()) {
-                    console.log("sendtask.received.data");
                     SONDA_DB_Session.transaction(function (tx) {
                         var xdate = getDateTime();
                         var pSQL = "INSERT INTO PRESALES_ROUTE(TASK_ID, SCHEDULE_FOR, ASSIGNED_BY, DOC_PARENT, EXPECTED_GPS, ";
                         pSQL +=
                             "TASK_COMMENTS, TASK_SEQ, TASK_ADDRESS, RELATED_CLIENT_PHONE_1, EMAIL_TO_CONFIRM, RELATED_CLIENT_CODE, RELATED_CLIENT_NAME, TASK_PRIORITY, TASK_STATUS, SYNCED, IS_OFFLINE, DOC_NUM, TASK_TYPE)";
                         pSQL += "VALUES(" + data.TASK_ID + ",'" + xdate + "','',''";
-                        pSQL += ", '" +
-                            data.EXPECTED_GPS +
-                            "','" +
-                            data.TASK_COMMENTS +
-                            "'," +
-                            data.TASK_SEQ +
-                            ",'" +
-                            data.TASK_ADDRESS +
-                            "'";
+                        pSQL +=
+                            ", '" +
+                                data.EXPECTED_GPS +
+                                "','" +
+                                data.TASK_COMMENTS +
+                                "'," +
+                                data.TASK_SEQ +
+                                ",'" +
+                                data.TASK_ADDRESS +
+                                "'";
                         pSQL += ", '" + data.RELATED_CLIENT_PHONE_1 + "','";
-                        pSQL += data.EMAIL_TO_CONFIRM + "','" + data.RELATED_CLIENT_CODE + "','";
-                        pSQL += data.RELATED_CLIENT_NAME +
-                            "'," +
-                            data.TASK_SEQ +
-                            ",'ASSIGNED', 1, 1, " +
-                            data.PICKING_NUMBER +
-                            "','" +
-                            data.TASK_TYPE +
-                            ")";
+                        pSQL +=
+                            data.EMAIL_TO_CONFIRM +
+                                "','" +
+                                data.RELATED_CLIENT_CODE +
+                                "','";
+                        pSQL +=
+                            data.RELATED_CLIENT_NAME +
+                                "'," +
+                                data.TASK_SEQ +
+                                ",'ASSIGNED', 1, 1, " +
+                                data.PICKING_NUMBER +
+                                "','" +
+                                data.TASK_TYPE +
+                                ")";
                         tx.executeSql(pSQL);
                     }, function () {
                         my_dialog("", "", "close");
                     }, function () {
-                        socketIo.emit('task_has_been_received', { 'TASK_ID': data.TASK_ID });
+                        socketIo.emit("task_has_been_received", {
+                            TASK_ID: data.TASK_ID
+                        });
                         ToastThis("Tiene una nueva tarea!");
                         navigator.vibrate([500, 1000, 500, 1000, 3000]);
                     });
                 }
             });
-            socketIo.on('task_accepted_completed', function (data) {
+            socketIo.on("task_accepted_completed", function (data) {
                 SONDA_DB_Session.transaction(function (tx) {
-                    var pSQL = "UPDATE PICKUP_ROUTE SET SYNCED = 1 WHERE TASK_ID = " + data.taskid;
-                    console.log(pSQL);
+                    var pSQL = "UPDATE PICKUP_ROUTE SET SYNCED = 1 WHERE TASK_ID = " +
+                        data.taskid;
                     tx.executeSql(pSQL);
                     pSQL = null;
                 }, function (err) {
                     my_dialog("", "", "close");
-                    console.dir(err.message);
                 });
                 RefreshMyRoutePlan();
             });
-            socketIo.on('getmyrouteplan_completed', function (data) {
+            socketIo.on("getmyrouteplan_completed", function (data) {
             });
             socketIo.on("finishroute_completed", function (data) {
                 my_dialog("", "", "close");
                 SONDA_DB_Session.transaction(function (tx) {
                     var pSQL = "DELETE FROM PICKUP_ROUTE";
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
                     pSQL = "DELETE FROM GUIDES";
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
                     pSQL = "DELETE FROM PACKAGES_X_GUIDE";
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
-                    localStorage.setItem('LOGIN_STATUS', "CLOSED");
+                    localStorage.setItem("LOGIN_STATUS", "CLOSED");
                 }, function (err) {
                     my_dialog("", "", "close");
                     notify("finishroute_completed.add.row:" + err);
                 });
             });
-            socketIo.on('get_all_branches_completed', function (data) {
-                console.log("branches count:" + data.rowcount);
-                gTimeout = setTimeout(socketIo.emit("get_all_novisit", { 'dbuser': gdbuser, 'dbuserpass': gdbuserpass }), 500);
+            socketIo.on("get_all_branches_completed", function (data) {
+                gTimeout = setTimeout(function () {
+                    socketIo.emit("get_all_novisit", {
+                        dbuser: gdbuser,
+                        dbuserpass: gdbuserpass
+                    });
+                }, 500);
             });
             socketIo.on("get_all_branches_received", function (data) {
                 SONDA_DB_Session.transaction(function (tx) {
                     var pSQL = "DELETE FROM BRANCHES";
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
                 }, function (err) {
                     my_dialog("", "", "close");
@@ -207,14 +220,16 @@ var GlobalUtilsServicio = (function () {
             });
             socketIo.on("post_order.posted", function (data) {
                 SONDA_DB_Session.transaction(function (tx) {
-                    var pSQL = "UPDATE PRESALES_ROUTE SET IS_OFFLINE = 0 WHERE TASK_ID = " + data.taskid;
-                    console.log(pSQL);
+                    var pSQL = "UPDATE PRESALES_ROUTE SET IS_OFFLINE = 0 WHERE TASK_ID = " +
+                        data.taskid;
                     tx.executeSql(pSQL);
-                    pSQL = "UPDATE SKUS_X_ORDER SET IS_OFFLINE = 0 WHERE SOURCE_TASK = " + data.taskid;
-                    console.log(pSQL);
+                    pSQL =
+                        "UPDATE SKUS_X_ORDER SET IS_OFFLINE = 0 WHERE SOURCE_TASK = " +
+                            data.taskid;
                     tx.executeSql(pSQL);
-                    pSQL = "UPDATE ORDERS SET IS_OFFLINE = 0 WHERE SOURCE_TASK = " + data.taskid;
-                    console.log(pSQL);
+                    pSQL =
+                        "UPDATE ORDERS SET IS_OFFLINE = 0 WHERE SOURCE_TASK = " +
+                            data.taskid;
                     tx.executeSql(pSQL);
                 }, function (err) {
                     my_dialog("", "", "close");
@@ -225,27 +240,29 @@ var GlobalUtilsServicio = (function () {
                 SONDA_DB_Session.transaction(function (tx) {
                     var xdate = getDateTime();
                     var pSQL = "INSERT INTO BRANCHES(CLIENT_CODE, BRANCH_CODE, BRANCH_PDE, BRANCH_NAME, BRANCH_ADDRESS, GEO_ROUTE, GPS_LAT_LON, PHONE_1, DELIVERY_EMAIL, RECOLLECT_EMAIL)";
-                    pSQL += " VALUES('" +
-                        data.row.CUSTOMER_CODE +
-                        "','" +
-                        data.row.BRANCH_CODE +
-                        "','" +
-                        data.row.BRANCH_PDE +
-                        "','" +
-                        data.row.BRANCH_NAME +
-                        "','" +
-                        data.row.BRANCH_ADDRESS +
-                        "','" +
-                        data.row.GEO_ROUTE;
-                    pSQL += "', '" +
-                        data.row.GPS_LAT_LON +
-                        "','" +
-                        data.row.PHONE +
-                        "','" +
-                        data.row.DELIVERY_EMAIL +
-                        "','" +
-                        data.row.RECOLLECT_EMAIL +
-                        "')";
+                    pSQL +=
+                        " VALUES('" +
+                            data.row.CUSTOMER_CODE +
+                            "','" +
+                            data.row.BRANCH_CODE +
+                            "','" +
+                            data.row.BRANCH_PDE +
+                            "','" +
+                            data.row.BRANCH_NAME +
+                            "','" +
+                            data.row.BRANCH_ADDRESS +
+                            "','" +
+                            data.row.GEO_ROUTE;
+                    pSQL +=
+                        "', '" +
+                            data.row.GPS_LAT_LON +
+                            "','" +
+                            data.row.PHONE +
+                            "','" +
+                            data.row.DELIVERY_EMAIL +
+                            "','" +
+                            data.row.RECOLLECT_EMAIL +
+                            "')";
                     tx.executeSql(pSQL);
                 }, function (err) {
                     my_dialog("", "", "close");
@@ -253,17 +270,16 @@ var GlobalUtilsServicio = (function () {
                 });
             });
             socketIo.on("add_to_pde", function (data) {
-                console.log("add_to_get_all_pde.received:" + data.row.GEO_ROUTE);
                 SONDA_DB_Session.transaction(function (tx) {
                     var pSQL = "INSERT INTO PDE(GEO_ROUTE, CODE_GEO_ROUTE, CODE_POINT)";
-                    pSQL += " VALUES('" +
-                        data.row.GEO_ROUTE +
-                        "','" +
-                        data.row.CODE_GEO_ROUTE +
-                        "','" +
-                        data.row.CODE_POINT +
-                        "')";
-                    console.log(pSQL);
+                    pSQL +=
+                        " VALUES('" +
+                            data.row.GEO_ROUTE +
+                            "','" +
+                            data.row.CODE_GEO_ROUTE +
+                            "','" +
+                            data.row.CODE_POINT +
+                            "')";
                     tx.executeSql(pSQL);
                 }, function (err) {
                     my_dialog("", "", "close");
@@ -271,7 +287,6 @@ var GlobalUtilsServicio = (function () {
                 });
             });
             socketIo.on("getpde_completed", function (data) {
-                console.log("PDE count:" + data.rowcount);
                 if (data.rowcount === 0) {
                     notify("ERROR, no hay PDE definidos en la ruta. \n Verifique");
                 }
@@ -283,19 +298,16 @@ var GlobalUtilsServicio = (function () {
             socketIo.on("manifest_accepted_ok", function (data) {
                 try {
                     my_dialog("", "", "close");
-                    console.log("manifest_accepted_ok");
                     clearup_manifiesto();
-                    console.dir(data);
                     localStorage.setItem("MANIFEST_PRESENT", "1");
                     localStorage.setItem("MANIFEST_SCANNED", gManifestID);
                 }
                 catch (e) {
-                    console.log("manifest_not_found.catch:" + e.message);
+                    notify(e.message);
                 }
             });
             socketIo.on("delivery_image_has_been_saved", function (data) {
                 try {
-                    console.log('delivery_image_has_been_saved');
                     ToastThis("Grabado en el server");
                 }
                 catch (e) {
@@ -304,10 +316,9 @@ var GlobalUtilsServicio = (function () {
             });
             socketIo.on("delivery_signature_has_been_saved", function (data) {
                 try {
-                    console.log("delivery_signature_has_been_saved");
                     socketIo.emit("process_delivery_image", {
-                        'image': gpicture,
-                        'guide_id': gGuideToDeliver
+                        image: gpicture,
+                        guide_id: gGuideToDeliver
                     });
                 }
                 catch (e) {
@@ -319,17 +330,15 @@ var GlobalUtilsServicio = (function () {
                     if (data.pReturned === 0) {
                         my_dialog("", "", "close");
                         SONDA_DB_Session.transaction(function (tx) {
-                            var pSQL = "UPDATE MANIFEST_DETAIL SET IS_OFFLINE = 0 WHERE GUIDE_ID = " + data
-                                .guideid;
-                            console.log(pSQL);
+                            var pSQL = "UPDATE MANIFEST_DETAIL SET IS_OFFLINE = 0 WHERE GUIDE_ID = " + data.guideid;
                             tx.executeSql(pSQL);
                         }, function (err) {
                             my_dialog("", "", "close");
                             notify("guide_delivered_returned.post.offline:" + err);
                         }, function () {
                             socketIo.emit("process_signature_delivery", {
-                                'dataurl': pSignature,
-                                'guide_id': gGuideToDeliver
+                                dataurl: pSignature,
+                                guide_id: gGuideToDeliver
                             });
                         });
                     }
@@ -348,7 +357,6 @@ var GlobalUtilsServicio = (function () {
                     var pSQL = "INSERT INTO MANIFEST_DETAIL(GUIDE_SEQ, GUIDE_ID, GEO_ROUTE, SEQUENCY, GUIDE_STATUS, SENDER_CLIENTCODE, CLIENT_NAME, DESTINATION_CLIENTNAME, DESTINATION_ADDRESS, PACKAGES, DELIVERY_POINT, SCANNED_PACKS, LABELS)";
                     pSQL += " VALUES('" + data.row.GUIDE_SEQ + "','" + data.row.GUIDE_ID + "','" + data.row.GEO_ROUTE + "','" + data.row.SEQUENCY + "','PENDING','" + data.row.SENDER_CLIENTCODE;
                     pSQL += "', '" + data.row.CLIENT_NAME + "','" + data.row.DESTINATION_CLIENTNAME + "','" + data.row.DESTINATION_ADDRESS + "'," + data.row.PACKAGES + ",'" + data.row.DELIVERY_POINT + "', 0, " + data.row.LABELS + ")";
-                    console.log(pSQL);
                     tx.executeSql(pSQL);
                 }, function (err) {
                     my_dialog("", "", "close");
@@ -356,7 +364,6 @@ var GlobalUtilsServicio = (function () {
                 });
             });
             socketIo.on("get_manifest_guide_completed", function (data) {
-                console.log("guides count:" + data.rowcount);
                 if (data.rowcount === 0) {
                     notify("ERROR, Manifiesto " + gManifestID + ", no tiene guias relacionadas. \n Verifique y vuelva a intentar");
                 }
@@ -375,17 +382,15 @@ var GlobalUtilsServicio = (function () {
             socketIo.on("manifest_not_found", function (data) {
                 try {
                     my_dialog("", "", "close");
-                    console.log("manifest_not_found");
                     notify("Manifiesto " + data.manifestid + ", No Existe.");
                     clearup_manifiesto();
                 }
                 catch (e) {
-                    console.log("manifest_not_found.catch:" + e.message);
+                    notify(e.message);
                 }
             });
-            socketIo.on('manifest_summ', function (data) {
+            socketIo.on("manifest_summ", function (data) {
                 try {
-                    var xdate = new Date(data.CREATED_DATE);
                     $("#lstmanifestsumm").listview();
                     my_dialog("", "", "close");
                     $("#lblScannedManifest").text(gManifestID);
@@ -395,39 +400,42 @@ var GlobalUtilsServicio = (function () {
                     $("#lblGuiasManifest").text(data.TOTAL_GUIDES);
                     $("#lblPacksManifest").text(data.TOTAL_PACKAGES);
                     $("#btnAcceptManifest").css("visibility", "visible");
-                    $('#lstmanifestsumm').listview("refresh");
+                    $("#lstmanifestsumm").listview("refresh");
                 }
                 catch (e) {
-                    console.log("signature_has_been_saved.catch:" + e.message);
+                    notify(e.message);
                 }
             });
             socketIo.on("signature_has_been_saved", function (data) {
                 try {
-                    socketIo.emit("process_pickup_image", { 'taskid': data.taskid, 'image': gpicture });
+                    socketIo.emit("process_pickup_image", {
+                        taskid: data.taskid,
+                        image: gpicture
+                    });
                 }
                 catch (e) {
-                    console.log("signature_has_been_saved.catch:" + e.message);
+                    notify(e.message);
                 }
             });
             socketIo.on("delivery_signature_has_been_saved", function (data) {
                 try {
-                    socketIo.emit("process_delivery_image", { 'guide_id': gGuideToDeliver, 'image': gpicture });
-                    console.log("delivery_signature_has_been_saved:" + data.pReturned);
-                    console.dir(data);
+                    socketIo.emit("process_delivery_image", {
+                        guide_id: gGuideToDeliver,
+                        image: gpicture
+                    });
                     gDESTINATION_CLIENTNAME_ToDeliver = "";
                     gRELATED_CLIENT_NAME_ToDeliver = "";
                     gGuideToDeliver = "";
                     gSignatedDelivery = false;
                 }
                 catch (e) {
-                    console.log("signature_has_been_saved.catch:" + e.message);
+                    notify(e.message);
                 }
             });
             socketIo.on("process_novisit_completed", function (data) {
                 try {
                     SONDA_DB_Session.transaction(function (tx) {
                         var pSQL = "UPDATE PICKUP_ROUTE SET TASK_STATUS = 'COMPLETED', NO_PICKEDUP = 1, NO_VISIT_REASON = '" + data.reason + "' WHERE TASK_ID = " + data.taskid;
-                        console.log(pSQL);
                         tx.executeSql(pSQL);
                         RefreshMyRoutePlan();
                         $.mobile.changePage("#pickupplan_page", {
@@ -436,8 +444,7 @@ var GlobalUtilsServicio = (function () {
                             changeHash: true,
                             showLoadMsg: false
                         });
-                    }, function (err) {
-                    });
+                    }, function (err) { });
                 }
                 catch (e) {
                     notify("process_novisit.complete.catch:" + e.message);
@@ -448,7 +455,6 @@ var GlobalUtilsServicio = (function () {
                     SONDA_DB_Session.transaction(function (tx) {
                         var pSQL = "INSERT INTO SKUS(SKU_ID, SKU_DESCRIPTION, PRICE_LIST)";
                         pSQL += " VALUES('" + data.row.CODE_SKU + "','" + data.row.DESCRIPTION_SKU + "'," + data.row.LIST_PRICE + ")";
-                        console.log(pSQL);
                         tx.executeSql(pSQL);
                     }, function (err) {
                         notify("get_all_skus_row:" + err.message);
@@ -456,17 +462,19 @@ var GlobalUtilsServicio = (function () {
                 }
             });
             socketIo.on("get_all_skus_done", function (data) {
-                gTimeout = setTimeout(socketIo.emit("get_all_branches", { 'dbuser': gdbuser, 'dbuserpass': gdbuserpass }), 500);
+                gTimeout = setTimeout(function () {
+                    socketIo.emit("get_all_branches", {
+                        dbuser: gdbuser,
+                        dbuserpass: gdbuserpass
+                    });
+                }, 500);
                 clearTimeout(gTimeout);
             });
             socketIo.on("get_all_novisit_row", function (data) {
-                console.log("get_all_novisit_row:" + data);
-                console.log("get_all_novisit_row.received");
                 if (data != undefined) {
                     SONDA_DB_Session.transaction(function (tx) {
                         var pSQL = "INSERT INTO NO_VISIT(PARAM_NAME, PARAM_CAPTION)";
                         pSQL += " VALUES('" + data.row.PARAM_NAME + "','" + data.row.PARAM_CAPTION + "')";
-                        console.log(pSQL);
                         tx.executeSql(pSQL);
                     }, function (err) {
                     });
@@ -475,7 +483,11 @@ var GlobalUtilsServicio = (function () {
             socketIo.on("GetManifestHeaderSend", function (data) {
                 $("#lblManifest").text(data.MANIFEST_HEADER);
                 var dateCreaction = new Date(data.FECHA_CREACION);
-                $("#lblManifestDateCreation").text(dateCreaction.getDate() + '/' + (dateCreaction.getMonth() + 1) + '/' + dateCreaction.getFullYear());
+                $("#lblManifestDateCreation").text(dateCreaction.getDate() +
+                    "/" +
+                    (dateCreaction.getMonth() + 1) +
+                    "/" +
+                    dateCreaction.getFullYear());
                 $("#lblManifestNumDoc").text(data.CANTIDAD_PEDIDOS);
                 $("#lblManifestComments").text(data.COMMENTS);
                 $("#lblManifestPilotAsigne").text(data.PILOTO_ASIGNADO);
@@ -495,7 +507,11 @@ var GlobalUtilsServicio = (function () {
                     changeHash: true,
                     showLoadMsg: false
                 });
-                socketIo.emit('getmyrouteplan', { 'loginid': gLastLogin, 'dbuser': gdbuser, 'dbuserpass': gdbuserpass });
+                socketIo.emit("getmyrouteplan", {
+                    loginid: gLastLogin,
+                    dbuser: gdbuser,
+                    dbuserpass: gdbuserpass
+                });
             });
             socketIo.on("GetInvoiceHeader", function (data) {
                 $("#lblInfInvoice_NunDoc").text(data.row.DocNum);
@@ -510,21 +526,38 @@ var GlobalUtilsServicio = (function () {
                 gSaldoPen = parseInt(data.row.DocTotal);
             });
             socketIo.on("GetInvoiceDet", function (data) {
-                var vLi = '';
-                vLi = '<li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">';
-                vLi = vLi + '<p>';
-                vLi = vLi + '<span class="medium" style="background-color: #333333; border-radius: 4px; color: #ffffff; padding: 3px; box-shadow: 1px 10px 10px 1px silver; text-shadow: none">' + data.row.ItemCode + '</span>&nbsp<span class="small-roboto">' + data.row.Dscription + '</span>';
-                vLi = vLi + '</p>';
-                vLi = vLi + '<p>';
-                vLi = vLi + '<span>Cantidad: ' + data.row.Quantity + '</span>&nbsp';
-                vLi = vLi + '<span>Unitario: ' + "Q " + format_number(parseFloat(data.row.Price), 2) + '</span>';
-                vLi = vLi + '<span class="ui-li-count" style="position:absolute; top:70%">' + "Q " + format_number(parseFloat(data.row.LineTotal), 2) + '</span>';
-                vLi = vLi + '</p>';
-                vLi = vLi + '</li>';
+                var vLi = "";
+                vLi =
+                    '<li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">';
+                vLi = vLi + "<p>";
+                vLi =
+                    vLi +
+                        '<span class="medium" style="background-color: #333333; border-radius: 4px; color: #ffffff; padding: 3px; box-shadow: 1px 10px 10px 1px silver; text-shadow: none">' +
+                        data.row.ItemCode +
+                        '</span>&nbsp<span class="small-roboto">' +
+                        data.row.Dscription +
+                        "</span>";
+                vLi = vLi + "</p>";
+                vLi = vLi + "<p>";
+                vLi = vLi + "<span>Cantidad: " + data.row.Quantity + "</span>&nbsp";
+                vLi =
+                    vLi +
+                        "<span>Unitario: " +
+                        "Q " +
+                        format_number(parseFloat(data.row.Price), 2) +
+                        "</span>";
+                vLi =
+                    vLi +
+                        '<span class="ui-li-count" style="position:absolute; top:70%">' +
+                        "Q " +
+                        format_number(parseFloat(data.row.LineTotal), 2) +
+                        "</span>";
+                vLi = vLi + "</p>";
+                vLi = vLi + "</li>";
                 $("#lstInfInvoice_Det").append(vLi);
             });
             socketIo.on("GetInvoiceDetCompleted", function (data) {
-                $("#lstInfInvoice_Det").listview('refresh');
+                $("#lstInfInvoice_Det").listview("refresh");
             });
             socketIo.on("SendDeliveryTask_fail", function (data) {
                 notify(data.Message);
@@ -536,7 +569,7 @@ var GlobalUtilsServicio = (function () {
                     var cliente = new Cliente();
                     cliente.clientId = gClientID;
                     clienteServicio.obtenerCliente(cliente, decimales, function (clienteN1) {
-                        actualizarListadoDeTareas(data.taskid, 'DELIVERY', TareaEstado.Completada, clienteN1.clientId, clienteN1.clientName, clienteN1.address, 0, TareaEstado.Aceptada, clienteN1.rgaCode);
+                        actualizarListadoDeTareas(data.taskid, "DELIVERY", TareaEstado.Completada, clienteN1.clientId, clienteN1.clientName, clienteN1.address, 0, TareaEstado.Aceptada, clienteN1.rgaCode);
                         $.mobile.changePage("#menu_page", {
                             transition: "flow",
                             reverse: true,
@@ -556,35 +589,36 @@ var GlobalUtilsServicio = (function () {
             });
             socketIo.on("add_to_auth", function (data) {
                 try {
-                    console.log("data.row.AUTH_ASSIGNED_DATETIME: " + data.row.AUTH_ASSIGNED_DATETIME);
-                    console.log("data.row.AUTH_LIMIT_DATETIME: " + data.row.AUTH_LIMIT_DATETIME);
-                    var dateAutho = data.row.AUTH_ASSIGNED_DATETIME.substring(0, 4) + '/' + data.row.AUTH_ASSIGNED_DATETIME.substring(5, 7) + '/' + data.row.AUTH_ASSIGNED_DATETIME.substring(8, 10);
-                    var dateAuthoLimit = data.row.AUTH_LIMIT_DATETIME.substring(0, 4) + '/' + data.row.AUTH_LIMIT_DATETIME.substring(5, 7) + '/' + data.row.AUTH_LIMIT_DATETIME.substring(8, 10);
+                    var dateAutho = data.row.AUTH_ASSIGNED_DATETIME.substring(0, 4) +
+                        "/" +
+                        data.row.AUTH_ASSIGNED_DATETIME.substring(5, 7) +
+                        "/" +
+                        data.row.AUTH_ASSIGNED_DATETIME.substring(8, 10);
+                    var dateAuthoLimit = data.row.AUTH_LIMIT_DATETIME.substring(0, 4) +
+                        "/" +
+                        data.row.AUTH_LIMIT_DATETIME.substring(5, 7) +
+                        "/" +
+                        data.row.AUTH_LIMIT_DATETIME.substring(8, 10);
                     if (data.doctype === "FACTURA") {
                         $("#lblCurrent_AuthID").text(data.row.AUTH_ID);
                         $("#lblCurrent_Serie").text(data.row.AUTH_SERIE);
                         $("#lblCurrent_DateAuth").text(dateAutho.toString());
                         $("#lblCurrent_AuthFinishDate").text(dateAuthoLimit.toString());
-                        console.log("lblCurrent_DateAuth: " + $("#lblCurrent_DateAuth").text());
-                        console.log("lblCurrent_AuthFinishDate: " + $("#lblCurrent_AuthFinishDate").text());
                         $("#lblCurrent_From").text(data.row.AUTH_DOC_FROM);
                         $("#lblCurrent_To").text(data.row.AUTH_DOC_TO);
                         $("#lblCurrent_CurrentInvoice").text(data.row.AUTH_CURRENT_DOC);
                         $("#lblBranchName").text(data.row.AUTH_BRANCH_NAME);
                         $("#lblBranchAddress").text(data.row.AUTH_BRANCH_ADDRESS);
-                        localStorage.setItem('SAT_RES_EXPIRE', dateAuthoLimit);
+                        localStorage.setItem("SAT_RES_EXPIRE", dateAuthoLimit);
                     }
                     $("#btnStartPOS_action").css("display", "none");
                     $("#btnStartPOS_action").css("visibility", "visible");
                 }
                 catch (e) {
-                    console.log("add_to_auth.catch:" + e.message);
+                    notify(e.message);
                 }
             });
-            socketIo.on("GetInitialRouteSend2", function (data) {
-                var r = data;
-            });
-            socketIo.on('GetInitialRouteSend', function (data) {
+            socketIo.on("GetInitialRouteSend", function (data) {
                 switch (data.option) {
                     case "GetInitialRouteStarted":
                         break;
@@ -621,6 +655,7 @@ var GlobalUtilsServicio = (function () {
                         break;
                     case "GetInitialRouteCompleted":
                         estaCargandoInicioRuta = 0;
+                        console.log("peticiones al server finalizadas.... inicia proceso de datos...");
                         GetInitialRouteCompleted(data);
                         break;
                     case "requested_tags":
@@ -791,9 +826,6 @@ var GlobalUtilsServicio = (function () {
                     case "get_price_list_default_completed":
                         PriceListDefaultCompleted();
                         break;
-                    case "get_price_item_history_received":
-                        GetItemHistoryReceived();
-                        break;
                     case "not_found_item_history":
                         GetItemHistoryNotFound(data);
                         break;
@@ -937,7 +969,8 @@ var GlobalUtilsServicio = (function () {
                         gInsertsInitialRoute.push(sql);
                         break;
                     case "get_bonus_list_by_sku_multiple_fail":
-                        notify("Error al obtener la Lista de Bonificaciones por Multiplo: " + data.error);
+                        notify("Error al obtener la Lista de Bonificaciones por Multiplo: " +
+                            data.error);
                         break;
                     case "get_bonus_list_by_sku_multiple_not_found":
                         notify(data.error);
@@ -970,7 +1003,7 @@ var GlobalUtilsServicio = (function () {
                         listaDeEjecucion.push(" , '" + bonificacion.PROMO_TYPE + "'");
                         listaDeEjecucion.push(" , '" + bonificacion.FREQUENCY + "'");
                         listaDeEjecucion.push(" )");
-                        gInsertsInitialRoute.push(listaDeEjecucion.join(''));
+                        gInsertsInitialRoute.push(listaDeEjecucion.join(""));
                         break;
                     case "add_bonus_sku_multiple_complete":
                         break;
@@ -989,24 +1022,16 @@ var GlobalUtilsServicio = (function () {
                     case "add_currency_complete":
                         CurrencyCompleted();
                         break;
-                    case "GetTaxPercentParameter_received":
-                        console.log("recibiendo parametro de impuesto...");
-                        break;
                     case "not_found_GetTaxPercentParameter":
-                        console.log("No se encontro parametro de impuesto...");
                         localStorage.setItem("TAX_PERCENT_PARAMETER", "0");
                         break;
                     case "add_GetTaxPercentParameter":
                         try {
                             localStorage.setItem("TAX_PERCENT_PARAMETER", data.row.Value);
-                            console.log("Porcentaje de impuesto: " + data.row.Value);
                         }
                         catch (e) {
-                            console.log(e.message);
+                            notify(e.message);
                         }
-                        break;
-                    case "GetTaxPercentParameter_completed":
-                        console.log("Parametro de impuesto recibo completamente...");
                         break;
                     case "GetDefaultBonusAndDiscountListId_AddInfo":
                         localStorage.setItem("DEFAULT_DISCOUNT_LIST_ID", data.recordset.DISCOUNT_LIST_ID);
@@ -1022,9 +1047,6 @@ var GlobalUtilsServicio = (function () {
                         sql = "DELETE FROM SKU_SALES_BY_MULTIPLE_LIST_BY_SKU";
                         gInsertsInitialRoute.push(sql);
                         break;
-                    case "no_found_sales_skus_by_multiple_list":
-                        console.log("No se encontraron skus por lista multiple");
-                        break;
                     case "add_sales_skus_by_multiple_list":
                         var listaDeLi = [];
                         listaDeLi.push("INSERT INTO SKU_SALES_BY_MULTIPLE_LIST_BY_SKU(SALES_BY_MULTIPLE_LIST_ID, CODE_SKU, CODE_PACK_UNIT, MULTIPLE, PROMO_ID, PROMO_NAME, PROMO_TYPE, FREQUENCY)");
@@ -1038,17 +1060,11 @@ var GlobalUtilsServicio = (function () {
                         listaDeLi.push(" , '" + data.row.PROMO_TYPE + "'");
                         listaDeLi.push(" , '" + data.row.FREQUENCY + "'");
                         listaDeLi.push(")");
-                        gInsertsInitialRoute.push(listaDeLi.join(''));
-                        break;
-                    case "get_sales_skus_by_multiple_list_completed":
-                        console.log("Skus multiples recibidos exitosamente...");
+                        gInsertsInitialRoute.push(listaDeLi.join(""));
                         break;
                     case "GetCombosByRoute_received":
                         sql = "DELETE FROM COMBO";
                         gInsertsInitialRoute.push(sql);
-                        break;
-                    case "GetCombosByRoute_not_found":
-                        console.log("No se encontraron combos");
                         break;
                     case "add_combo":
                         sql = "INSERT INTO COMBO VALUES (";
@@ -1058,18 +1074,13 @@ var GlobalUtilsServicio = (function () {
                         sql += ")";
                         gInsertsInitialRoute.push(sql);
                         break;
-                    case "add_combo_complete":
-                        console.log("Se completaron los combos");
-                        break;
                     case "GetSkuForCombosByRoute_received":
                         sql = "DELETE FROM SKU_BY_COMBO";
                         gInsertsInitialRoute.push(sql);
                         break;
-                    case "GetSkuForCombosByRoute_not_found":
-                        console.log("No se encontraron los productos de los combos");
-                        break;
                     case "add_sku_for_combo":
-                        sql = "INSERT INTO SKU_BY_COMBO(COMBO_ID,CODE_SKU,CODE_PACK_UNIT,QTY) VALUES(";
+                        sql =
+                            "INSERT INTO SKU_BY_COMBO(COMBO_ID,CODE_SKU,CODE_PACK_UNIT,QTY) VALUES(";
                         sql += data.row.COMBO_ID;
                         sql += ",'" + data.row.CODE_SKU + "'";
                         sql += ",'" + data.row.CODE_PACK_UNIT + "'";
@@ -1077,15 +1088,9 @@ var GlobalUtilsServicio = (function () {
                         sql += ")";
                         gInsertsInitialRoute.push(sql);
                         break;
-                    case "add_sku_for_combo_complete":
-                        console.log("Se completaron los productos de los combos");
-                        break;
                     case "GetBonusListCombosByRoute_received":
                         sql = "DELETE FROM BONUS_LIST_BY_COMBO";
                         gInsertsInitialRoute.push(sql);
-                        break;
-                    case "GetBonusListCombosByRoute_not_found":
-                        console.log("No se encontraron las listas a las que pertenecen los combos");
                         break;
                     case "add_combo_to_bonus_list":
                         var listaParaEjecutar = [];
@@ -1102,20 +1107,15 @@ var GlobalUtilsServicio = (function () {
                         listaParaEjecutar.push(",'" + data.row.PROMO_TYPE + "'");
                         listaParaEjecutar.push(",'" + data.row.FREQUENCY + "'");
                         listaParaEjecutar.push(")");
-                        gInsertsInitialRoute.push(listaParaEjecutar.join(''));
-                        break;
-                    case "add_combo_to_bonus_list_complete":
-                        console.log("Se completaron las listas a las que pertenecen los combos");
+                        gInsertsInitialRoute.push(listaParaEjecutar.join(""));
                         break;
                     case "GetBonusListCombosSkuByRoute_received":
                         sql = "DELETE FROM BONUS_LIST_BY_COMBO_SKU";
                         gInsertsInitialRoute.push(sql);
                         break;
-                    case "GetBonusListCombosSkuByRoute_not_found":
-                        console.log("No se encontraron las bonificaciones de combos");
-                        break;
                     case "add_sku_combo_to_bonus_list":
-                        sql = "INSERT INTO BONUS_LIST_BY_COMBO_SKU(BONUS_LIST_ID,COMBO_ID,CODE_SKU,CODE_PACK_UNIT,QTY,IS_MULTIPLE) VALUES(";
+                        sql =
+                            "INSERT INTO BONUS_LIST_BY_COMBO_SKU(BONUS_LIST_ID,COMBO_ID,CODE_SKU,CODE_PACK_UNIT,QTY,IS_MULTIPLE) VALUES(";
                         sql += data.row.BONUS_LIST_ID;
                         sql += "," + data.row.COMBO_ID;
                         sql += ",'" + data.row.CODE_SKU + "'";
@@ -1125,9 +1125,6 @@ var GlobalUtilsServicio = (function () {
                         sql += ")";
                         gInsertsInitialRoute.push(sql);
                         break;
-                    case "add_sku_combo_to_bonus_list_complete":
-                        console.log("Se completaron las bonificaciones de combos");
-                        break;
                     case "not_found_GetMaxBonusParameter":
                         SetMaxBonusParameter(0);
                         break;
@@ -1136,16 +1133,10 @@ var GlobalUtilsServicio = (function () {
                         break;
                     case "GetLabelParameter_received":
                         break;
-                    case "not_found_GetLabelParameter":
-                        console.log("No hay parametros de etiquetas");
-                        break;
                     case "add_GetLabelParameter":
                         almacenarParametroEnElLocalStorage(data.row);
                         break;
                     case "GetLabelParameter_completed":
-                        break;
-                    case "GetBonusByGeneralAmountListNotFound":
-                        console.log("No hay bonificaciones por monto general");
                         break;
                     case "AddBonusByGeneralAmountList":
                         AgregarBonoPorMontoGeneral(data.row);
@@ -1179,6 +1170,49 @@ var GlobalUtilsServicio = (function () {
                         break;
                     case "add_GetApplyDiscountParameter":
                         SetApplyDiscountParameter(data.row.Value);
+                        break;
+                    case "statistics_not_found":
+                        notify("No se encontraron las estadisticas de venta.");
+                        break;
+                    case "add_statistic":
+                        _this.estadisticaServicio.agregarEstadisticaDeVenta(data.row);
+                        break;
+                    case "ListsOfSpecialPriceByScaleForRouteNotFound":
+                        notify("No se encontraron listas de precios especiales para la ruta.");
+                        break;
+                    case "AddListsOfSpecialPriceByScaleForRoute":
+                        AddListOfSpecialPriceByScale(data.row);
+                        break;
+                    case "GetListsOfSpecialPriceByScaleForRouteCompleted":
+                        break;
+                    case "add_order_discount_apply":
+                        AddOrderForDiscountForApply(data.row);
+                        break;
+                    case "add_microsurvey":
+                        AddMicrosurvey(data.row);
+                        break;
+                    case "add_question_by_microsurvey":
+                        AddQuestionOfMicrosurvey(data.row);
+                        break;
+                    case "add_answer_by_microsurvey":
+                        AddAnswerOfQuestionOfMicrosurvey(data.row);
+                        break;
+                    case "add_channel_by_microsurvey":
+                        AddChannelsOfMicrosurvey(data.row);
+                        break;
+                    case "add_overdue_invoice_by_customer_for_route":
+                        _this.cuentaCorrienteServicio.agregarFacturaVencidaDeCliente(data.row);
+                        break;
+                    case "add_parameter_minimum_percentage_of_payment":
+                        localStorage.setItem("MINIMUM_PERCENTAGE_OF_PAYMENT", data.row.Value || "0");
+                        break;
+                    case "add_parameter_use_goal_module":
+                        localStorage.setItem("USE_GOAL_MODULE", data.row.Value || "0");
+                        break;
+                    case "add_image_by_sku":
+                        if (data.row) {
+                            _this.imagenDeSkuServicio.almacenarImagenesDeProducto(data.row);
+                        }
                         break;
                 }
             });
@@ -1225,7 +1259,6 @@ var GlobalUtilsServicio = (function () {
                         MostarSecuenciaDeDocumentos(data.data);
                         break;
                     case "GetReviewTask":
-                        console.dir(data.data);
                         MostarResumenDeTareas(data.data);
                         break;
                     case "GetReviewQty":
@@ -1243,23 +1276,20 @@ var GlobalUtilsServicio = (function () {
                     changeHash: true,
                     showLoadMsg: false
                 });
-                socketIo.emit("getmyrouteplan", { 'loginid': gLastLogin, 'dbuser': gdbuser, 'dbuserpass': gdbuserpass });
+                socketIo.emit("getmyrouteplan", {
+                    loginid: gLastLogin,
+                    dbuser: gdbuser,
+                    dbuserpass: gdbuserpass
+                });
             });
             socketIo.on("PaymentReceive", function (data) {
-                ActualizarEnvioPagos(data, function (dataN1) {
-                    console.log(JSON.stringify(dataN1));
-                }, function (err) {
+                ActualizarEnvioPagos(data, function (dataN1) { }, function (err) {
                     notify("PaymentReceive " + err.message);
                 });
             });
             socketIo.on("insert_new_client_completed", function (data) {
                 ActualizarClienteNuevoHandHeld(data, function () {
-                    try {
-                        EnviarDataSinClientes();
-                    }
-                    catch (e) {
-                        console.log(e.message);
-                    }
+                    EnviarDataSinClientes();
                 }, function (err) {
                     notify(err.message);
                 });
@@ -1276,10 +1306,10 @@ var GlobalUtilsServicio = (function () {
                     var sql = "UPDATE PAYMENT_HEADER";
                     sql += " SET IS_POSTED=2";
                     sql += ", PAYMENT_BO_NUM = " + data.PaymentBoNum;
-                    sql += ", SERVER_POSTED_DATETIME = '" + data.ServerPostedDateTime + "'";
+                    sql +=
+                        ", SERVER_POSTED_DATETIME = '" + data.ServerPostedDateTime + "'";
                     sql += " WHERE";
                     sql += " PAYMENT_NUM =" + data.PaymentNum;
-                    console.log(sql);
                     tx.executeSql(sql);
                 }, function (err) {
                     notify("PaymentReceiveComplete" + err.message);
@@ -1289,9 +1319,7 @@ var GlobalUtilsServicio = (function () {
                 notify("Pago fallido: " + data.Message);
             });
             socketIo.on("TaskReceive", function (data) {
-                ActualizarEnvioTarea(data, function (dataN1) {
-                    console.log(JSON.stringify(dataN1));
-                }, function (err) {
+                ActualizarEnvioTarea(data, function (dataN1) { }, function (err) {
                     notify("Tarea recibida: " + err.message);
                 });
             });
@@ -1300,15 +1328,11 @@ var GlobalUtilsServicio = (function () {
                     MarcarTareasComoSincronizada(data.task);
                 }
                 else {
-                    console.log("TaskFail...");
-                    console.dir(data);
                     notify("Envio de tarea: " + data.Message);
                 }
             });
             socketIo.on("InvoiceReceive", function (data) {
-                ActualizarEnvioFactura(data, function (dataN1) {
-                    console.log(JSON.stringify(dataN1));
-                }, function (err) {
+                ActualizarEnvioFactura(data, function (dataN1) { }, function (err) {
                     notify("InvoiceReceive " + err.message);
                 });
             });
@@ -1324,20 +1348,17 @@ var GlobalUtilsServicio = (function () {
                 notify("Factura fallida: " + data.Message);
             });
             socketIo.on("ConsignmentReceive", function (data) {
-                ActualizarEnvioConsignacion(data, function (dataN1) {
-                    console.log(JSON.stringify(dataN1));
-                }, function (err) {
+                ActualizarEnvioConsignacion(data, function (dataN1) { }, function (err) {
                     notify("Consignacion recibida: " + err.message);
                 });
             });
-            socketIo.on('ConsignmentReceiveComplete', function (data) {
+            socketIo.on("ConsignmentReceiveComplete", function (data) {
                 SONDA_DB_Session.transaction(function (tx) {
                     var sql = "UPDATE CONSIGNMENT_HEADER";
                     sql += " SET IS_POSTED = 2";
                     sql += "  ,CONSIGNMENT_BO_NUM = " + data.ConsignmentBoNum;
                     sql += " WHERE";
                     sql += " CONSIGNMENT_ID =" + data.ConsignmentNum;
-                    console.log(sql);
                     tx.executeSql(sql);
                 }, function (err) {
                     notify("Consignacion recibida completamente: " + err.message);
@@ -1356,9 +1377,7 @@ var GlobalUtilsServicio = (function () {
                 MostrarFinDeRuta();
             });
             socketIo.on("SalesOrderReceive", function (data) {
-                ActualizarEnvioDeOrdernesDeCompra(data, function (dataN1) {
-                    console.log(JSON.stringify(dataN1));
-                }, function (err) {
+                ActualizarEnvioDeOrdernesDeCompra(data, function (dataN1) { }, function (err) {
                     notify("Orden de venta recibida: " + err.message);
                 });
             });
@@ -1382,91 +1401,85 @@ var GlobalUtilsServicio = (function () {
                 notify("Orden de venta fallida: " + data.message);
             });
             socketIo.on("SendSalesOrderTimesPrintedReceive", function (data) {
-                ActualizarEnvioDeNumeroDeImprecionesDeOrdenesDeVenta(data, function (dataN1) {
-                    console.log(JSON.stringify(dataN1));
-                }, function (err) {
+                ActualizarEnvioDeNumeroDeImprecionesDeOrdenesDeVenta(data, function (dataN1) { }, function (err) {
                     notify("Veces de impresion de orden de venta: " + err.message);
                 });
             });
             socketIo.on("SendSalesOrderTimesPrintedFail", function (data) {
                 notify("Veces de impresion de orden de venta fallidas: " + data.Message);
             });
-            socketIo.on('SendDocumentSecuence_Request', function (data) {
+            socketIo.on("SendDocumentSecuence_Request", function (data) {
                 switch (data.option) {
-                    case 'fail':
+                    case "fail":
                         notify("Error al actualizar el numero de las secuencias de documentos " + data.message);
                         break;
                 }
             });
-            socketIo.on('SendCommitedInventoryVoid_Request', function (data) {
+            socketIo.on("SendCommitedInventoryVoid_Request", function (data) {
                 switch (data.option) {
-                    case 'success':
-                        ActualizarInventarioReservadoPorOrdenesDeVentaAnuladas(data, 2, function () {
-                        }, function (err) {
+                    case "success":
+                        ActualizarInventarioReservadoPorOrdenesDeVentaAnuladas(data, 2, function () { }, function (err) {
                             notify("Error al devolver inventario por orden de venta anulada " + err.message);
                         });
                         break;
-                    case 'fail':
+                    case "fail":
                         notify("Error al devolver inventario por orden de venta anulada " + data.message);
                         break;
-                    case 'receive':
-                        ActualizarInventarioReservadoPorOrdenesDeVentaAnuladas(data, 1, function () {
-                        }, function (err) {
+                    case "receive":
+                        ActualizarInventarioReservadoPorOrdenesDeVentaAnuladas(data, 1, function () { }, function (err) {
                             notify("Error al actualizar la orden de venta anulada " + err.message);
                         });
                         break;
                 }
             });
-            socketIo.on('SendSalesOrderDraft', function (data) {
+            socketIo.on("SendSalesOrderDraft", function (data) {
                 switch (data.option) {
-                    case 'SendSalesOrderDraft_Completed':
+                    case "SendSalesOrderDraft_Completed":
                         ActualizarEnvioDeBorradoresDeOrdernesDeCompra(data, function () {
                         }, function (err) {
                             notify("Error al actualizar el borrador de orden de venta en HH: " + err.message);
                         });
                         break;
-                    case 'SendSalesOrderDraft_Fail':
+                    case "SendSalesOrderDraft_Fail":
                         notify("Error al insertar el borrador de orden de venta: " + data.Message);
                         break;
                 }
             });
-            socketIo.on('SendUpdateSalesOrderDraft', function (data) {
+            socketIo.on("SendUpdateSalesOrderDraft", function (data) {
                 switch (data.option) {
-                    case 'SendUpdateSalesOrderDraft_Completed':
+                    case "SendUpdateSalesOrderDraft_Completed":
                         ActualizarEnvioDeActualizacionDeBorradoresDeOrdernesDeCompra(data, function () {
                         }, function (err) {
                             notify("Error al actualizar el borrador de orden de venta en HH: " + err.message);
                         });
                         break;
-                    case 'SendUpdateSalesOrderDraft_Fail':
+                    case "SendUpdateSalesOrderDraft_Fail":
                         notify("Error al actualizar el borrador de orden de venta: " + data.Message);
                         break;
                 }
             });
-            socketIo.on('TakeInventoryReceiveComplete', function (data) {
+            socketIo.on("TakeInventoryReceiveComplete", function (data) {
                 SONDA_DB_Session.transaction(function (tx) {
                     var sql = "UPDATE TAKE_INVENTORY_HEADER";
                     sql += " SET IS_POSTED = 2";
                     sql += "  ,TAKE_INVENTORY_ID_BO = " + data.TakeInventoryBoId;
-                    sql += ", SERVER_POSTED_DATETIME = '" + data.ServerPostedDateTime + "'";
+                    sql +=
+                        ", SERVER_POSTED_DATETIME = '" + data.ServerPostedDateTime + "'";
                     sql += " WHERE";
                     sql += " TAKE_INVENTORY_ID =" + data.TakeInventoryHhId;
-                    console.log(sql);
                     tx.executeSql(sql);
                 }, function (err) {
                     notify("Error al actualizar toma de inventario: " + err.message);
-                }, function () {
-                });
+                }, function () { });
             });
-            socketIo.on('SendCustomerChange_Request', function (data) {
+            socketIo.on("SendCustomerChange_Request", function (data) {
                 switch (data.option) {
-                    case 'success':
-                        ActualizarEnvioDeCambiosDeClientes(data, function () {
-                        }, function (err) {
+                    case "success":
+                        ActualizarEnvioDeCambiosDeClientes(data, function () { }, function (err) {
                             notify("Error al enviar el cliente: " + err.message);
                         });
                         break;
-                    case 'fail':
+                    case "fail":
                         notify("Error al actualizar cliente : " + data.message);
                         break;
                 }
@@ -1494,31 +1507,28 @@ var GlobalUtilsServicio = (function () {
             });
             socketIo.on("GetSalesOrderForValidationInBo", function (data) {
                 var sincronizacionDeDatosEnBoServicio = new SincronizacionDeDatosEnBackOfficeServicio();
-                sincronizacionDeDatosEnBoServicio
-                    .obtenerOrdenesDeVentaParaValidacionEnBackOffice(function (ordenesDeVenta) {
-                    socketIo
-                        .emit("GetSalesOrderForValidationInBo_response", {
-                        "option": "success",
-                        "salesOrders": ordenesDeVenta,
-                        "socketServerId": data.socketServerId,
-                        "dbuser": gdbuser,
-                        "dbuserpass": gdbuserpass,
-                        "battery": gBatteryLevel,
-                        "routeid": gCurrentRoute,
-                        "warehouse": gPreSaleWhs
+                sincronizacionDeDatosEnBoServicio.obtenerOrdenesDeVentaParaValidacionEnBackOffice(function (ordenesDeVenta) {
+                    socketIo.emit("GetSalesOrderForValidationInBo_response", {
+                        option: "success",
+                        salesOrders: ordenesDeVenta,
+                        socketServerId: data.socketServerId,
+                        dbuser: gdbuser,
+                        dbuserpass: gdbuserpass,
+                        battery: gBatteryLevel,
+                        routeid: gCurrentRoute,
+                        warehouse: gPreSaleWhs
                     });
                 }, function (resultado) {
-                    socketIo
-                        .emit("GetSalesOrderForValidationInBo_response", {
-                        "option": "fail",
-                        "salesOrders": [],
-                        "socketServerId": data.socketServerId,
-                        "message": resultado.mensaje,
-                        "dbuser": gdbuser,
-                        "dbuserpass": gdbuserpass,
-                        "battery": gBatteryLevel,
-                        "routeid": gCurrentRoute,
-                        "warehouse": gPreSaleWhs
+                    socketIo.emit("GetSalesOrderForValidationInBo_response", {
+                        option: "fail",
+                        salesOrders: [],
+                        socketServerId: data.socketServerId,
+                        message: resultado.mensaje,
+                        dbuser: gdbuser,
+                        dbuserpass: gdbuserpass,
+                        battery: gBatteryLevel,
+                        routeid: gCurrentRoute,
+                        warehouse: gPreSaleWhs
                     });
                 });
             });
@@ -1526,24 +1536,24 @@ var GlobalUtilsServicio = (function () {
                 var ordenDeVentaServicio = new OrdenDeVentaServicio();
                 ordenDeVentaServicio.marcarOrdenesDeVentaComoPosteadasYValidadasDesdeBo(data.ordenesDeVenta, function () {
                     socketIo.emit("markSalesOrdersAsPostedAndValidated_response", {
-                        "option": "success",
-                        "socketServerId": data.socketServerId,
-                        "dbuser": gdbuser,
-                        "dbuserpass": gdbuserpass,
-                        "battery": gBatteryLevel,
-                        "routeid": gCurrentRoute,
-                        "warehouse": gPreSaleWhs
+                        option: "success",
+                        socketServerId: data.socketServerId,
+                        dbuser: gdbuser,
+                        dbuserpass: gdbuserpass,
+                        battery: gBatteryLevel,
+                        routeid: gCurrentRoute,
+                        warehouse: gPreSaleWhs
                     });
                 }, function (resultado) {
                     socketIo.emit("markSalesOrdersAsPostedAndValidated_response", {
-                        "option": "fail",
-                        "socketServerId": data.socketServerId,
-                        "message": resultado.mensaje,
-                        "dbuser": gdbuser,
-                        "dbuserpass": gdbuserpass,
-                        "battery": gBatteryLevel,
-                        "routeid": gCurrentRoute,
-                        "warehouse": gPreSaleWhs
+                        option: "fail",
+                        socketServerId: data.socketServerId,
+                        message: resultado.mensaje,
+                        dbuser: gdbuser,
+                        dbuserpass: gdbuserpass,
+                        battery: gBatteryLevel,
+                        routeid: gCurrentRoute,
+                        warehouse: gPreSaleWhs
                     });
                 });
             });
@@ -1557,6 +1567,58 @@ var GlobalUtilsServicio = (function () {
                         break;
                 }
             });
+            socketIo.on("AddMicrosurveyByClientResponse", function (data) {
+                switch (data.option) {
+                    case "success":
+                        if (data.recordset && data.recordset.length > 0) {
+                            var encuestaServicio = new EncuestaServicio();
+                            encuestaServicio.actualizarEstadoDePosteoDeEncuesta(data.recordset);
+                        }
+                        break;
+                    case "fail":
+                        console.log({ "Error al postear encuestas por cliente": data });
+                        break;
+                    default:
+                        console.log({ "Error al postear encuestas por cliente": data });
+                        break;
+                }
+            });
+            socketIo.on("AddOverdueInvoicePaymentResponse", function (data) {
+                switch (data.option) {
+                    case "success":
+                        var pagoServicio = new PagoDeFacturaVencidaServicio();
+                        pagoServicio.marcarDocumentosDePagoComoPosteadosEnElServidor(data.recordsets);
+                        pagoServicio = null;
+                        break;
+                    case "fail":
+                        notify("Error al postear documentos de pago de facturas vencidas en el servidor debido a: " + data.message);
+                        break;
+                }
+            });
+            socketIo.on("add_to_bank_accounts", function (data) {
+                var query = "INSERT INTO BANK_ACCOUNTS(BANK, ACCOUNT_BASE, ACCOUNT_NAME, ACCOUNT_NUMBER) VALUES('" +
+                    data.row.ACCOUNT_BANK +
+                    "','" +
+                    data.row.ACCOUNT_BASE +
+                    "','" +
+                    data.row.ACCOUNT_NAME +
+                    "','" +
+                    data.row.ACCOUNT_NUMBER +
+                    "')";
+                gInsertsInitialRoute.push(query);
+            });
+            socketIo.on("AddOverdueInvoicePaymentResponse", function (data) {
+                switch (data.option) {
+                    case "success":
+                        var pagoServicio = new PagoDeFacturaVencidaServicio();
+                        pagoServicio.marcarDocumentosDePagoComoPosteadosEnElServidor(data.recordsets);
+                        pagoServicio = null;
+                        break;
+                    case "fail":
+                        notify("Error al postear documentos de pago de facturas vencidas en el servidor debido a: " + data.message);
+                        break;
+                }
+            });
         }
         catch (e) {
             notify("Error al intentar delegar sockets: " + e.message);
@@ -1567,52 +1629,78 @@ var GlobalUtilsServicio = (function () {
 function ObtenerInsertTareaGU(cliente, codigoTarea, tipoTarea) {
     var fechaActual = getDateTime();
     var sql = "";
-    sql = "INSERT INTO TASK ("
-        + "TASK_ID"
-        + " ,TASK_TYPE"
-        + " ,TASK_DATE"
-        + " ,SCHEDULE_FOR"
-        + " ,CREATED_STAMP"
-        + " ,ASSIGEND_TO"
-        + " ,ASSIGNED_BY"
-        + " ,ACCEPTED_STAMP"
-        + " ,COMPLETED_STAMP"
-        + " ,EXPECTED_GPS"
-        + " ,POSTED_GPS"
-        + " ,TASK_COMMENTS"
-        + " ,TASK_SEQ"
-        + " ,TASK_ADDRESS"
-        + " ,RELATED_CLIENT_CODE"
-        + " ,RELATED_CLIENT_NAME"
-        + " ,TASK_STATUS"
-        + " ,IS_POSTED"
-        + " ,IN_PLAN_ROUTE"
-        + " ,CREATE_BY"
-        + " ,TASK_BO_ID"
-        + ")"
-        + " SELECT "
-        + parseInt(codigoTarea)
-        + ",'" + tipoTarea + "'"
-        + ",'" + fechaActual + "'"
-        + ",'" + fechaActual + "'"
-        + ",'" + fechaActual + "'"
-        + ",'" + gLastLogin + "'"
-        + ",'" + gLastLogin + "'"
-        + ",null"
-        + ",null"
-        + ",'" + gCurrentGPS + "'"
-        + ",null"
-        + ",'Tarea generada para nuevo cliente " + cliente.CUSTOMER_NAME + "'"
-        + ",0"
-        + ",'" + cliente.TASK_ADDRESS + "'"
-        + ",'" + cliente.CUSTOMER_CODE + "'"
-        + ",'" + cliente.CUSTOMER_NAME + "'"
-        + ",'ASSIGNED'"
-        + ",2"
-        + ",1"
-        + ",'BY_CALENDAR' "
-        + "," + parseInt(codigoTarea)
-        + " WHERE NOT EXISTS(SELECT 1 FROM TASK WHERE TASK_ID= " + codigoTarea + ") ";
+    sql =
+        "INSERT INTO TASK (" +
+            "TASK_ID" +
+            " ,TASK_TYPE" +
+            " ,TASK_DATE" +
+            " ,SCHEDULE_FOR" +
+            " ,CREATED_STAMP" +
+            " ,ASSIGEND_TO" +
+            " ,ASSIGNED_BY" +
+            " ,ACCEPTED_STAMP" +
+            " ,COMPLETED_STAMP" +
+            " ,EXPECTED_GPS" +
+            " ,POSTED_GPS" +
+            " ,TASK_COMMENTS" +
+            " ,TASK_SEQ" +
+            " ,TASK_ADDRESS" +
+            " ,RELATED_CLIENT_CODE" +
+            " ,RELATED_CLIENT_NAME" +
+            " ,TASK_STATUS" +
+            " ,IS_POSTED" +
+            " ,IN_PLAN_ROUTE" +
+            " ,CREATE_BY" +
+            " ,TASK_BO_ID" +
+            ")" +
+            " SELECT " +
+            parseInt(codigoTarea) +
+            ",'" +
+            tipoTarea +
+            "'" +
+            ",'" +
+            fechaActual +
+            "'" +
+            ",'" +
+            fechaActual +
+            "'" +
+            ",'" +
+            fechaActual +
+            "'" +
+            ",'" +
+            gLastLogin +
+            "'" +
+            ",'" +
+            gLastLogin +
+            "'" +
+            ",null" +
+            ",null" +
+            ",'" +
+            gCurrentGPS +
+            "'" +
+            ",null" +
+            ",'Tarea generada para nuevo cliente " +
+            cliente.CUSTOMER_NAME +
+            "'" +
+            ",0" +
+            ",'" +
+            cliente.TASK_ADDRESS +
+            "'" +
+            ",'" +
+            cliente.CUSTOMER_CODE +
+            "'" +
+            ",'" +
+            cliente.CUSTOMER_NAME +
+            "'" +
+            ",'ASSIGNED'" +
+            ",2" +
+            ",1" +
+            ",'BY_CALENDAR' " +
+            "," +
+            parseInt(codigoTarea) +
+            " WHERE NOT EXISTS(SELECT 1 FROM TASK WHERE TASK_ID= " +
+            codigoTarea +
+            ") ";
     return sql;
 }
 function almacenarParametroEnElLocalStorage(parametro) {

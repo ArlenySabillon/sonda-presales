@@ -1,24 +1,28 @@
-﻿class AvanceDeRutaControlador {
+class AvanceDeRutaControlador {
     ordenDeVentaServicio = new OrdenDeVentaServicio();
     configuracionDecimales: ManejoDeDecimales;
     configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
-
-    delegarAvanceDeRutaControlador() {
+    
+    delegarAvanceDeRutaControlador(){
         const este = this;
-        document.addEventListener("backbutton", () => {
+
+        document.addEventListener("backbutton", () => {            
             este.mostrarPantallaAnterior();
         }, true);
+
         $("#UiBotonConsultarAvanceDeRuta").bind("touchstart", () => {
             este.usuarioDeseaVerConsultaDeAvanceDeRuta();
         });
+
         $(document).on("pagebeforechange",
             (event, data) => {
-                if (data.toPage === "UiPaginaAvanceDeRuta") {
+                if (data.toPage === "UiPaginaAvanceDeRuta") {                   
                     este.cargarPantalla();
                     $.mobile.changePage("#UiPaginaAvanceDeRuta");
-                }
-            });
+            }
+        });            
     }
+
     mostrarPantallaAnterior() {
         switch ($.mobile.activePage[0].id) {
             case "UiPaginaAvanceDeRuta":
@@ -26,15 +30,16 @@
                 break;
         }
     }
-    usuarioDeseaVerConsultaDeAvanceDeRuta() {
-        try {
 
+    usuarioDeseaVerConsultaDeAvanceDeRuta(){        
+        try{
+            
             let _this = this;
             $.mobile.changePage("UiPaginaAvanceDeRuta", {
                 transition: "flow",
                 reverse: true,
                 changeHash: true,
-                showLoadMsg: false,
+                showLoadMsg: false,                
             });
         }
         catch (err) {
@@ -42,39 +47,40 @@
             my_dialog("", "", "closed");
         }
     }
-    cargarPantalla() {
-        try {
+
+    cargarPantalla(){
+        try{
             this.configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales((decimales: ManejoDeDecimales) => {
                 this.configuracionDecimales = decimales;
-                this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerCantidadDeTotalDeOrdenDeVenta(), (total: number) => {
+                this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerCantidadDeTotalDeOrdenDeVenta(),(total: number)=>{
                     let uiEtiquetaDeTituloTotalDePedidos = $('#UiEtiquetaDeTituloTotalDePedidos');
-                    uiEtiquetaDeTituloTotalDePedidos.text('Total CD(' + total + ')');
+                    uiEtiquetaDeTituloTotalDePedidos.text('Total CD(' + total + '):');
                     uiEtiquetaDeTituloTotalDePedidos = null;
-                    this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeOrdenDeVenta(), (total: number) => {
+                    this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeOrdenDeVenta(),(total: number)=>{
                         let uiEtiquetaARTotalDePedidos = $('#UiEtiquetaARTotalDePedidos');
-                        uiEtiquetaARTotalDePedidos.text(format_number(total, this.configuracionDecimales.defaultDisplayDecimals));
+                        uiEtiquetaARTotalDePedidos.text(DarFormatoAlMonto(format_number(total, this.configuracionDecimales.defaultDisplayDecimals)));
                         uiEtiquetaARTotalDePedidos = null;
-                        this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeClientesAVisitar(), (total: number) => {
-                            let totalClientesAVisitar = total;
-                            this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeClientesConVisitados(), (total: number) => {
+                        this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeClientesAVisitar(),(total: number)=>{
+                            let totalClientesAVisitar = total;                            
+                            this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeClientesConVisitados(),(total: number)=>{
                                 let uiEtiquetaARTotalClientesVisitados = $('#UiEtiquetaARTotalClientesVisitados');
-                                uiEtiquetaARTotalClientesVisitados.text(total + '/' + totalClientesAVisitar);
+                                uiEtiquetaARTotalClientesVisitados.text( total + '/' + totalClientesAVisitar);
                                 uiEtiquetaARTotalClientesVisitados = null;
-                                this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeTareasSinGestion(), (total: number) => {
+                                this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeTareasSinGestion(),(total: number)=>{
                                     let uiEtiquetaARTotalTareasSinGestion = $('#UiEtiquetaARTotalTareasSinGestion');
                                     uiEtiquetaARTotalTareasSinGestion.text(total);
                                     uiEtiquetaARTotalTareasSinGestion = null;
-                                    this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeTareasFueraPlanDeRuta(), (total: number) => {
+                                    this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalDeTareasFueraPlanDeRuta(),(total: number)=>{
                                         let uiEtiquetaARTotalDeTareasFueraPlanDeRuta = $('#UiEtiquetaARTotalDeTareasFueraPlanDeRuta');
                                         uiEtiquetaARTotalDeTareasFueraPlanDeRuta.text(total);
                                         uiEtiquetaARTotalDeTareasFueraPlanDeRuta = null;
-                                        this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalClientesNuevos(), (total: number) => {
+                                        this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalClientesNuevos(),(total: number)=>{
                                             let uiEtiquetaARTotalClientesNuevos = $('#UiEtiquetaARTotalClientesNuevos');
                                             uiEtiquetaARTotalClientesNuevos.text(total);
                                             uiEtiquetaARTotalClientesNuevos = null;
-                                            this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalSinDescuentoDeOrdenDeVenta(), (total: number) => {
+                                            this.ordenDeVentaServicio.ObtenerTotalesParaEstadoDeRuta(this.ordenDeVentaServicio.ObtenerTotalSinDescuentoDeOrdenDeVenta(),(total: number)=>{
                                                 let uiEtiquetaARTotalDePedidosSinDescuento = $('#UiEtiquetaARTotalDePedidosSinDescuento');
-                                                uiEtiquetaARTotalDePedidosSinDescuento.text(format_number(total, this.configuracionDecimales.defaultDisplayDecimals));
+                                                uiEtiquetaARTotalDePedidosSinDescuento.text(DarFormatoAlMonto(format_number(total, this.configuracionDecimales.defaultDisplayDecimals)));                                                
                                                 uiEtiquetaARTotalDePedidosSinDescuento = null;
                                             }, (resultado: Operacion) => {
                                                 notify(resultado.mensaje);

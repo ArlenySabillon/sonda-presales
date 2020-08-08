@@ -2,6 +2,7 @@ var DescuentoPorMontoGeneralYFamilia = (function () {
     function DescuentoPorMontoGeneralYFamilia() {
         this.discountListId = 0;
         this.codeFamily = "";
+        this.descriptionFamilySku = "";
         this.lowAmount = 0;
         this.highAmount = 0;
         this.discountType = "";

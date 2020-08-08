@@ -8,6 +8,7 @@ var Tarea = (function () {
         this.taskIsFrom = "";
         this.isPostedOffLine = 0;
         this.deviceNetworkType = "";
+        this.microsurveys = [];
     }
     return Tarea;
 }());

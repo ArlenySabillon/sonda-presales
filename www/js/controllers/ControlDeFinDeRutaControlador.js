@@ -22,6 +22,7 @@ var ControlDeFinDeRutaControlador = (function () {
             if (gIsOnline === SiNo.Si) {
                 navigator.notification.confirm("¿Está seguro de finalizar ruta?", function (buttonIndex) {
                     if (buttonIndex === 2) {
+                        localStorage.setItem("APP_IS_READY", "0");
                         my_dialog("Por favor espere...", "Finalizando ruta", "open");
                         var data = {
                             'routeid': gCurrentRoute,

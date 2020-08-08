@@ -10,8 +10,12 @@ var HistoricoDeArticuloServicio = (function () {
                 " ,I.QTY" +
                 " ,I.CODE_PACK_UNIT" +
                 " FROM ITEM_HISTORY I" +
-                " WHERE I.DOC_TYPE = '" + tipoDeDocumento + "' " +
-                " AND I.CODE_CUSTOMER = '" + cliente.clientId + "'";
+                " WHERE I.DOC_TYPE = '" +
+                tipoDeDocumento +
+                "' " +
+                " AND I.CODE_CUSTOMER = '" +
+                cliente.clientId +
+                "'";
             tx.executeSql(sql, [], function (tx, results) {
                 if (results.rows.length >= 1) {
                     var historicoDeArticulos = [];
@@ -19,9 +23,11 @@ var HistoricoDeArticuloServicio = (function () {
                         var stHistoricoDeArticulos = results.rows.item(i);
                         var historicoDeArticulo = new HistoricoDeArticulo();
                         historicoDeArticulo.docType = stHistoricoDeArticulos.DOC_TYPE;
-                        historicoDeArticulo.codeCustomer = stHistoricoDeArticulos.CODE_CUSTOMER;
+                        historicoDeArticulo.codeCustomer =
+                            stHistoricoDeArticulos.CODE_CUSTOMER;
                         historicoDeArticulo.codeSku = stHistoricoDeArticulos.CODE_SKU;
-                        historicoDeArticulo.codePackUnit = stHistoricoDeArticulos.CODE_PACK_UNIT;
+                        historicoDeArticulo.codePackUnit =
+                            stHistoricoDeArticulos.CODE_PACK_UNIT;
                         historicoDeArticulo.qty = stHistoricoDeArticulos.QTY;
                         historicoDeArticulos.push(historicoDeArticulo);
                     }
@@ -47,7 +53,7 @@ var HistoricoDeArticuloServicio = (function () {
         for (var i = 0; i < paquetes.length; i++) {
             this.colocarSugerenciaDeVentaAPaquete(tipoDeDocumento, cliente, sku, paquetes[i], i, decimales, function (paquete, index) {
                 paquetes[index].lastQtySold = trunc_number(paquete.lastQtySold, decimales.defaultCalculationsDecimals);
-                if ((paquetes.length - 1) === index) {
+                if (paquetes.length - 1 === index) {
                     callback(paquetes);
                 }
             }, function (resultado) {
@@ -57,9 +63,11 @@ var HistoricoDeArticuloServicio = (function () {
     };
     HistoricoDeArticuloServicio.prototype.colocarSugerenciaDeVentaAPaquete = function (tipoDeDocumento, cliente, sku, paquete, index, decimales, callback, callbackError) {
         SONDA_DB_Session.transaction(function (tx) {
-            var qty = (paquete.qty === 0 ? 1 : paquete.qty);
             var sql = "SELECT";
-            sql += " QTY";
+            sql += " I.QTY";
+            sql += " ,I.CODE_PACK_UNIT AS LAST_CODE_PACK_UNIT_SOLD";
+            sql += " ,I.LAST_PRICE AS LAST_PRICE_SOLD";
+            sql += " ,I.SALE_DATE AS LAST_SALE_DATE";
             sql += " FROM ITEM_HISTORY I";
             sql += " WHERE I.DOC_TYPE = '" + tipoDeDocumento + "'";
             sql += " AND I.CODE_CUSTOMER = '" + cliente.clientId + "'";
@@ -70,6 +78,10 @@ var HistoricoDeArticuloServicio = (function () {
                 if (results.rows.length > 0) {
                     var stHistoricoDeArticulo = results.rows.item(0);
                     paquete.lastQtySold = trunc_number(stHistoricoDeArticulo.QTY, decimales.defaultCalculationsDecimals);
+                    paquete.lastCodePackUnitSold =
+                        stHistoricoDeArticulo.LAST_CODE_PACK_UNIT_SOLD;
+                    paquete.lastPriceSold = stHistoricoDeArticulo.LAST_PRICE_SOLD;
+                    paquete.lastSaleDate = stHistoricoDeArticulo.LAST_SALE_DATE;
                 }
                 else {
                     paquete.lastQtySold = 0;

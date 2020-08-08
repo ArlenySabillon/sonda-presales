@@ -9,7 +9,7 @@ function MostrarPaginaDeInicioDeRuta() {
         $.mobile.changePage("#dialog_startpos", {
             transition: "flow",
             reverse: true,
-            showLoadMsg: true
+            showLoadMsg: false
         });
 
     } catch (e) {

@@ -47,6 +47,8 @@ var TIpoDeDocumento;
     TIpoDeDocumento[TIpoDeDocumento["Inventario"] = "TAKE_INVENTORY"] = "Inventario";
     TIpoDeDocumento[TIpoDeDocumento["PreVenta"] = "SALE_ORDER"] = "PreVenta";
     TIpoDeDocumento[TIpoDeDocumento["Pago"] = "PAYMENT"] = "Pago";
+    TIpoDeDocumento[TIpoDeDocumento["EncuestaDeCliente"] = "CLIENT_SURVEY"] = "EncuestaDeCliente";
+    TIpoDeDocumento[TIpoDeDocumento["PagoDeFacturaVencida"] = "CREDIT_INVOICE_PAYMENT"] = "PagoDeFacturaVencida";
 })(TIpoDeDocumento || (TIpoDeDocumento = {}));
 var TipoDeRazon;
 (function (TipoDeRazon) {
@@ -134,6 +136,11 @@ var TiposDeDescuento;
     TiposDeDescuento[TiposDeDescuento["Porcentaje"] = "PERCENTAGE"] = "Porcentaje";
     TiposDeDescuento[TiposDeDescuento["Monetario"] = "MONETARY"] = "Monetario";
 })(TiposDeDescuento || (TiposDeDescuento = {}));
+var TiposDePago;
+(function (TiposDePago) {
+    TiposDePago[TiposDePago["Contado"] = "CASH"] = "Contado";
+    TiposDePago[TiposDePago["Credito"] = "CREDIT"] = "Credito";
+})(TiposDePago || (TiposDePago = {}));
 var SqliteError;
 (function (SqliteError) {
     SqliteError[SqliteError["Desconocido"] = 0] = "Desconocido";
@@ -164,4 +171,72 @@ var TipoPeriodicidadDePromo;
     TipoPeriodicidadDePromo[TipoPeriodicidadDePromo["PorSemana"] = "WEEK"] = "PorSemana";
     TipoPeriodicidadDePromo[TipoPeriodicidadDePromo["PorMes"] = "MONTH"] = "PorMes";
 })(TipoPeriodicidadDePromo || (TipoPeriodicidadDePromo = {}));
+var ListaDeDescuento;
+(function (ListaDeDescuento) {
+    ListaDeDescuento[ListaDeDescuento["DescuentoPorEscala"] = "DE"] = "DescuentoPorEscala";
+    ListaDeDescuento[ListaDeDescuento["DescuentoPorMontoGeneralYFamilia"] = "DMF"] = "DescuentoPorMontoGeneralYFamilia";
+    ListaDeDescuento[ListaDeDescuento["DescuentoPorFamiliaYTipoPago"] = "DFTP"] = "DescuentoPorFamiliaYTipoPago";
+})(ListaDeDescuento || (ListaDeDescuento = {}));
+var TipoDePregunta;
+(function (TipoDePregunta) {
+    TipoDePregunta[TipoDePregunta["Unica"] = "UNIQUE"] = "Unica";
+    TipoDePregunta[TipoDePregunta["Multiple"] = "MULTIPLE"] = "Multiple";
+    TipoDePregunta[TipoDePregunta["Texto"] = "TEXT"] = "Texto";
+    TipoDePregunta[TipoDePregunta["Numero"] = "NUMBER"] = "Numero";
+    TipoDePregunta[TipoDePregunta["Fecha"] = "DATE"] = "Fecha";
+})(TipoDePregunta || (TipoDePregunta = {}));
+var DisparadorDeEncuesta;
+(function (DisparadorDeEncuesta) {
+    DisparadorDeEncuesta[DisparadorDeEncuesta["InicioDeTarea"] = 1] = "InicioDeTarea";
+    DisparadorDeEncuesta[DisparadorDeEncuesta["FinDeTarea"] = 2] = "FinDeTarea";
+})(DisparadorDeEncuesta || (DisparadorDeEncuesta = {}));
+var GrupoParametro;
+(function (GrupoParametro) {
+    GrupoParametro[GrupoParametro["Factura"] = "INVOICE"] = "Factura";
+})(GrupoParametro || (GrupoParametro = {}));
+var TipoDeParametro;
+(function (TipoDeParametro) {
+    TipoDeParametro["PorcentajeMinimoDePagoDeFacturasVencidas"] = "MINIMUM_PERCENT_OF_PAID";
+    TipoDeParametro["FormatoDeImpresion"] = "PRINT_FORMAT";
+})(TipoDeParametro || (TipoDeParametro = {}));
+var TipoDePagoDeFactura;
+(function (TipoDePagoDeFactura) {
+    TipoDePagoDeFactura[TipoDePagoDeFactura["FacturaVencida"] = "OVERDUE_INVOICE"] = "FacturaVencida";
+    TipoDePagoDeFactura[TipoDePagoDeFactura["FacturaAbierta"] = "OPEN_INVOICE"] = "FacturaAbierta";
+})(TipoDePagoDeFactura || (TipoDePagoDeFactura = {}));
+var TipoDePagoFacturaVencida;
+(function (TipoDePagoFacturaVencida) {
+    TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Cheque"] = "BANK_CHECK"] = "Cheque";
+    TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Deposito"] = "BANK_DEPOSIT"] = "Deposito";
+    TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Efectivo"] = "CASH"] = "Efectivo";
+    TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Tarjeta"] = "CREDIT_OR_DEBIT_CARD"] = "Tarjeta";
+})(TipoDePagoFacturaVencida || (TipoDePagoFacturaVencida = {}));
+var BotonSeleccionado;
+(function (BotonSeleccionado) {
+    BotonSeleccionado[BotonSeleccionado["Si"] = 2] = "Si";
+    BotonSeleccionado[BotonSeleccionado["No"] = 1] = "No";
+    BotonSeleccionado[BotonSeleccionado["Atras"] = 0] = "Atras";
+})(BotonSeleccionado || (BotonSeleccionado = {}));
+var ResultadoDePosteoEnServidor;
+(function (ResultadoDePosteoEnServidor) {
+    ResultadoDePosteoEnServidor[ResultadoDePosteoEnServidor["Exitoso"] = 1] = "Exitoso";
+    ResultadoDePosteoEnServidor[ResultadoDePosteoEnServidor["Fallido"] = 0] = "Fallido";
+})(ResultadoDePosteoEnServidor || (ResultadoDePosteoEnServidor = {}));
+var OpcionDisponibleParaDocumentoDePagoSeleccionado;
+(function (OpcionDisponibleParaDocumentoDePagoSeleccionado) {
+    OpcionDisponibleParaDocumentoDePagoSeleccionado[OpcionDisponibleParaDocumentoDePagoSeleccionado["Reimprimir"] = "REPRINT"] = "Reimprimir";
+    OpcionDisponibleParaDocumentoDePagoSeleccionado[OpcionDisponibleParaDocumentoDePagoSeleccionado["VerDetalle"] = "DETAIL"] = "VerDetalle";
+})(OpcionDisponibleParaDocumentoDePagoSeleccionado || (OpcionDisponibleParaDocumentoDePagoSeleccionado = {}));
+var ReglaTipo;
+(function (ReglaTipo) {
+    ReglaTipo[ReglaTipo["CobroDeFacturaVencida"] = "FacturarAunConFacturasVencidas"] = "CobroDeFacturaVencida";
+    ReglaTipo[ReglaTipo["NoVenderAlContadoConLimiteExcedido"] = ("NoVenderAlContadoConLimiteExcedido")] = "NoVenderAlContadoConLimiteExcedido";
+    ReglaTipo[ReglaTipo["VisualizarFacturasAbiertasOVencidas"] = ("VisualizarListadoDeFacturasVencidasOAbiertas")] = "VisualizarFacturasAbiertasOVencidas";
+    ReglaTipo[ReglaTipo["OperadorPuedeModificarPrecioDeProducto"] = ("OperadorPuedeModificarPrecioDeProducto")] = "OperadorPuedeModificarPrecioDeProducto";
+})(ReglaTipo || (ReglaTipo = {}));
+var FormatoDeImpresion;
+(function (FormatoDeImpresion) {
+    FormatoDeImpresion["Estandar"] = "STANDARD";
+    FormatoDeImpresion["Pacasa"] = "PACASA-HN";
+})(FormatoDeImpresion || (FormatoDeImpresion = {}));
 //# sourceMappingURL=Tipos.js.map

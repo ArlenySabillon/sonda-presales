@@ -1,5 +1,4 @@
 ﻿class ControlDeFinDeRutaControlador {
-
     documentosDeFinDeRuta = [];
 
     delegarControlDeFinDeRuta() {
@@ -23,12 +22,14 @@
             () => {
                 este.enviarTodosLosDocumentosPendientesDeEnvioHaciaElServidor();
             });
+
         $("#BotonFinalizarRutaYMostrarResumenDeFinDeRuta").on("click", () => {
             if (gIsOnline === SiNo.Si) {
 
                 navigator.notification.confirm(
                     "¿Está seguro de finalizar ruta?",  (buttonIndex) =>{
                         if (buttonIndex === 2) {
+                            localStorage.setItem("APP_IS_READY", "0");
                             my_dialog("Por favor espere...", "Finalizando ruta", "open");
                             let data = {
                                 'routeid': gCurrentRoute,

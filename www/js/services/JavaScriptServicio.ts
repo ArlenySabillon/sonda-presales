@@ -41,7 +41,7 @@ declare var gLoggedUser: any;
 declare var gUserCode: any;
 declare var gDefaultWhs: any;
 declare var gPreSaleWhs: any;
-declare var gTimeout: number;
+declare var gTimeout: any;
 declare var bluetoothSerial: any;
 declare var gManifestID: any;
 declare var gpicture: any;
@@ -68,46 +68,122 @@ declare var SondaServerURL: string;
 declare var gPrintAddress: string;
 declare var estaCargandoInicioRuta: number;
 declare var EstadoEnvioDoc: any;
+declare var mensajero: Messenger;
+declare var tipoDePagoProcesadoEnCobroDeFacturasVencidas: TipoDePagoDeFactura;
 
 //-----Funciones Globales-----
 declare function DeviceIsOnline(): void;
 declare function EstaGpsDesavilitado(callback: () => void): void;
 declare function ObtenerPosicionGPS(callback: () => void): void;
-declare function my_dialog(titulo: string, mensaje: string, estadoDelDialogo: string): void;
+declare function my_dialog(
+  titulo: string,
+  mensaje: string,
+  estadoDelDialogo: string
+): void;
 declare function ToDecimal(valor: number): number;
-declare function ValidarFechaDeEntrega(fechaActual: Date, fechaDeEntrega: Date): void;
+declare function ValidarFechaDeEntrega(
+  fechaActual: Date,
+  fechaDeEntrega: Date
+): boolean;
 declare function ObtenerFecha(): Date;
-declare function MostrarCapturaDeFirmaYFoto(opcionFirmaYFotoTipo: any, callback: (firma: string, foto: string) => void): void;
-declare function GetNexSequence(tipo: string, callback: (sequencia: string) => void, callbackError: (error: any) => void): void;
-declare function ObtenerSecuenciaSiguiente(tipoDocumento: any, callback: (serie: string, numeroDeDocumento: number) => void, callbackError: (error: any) => void): void;
+declare function MostrarCapturaDeFirmaYFoto(
+  opcionFirmaYFotoTipo: any,
+  callback: (firma: string, foto: string) => void
+): void;
+declare function GetNexSequence(
+  tipo: string,
+  callback: (sequencia: string) => void,
+  callbackError: (error: any) => void
+): void;
+declare function ObtenerSecuenciaSiguiente(
+  tipoDocumento: any,
+  callback: (serie: string, numeroDeDocumento: number) => void,
+  callbackError: (error: any) => void
+): void;
 declare function ObtenerPosicionGPS(callback: () => void): void;
 declare function getDateTime(): string;
-declare function format_number(cantidad: number, cantidadDeDecimales: number): number;
-declare function ConectarImpresora(printAddress: string, callback: () => void): void;
-declare function DesconectarImpresora(resolve: (result:boolean) => void, reject: (reason: Error) => void);
-declare function ImprimirDocumento(documento: string, callback: () => void, callbackError: (error: any) => void): void;
+declare function format_number(
+  cantidad: number,
+  cantidadDeDecimales: number
+): number;
+declare function ConectarImpresora(
+  printAddress: string,
+  callback: () => void
+): void;
+declare function DesconectarImpresora(
+  resolve: (result: boolean) => void,
+  reject: (reason: Error) => void
+);
+declare function ImprimirDocumento(
+  documento: string,
+  callback: () => void,
+  callbackError: (error: any) => void
+): void;
 declare function EnviarData(): void;
-declare function CrearTarea(cliente: any, tipoTarea: string, callback: (clienteNuevo: string, codigoTarea: string) => void): void;
-declare function ShowListPicker(configoptions: any, callback: (item: any) => void);
+declare function CrearTarea(
+  cliente: any,
+  tipoTarea: string,
+  callback: (clienteNuevo: string, codigoTarea: string) => void
+): void;
+declare function ShowListPicker(
+  configoptions: any,
+  callback: (item: any) => void
+);
 
-declare function ListPicker(configoptions: any, callback: (item: any) => void, cancelledCallback: () => void);
+declare function ListPicker(
+  configoptions: any,
+  callback: (item: any) => void,
+  cancelledCallback: () => void
+);
 
 declare function gotomyDelivery(): void;
 declare function EjecutarTareaDeVenta(clienteId: string): void;
 
-declare function trunc_number(cantidad: number, cantidadDeDecimales: number): number;
+declare function trunc_number(
+  cantidad: number,
+  cantidadDeDecimales: number
+): number;
 
-declare function swipe(pagina: string, callback: (direccion: string) => void): void;
+declare function swipe(
+  pagina: string,
+  callback: (direccion: string) => void
+): void;
 
-declare function actualizarListadoDeTareas(idTarea: number, tipoDeTarea: string, estadoDeTarea: string, codigoCliente: string, nombreCliente: string, direccionCliente: string, noReolectado: number, estadoDeTareaAnterior: string, rgaCode: string): void;
+declare function actualizarListadoDeTareas(
+  idTarea: number,
+  tipoDeTarea: string,
+  estadoDeTarea: string,
+  codigoCliente: string,
+  nombreCliente: string,
+  direccionCliente: string,
+  noReolectado: number,
+  estadoDeTareaAnterior: string,
+  rgaCode: string
+): void;
 
-declare function ObtenerCantidadDeSecuenciasDisponibles(tipoDocumento: string, callback: (docType: string, docFrom: number, docTo: number, serie: string, currentDoc: number, available: number) => void, errCallback: (errorMensaje: string) => void): void;
+declare function ObtenerCantidadDeSecuenciasDisponibles(
+  tipoDocumento: string,
+  callback: (
+    docType: string,
+    docFrom: number,
+    docTo: number,
+    serie: string,
+    currentDoc: number,
+    available: number
+  ) => void,
+  errCallback: (errorMensaje: string) => void
+): void;
 
-declare function TomarFoto(callback: (fotografia: string) => void, errCallback: (resultado: Operacion) => void): void;
+declare function TomarFoto(
+  callback: (fotografia: string) => void,
+  errCallback: (resultado: any) => void
+): void;
 
 declare function DarFormatoAlMonto(monto: number): string;
 
-declare function LeerCodigoBarraConCamara(callback: (codigoLeido: string) => void): void;
+declare function LeerCodigoBarraConCamara(
+  callback: (codigoLeido: string) => void
+): void;
 
 declare function BloquearPantalla(): void;
 
@@ -192,7 +268,6 @@ declare function PriceListDefaultReceived(): void;
 declare function PriceListDefaultNotFound(data): void;
 declare function AddPriceListDefault(data): void;
 declare function PriceListDefaultCompleted(): void;
-declare function GetItemHistoryReceived(): void;
 declare function GetItemHistoryNotFound(data): void;
 declare function AddItemHistory(data): void;
 declare function GetItemHistoryCompleted(): void;
@@ -251,49 +326,134 @@ declare function MostarResolucion(data): void;
 declare function MostarSecuenciaDeDocumentos(data): void;
 declare function MostarResumenDeTareas(data): void;
 declare function MostarResumenDeCantidad(data): void;
-declare function ActualizarEnvioPagos(data, callback: (data: any) => void, errorCallBack: (error: any) => void): void;
-declare function ActualizarClienteNuevoHandHeld(data, callback: () => void, errorCallBack: (error: any) => void): void;
+declare function ActualizarEnvioPagos(
+  data,
+  callback: (data: any) => void,
+  errorCallBack: (error: any) => void
+): void;
+declare function ActualizarClienteNuevoHandHeld(
+  data,
+  callback: () => void,
+  errorCallBack: (error: any) => void
+): void;
 declare function EnviarDataSinClientes(): void;
 declare function ActualizarEtiqutaPorClienteHandHeld(data): void;
 declare function ActualizarEnvioEtiquetaClienteError(data): void;
-declare function ActualizarEnvioTarea(data: any, callBack: (dataN1: any) => void, errorCallBack: (error: any) => void): void;
+declare function ActualizarEnvioTarea(
+  data: any,
+  callBack: (dataN1: any) => void,
+  errorCallBack: (error: any) => void
+): void;
 declare function MarcarTareasComoSincronizada(task): void;
-declare function ActualizarEnvioFactura(data: any, callback: (dataN1) => void, errorCallBack: (error) => void): void;
-declare function ActualizarEnvioConsignacion(data, callback: (dataN1) => void, errorCallBack: (erro) => void): void;
+declare function ActualizarEnvioFactura(
+  data: any,
+  callback: (dataN1) => void,
+  errorCallBack: (error) => void
+): void;
+declare function ActualizarEnvioConsignacion(
+  data,
+  callback: (dataN1) => void,
+  errorCallBack: (erro) => void
+): void;
 declare function ImprimirFinDia(): void;
-declare function ActualizarEnvioDeOrdernesDeCompra(data, callBack: (dataN1) => void, errorCallBack: (error) => void): void;
-declare function ActualizarEnvioDeNumeroDeImprecionesDeOrdenesDeVenta(data, callBack: (dataN1) => void, errorCallBack: (error) => void): void;
-declare function ActualizarInventarioReservadoPorOrdenesDeVentaAnuladas(data, index, callBack: () => void, errorCallBack: (error) => void): void;
-declare function ActualizarEnvioDeBorradoresDeOrdernesDeCompra(data, callBack: () => void, errorCallBack: (err) => void): void;
-declare function ActualizarEnvioDeActualizacionDeBorradoresDeOrdernesDeCompra(data, callBack: () => void, errorCallBack: (error) => void): void;
-declare function ActualizarEnvioDeCambiosDeClientes(data, callBack: () => void, errorCallBack: (error) => void): void;
-declare function CambiarEstadoParaReenviarOrdenesDeVenta(data, callBack: () => void, errorCallBack: (error) => void): void;
-declare function EnviarValidacionDeOrdenDeVenta(callBack: () => void, errorcallback: (err) => void): void;
+declare function ActualizarEnvioDeOrdernesDeCompra(
+  data,
+  callBack: (dataN1) => void,
+  errorCallBack: (error) => void
+): void;
+declare function ActualizarEnvioDeNumeroDeImprecionesDeOrdenesDeVenta(
+  data,
+  callBack: (dataN1) => void,
+  errorCallBack: (error) => void
+): void;
+declare function ActualizarInventarioReservadoPorOrdenesDeVentaAnuladas(
+  data,
+  index,
+  callBack: () => void,
+  errorCallBack: (error) => void
+): void;
+declare function ActualizarEnvioDeBorradoresDeOrdernesDeCompra(
+  data,
+  callBack: () => void,
+  errorCallBack: (err) => void
+): void;
+declare function ActualizarEnvioDeActualizacionDeBorradoresDeOrdernesDeCompra(
+  data,
+  callBack: () => void,
+  errorCallBack: (error) => void
+): void;
+declare function ActualizarEnvioDeCambiosDeClientes(
+  data,
+  callBack: () => void,
+  errorCallBack: (error) => void
+): void;
+declare function CambiarEstadoParaReenviarOrdenesDeVenta(
+  data,
+  callBack: () => void,
+  errorCallBack: (error) => void
+): void;
+declare function EnviarValidacionDeOrdenDeVenta(
+  callBack: () => void,
+  errorcallback: (err) => void
+): void;
 declare function ActualizarInventarioPreVenta(data): void;
 declare function DelegarABroadcast(socket: SocketIOClient.Socket): void;
-declare function DelegarSocketsListadoOrdenDeVentaControlador(socketIo: SocketIOClient.Socket): void;
+declare function DelegarSocketsListadoOrdenDeVentaControlador(
+  socketIo: SocketIOClient.Socket
+): void;
 declare function NoGetInvoiceFound(data): void;
 declare function AddInvoice(data): void;
 declare function GetInvoiceCompleted(data): void;
 declare function RegresarAPaginaAnterior(paginaAnterior: string): void;
 declare function BorrarDatosTablas(): void;
-declare function ObtenerReglas(tipo: string, callBack: (reglas: any) => void, errorCallBack: (error: string) => void): void;
+declare function ObtenerReglas(
+  tipo: string,
+  callBack: (reglas: any) => void,
+  errorCallBack: (error: string) => void
+): void;
 declare function SignaturePad(canvas: any, options: any): void;
 declare function AddCompany(data: any);
 declare function BorrarTablasParaInicioDeRuta(): void;
 declare function AgregarBonoPorMontoGeneral(data): void;
 declare function MostrarFinDeRuta(): void;
-declare function ObtenerDocumentosParaControlDeFinDeRuta(callback: (listaDeDocumentosDeFinDeRuta: any) => void, errorCallback: (error: string) => void): void;
-declare function MostrarPantallaDeControlDeFinDeRuta(documentosDeFinDeRuta: any): void;
+declare function ObtenerDocumentosParaControlDeFinDeRuta(
+  callback: (listaDeDocumentosDeFinDeRuta: any) => void,
+  errorCallback: (error: string) => void
+): void;
+declare function MostrarPantallaDeControlDeFinDeRuta(
+  documentosDeFinDeRuta: any
+): void;
 declare function EnviarBorradoresDeBonificaciones(origenDeEnvio: number): void;
-declare function AgregarHistoricoPorPromo(data):void;
-declare function MarcarHistoricoDePromocionesComoPosteado(historialDePromociones: any): void;
+declare function AgregarHistoricoPorPromo(data): void;
+declare function MarcarHistoricoDePromocionesComoPosteado(
+  historialDePromociones: any
+): void;
 declare function DiscountListByGeneralAmountAndFamilyNotFound(data): void;
 declare function AddDiscountListByGeneralAmountAndFamily(row): void;
 declare function DiscountListByFamilyAndPaymentTypeNotFound(data): void;
 declare function AddDiscountListByFamilyAndPaymentType(row): void;
 declare function SetApplyDiscountParameter(value): void;
+declare function AddOrderForDiscountForApply(row): void;
+declare function AddListOfSpecialPriceByScale(row): void;
+declare function AddMicrosurvey(row): void;
+declare function AddQuestionOfMicrosurvey(row): void;
+declare function AddAnswerOfQuestionOfMicrosurvey(row): void;
+declare function AddChannelsOfMicrosurvey(row): void;
+declare function onBackKeyDown(): void;
+declare function onMenuKeyDown(): void;
+declare function ValidarSequenciaDeDocumentos(
+  tipoDeDocumento,
+  callBack,
+  errorCallBack
+): void;
 
-class JavaScriptServicio {
+declare function publicarClienteParaProcesoDeCobroDeFacturasVencidas(
+  callback: () => void
+): void;
 
-}
+declare function obtenerCuentasDeBancos(
+  callback: (cuentasDeBanco: any) => void,
+  errCallback: (error: any) => void
+): void;
+
+class JavaScriptServicio { }

@@ -36,4 +36,8 @@
     typeOfDiscountByFamily: string = "";
     typeOfDiscountByGeneralAmount: string = "";
     typeOfDiscountByFamilyAndPaymentType: string = "";
+    codeFamilySku: string = "";
+    basePrice: number = 0;
+    uniqueDiscountByScaleAplied: number = 0;
+    applyDiscountBySpecialPrice: number = 0;
 }

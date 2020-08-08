@@ -216,6 +216,7 @@ var NuevaTareaControlador = (function () {
                 Telefono: cliente.phone,
                 CodigoHH: cliente.clientId
             };
+            gCurrentGPS = cliente.gps;
             CrearTarea(clienteTarea, TareaTipo.Preventa, function (cliente, tareaId) {
                 _this.tarea.taskId = Number(tareaId);
                 _this.tarea.taskType = TareaTipo.Preventa;
@@ -230,7 +231,6 @@ var NuevaTareaControlador = (function () {
                 $.mobile.changePage("#taskdetail_page", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
                 DesBloquearPantalla();
@@ -244,7 +244,6 @@ var NuevaTareaControlador = (function () {
         $.mobile.changePage("#UiPageNewTask", {
             transition: "flow",
             reverse: true,
-            changeHash: false,
             showLoadMsg: false
         });
     };
@@ -252,7 +251,6 @@ var NuevaTareaControlador = (function () {
         $.mobile.changePage("#pickupplan_page", {
             transition: "flow",
             reverse: true,
-            changeHash: false,
             showLoadMsg: false
         });
     };

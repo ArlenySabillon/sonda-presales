@@ -139,7 +139,6 @@
                 $.mobile.changePage("#taskdetail_page", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
 

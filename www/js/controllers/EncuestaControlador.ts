@@ -72,10 +72,10 @@ class EncuestaControlador {
   cargarDatosDeEncuestaAProcesar(): void {
     if (this.numeroDeEncuestaEnProceso <= this.encuestas.length - 1) {
       this.encuestaEnProceso = this.encuestas[this.numeroDeEncuestaEnProceso];
-
+      
       this.encuestaEnProceso.isFromDraft = this.tareaEsBorrador;
       this.establecerTituloYOpcionesGeneralesDeEncuesta(() => {
-        this.construirListadoDePreguntasDeEncuesta(() => {
+      this.construirListadoDePreguntasDeEncuesta(() => {
           DesBloquearPantalla();
         }, this.procesarErrores);
       }, this.procesarErrores);
@@ -181,7 +181,9 @@ class EncuestaControlador {
     html.push(`<form>`);
     html.push(`<p>`);
     html.push(
-      `<textarea cols="40" name="PRE_${pregunta.id}" id="PRE_${pregunta.id}"></textarea>`
+      `<textarea cols="40" name="PRE_${pregunta.id}" id="PRE_${
+        pregunta.id
+      }"></textarea>`
     );
     html.push(`</p>`);
     html.push(`</form>`);
@@ -193,7 +195,9 @@ class EncuestaControlador {
     let html: string[] = [];
 
     html.push(
-      `<input is="text-input" type="number" id="PRE_${pregunta.id}" name="PRE_${pregunta.id}">`
+      `<input is="text-input" type="number" id="PRE_${pregunta.id}" name="PRE_${
+        pregunta.id
+      }">`
     );
 
     return html.join("");
@@ -213,12 +217,16 @@ class EncuestaControlador {
     let html: string[] = [];
     html.push(`<form>`);
     html.push(
-      `<fieldset is="controlgroup-radio" data-role="controlgroup" id="PRE_${pregunta.id}">`
+      `<fieldset is="controlgroup-radio" data-role="controlgroup" id="PRE_${
+        pregunta.id
+      }">`
     );
 
     pregunta.answers.forEach((respuesta: Respuesta) => {
       html.push(
-        `<input is="checkbox-button" VALUE="${respuesta.answer}" type="checkbox" name="RES_${respuesta.id}" id="RES_${respuesta.id}">`
+        `<input is="checkbox-button" VALUE="${
+          respuesta.answer
+        }" type="checkbox" name="RES_${respuesta.id}" id="RES_${respuesta.id}">`
       );
       html.push(`<label for="RES_${respuesta.id}">${respuesta.answer}</label>`);
     });

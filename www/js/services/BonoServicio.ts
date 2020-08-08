@@ -644,4 +644,192 @@
             }
         );
     }
+    //-----Para Visualizacion de promociones
+    obtenerBonificacionPorMontoGeneralPorCliente(cliente: Cliente, callback: (listaDeBonificacionesPorMontoGeneral: Array<BonoPorMontoGeneral>) => void, callbackError: (resultado: Operacion) => void) {
+        SONDA_DB_Session.transaction(
+            (tx) => {
+                let listaDeLi: string[] = [];
+                listaDeLi.push("SELECT DISTINCT");
+                listaDeLi.push(" BLGA.BONUS_LIST_ID");
+                listaDeLi.push(" ,BLGA.LOW_LIMIT");
+                listaDeLi.push(" ,BLGA.HIGH_LIMIT");
+                listaDeLi.push(" ,BLGA.CODE_SKU_BONUS");
+                listaDeLi.push(" ,PU.CODE_PACK_UNIT CODE_PACK_UNIT_BONUS");
+                listaDeLi.push(" ,BLGA.BONUS_QTY");
+                listaDeLi.push(" ,BLGA.PROMO_ID");
+                listaDeLi.push(" ,BLGA.PROMO_NAME");
+                listaDeLi.push(" ,BLGA.PROMO_TYPE");
+                listaDeLi.push(" ,SP.SKU_NAME");
+                listaDeLi.push(" ,SP.OWNER");
+                listaDeLi.push(" ,SP.OWNER_ID");
+                listaDeLi.push(" ,BLGA.FREQUENCY");
+                listaDeLi.push(" FROM BONUS_LIST_BY_GENERAL_AMOUNT BLGA");
+                listaDeLi.push(" INNER JOIN SKU_PRESALE SP ");
+                listaDeLi.push(" ON (SP.SKU = BLGA.CODE_SKU_BONUS)");
+                listaDeLi.push(" INNER JOIN PACK_UNIT PU ");
+                listaDeLi.push(" ON (PU.PACK_UNIT = BLGA.CODE_PACK_UNIT_BONUS)");
+                listaDeLi.push(` WHERE BLGA.BONUS_LIST_ID = ${cliente.bonusListId}`);                
+
+                tx.executeSql(listaDeLi.join(''), [],
+                    (tx: SqlTransaction, results: SqlResultSet) => {
+                        let listaDeBonificacionesPorMontoGeneral = new Array<BonoPorMontoGeneral>();
+                        for (let i = 0; i < results.rows.length; i++) {
+                            let descuentoSql: any = results.rows.item(i);
+                            let bonoPorMontoGeneral = new BonoPorMontoGeneral();
+                            bonoPorMontoGeneral.bonusListId = descuentoSql.BONUS_LIST_ID;
+                            bonoPorMontoGeneral.lowLimit = descuentoSql.LOW_LIMIT;
+                            bonoPorMontoGeneral.highLimit = descuentoSql.HIGH_LIMIT;
+                            bonoPorMontoGeneral.codeSkuBonus = descuentoSql.CODE_SKU_BONUS;
+                            bonoPorMontoGeneral.codePackUnitBonus = descuentoSql.CODE_PACK_UNIT_BONUS;
+                            bonoPorMontoGeneral.bonusQty = descuentoSql.BONUS_QTY;
+                            bonoPorMontoGeneral.promoId = descuentoSql.PROMO_ID;
+                            bonoPorMontoGeneral.promoName = descuentoSql.PROMO_NAME;
+                            bonoPorMontoGeneral.promoType = descuentoSql.PROMO_TYPE;
+                            bonoPorMontoGeneral.skuNameBonus = descuentoSql.SKU_NAME;
+                            bonoPorMontoGeneral.owner = descuentoSql.OWNER;
+                            bonoPorMontoGeneral.ownerId = descuentoSql.OWNER_ID;
+                            bonoPorMontoGeneral.frequency = descuentoSql.FREQUENCY;
+                            listaDeBonificacionesPorMontoGeneral.push(bonoPorMontoGeneral);
+                            descuentoSql = null;
+                            bonoPorMontoGeneral = null;
+                        }
+                        callback(listaDeBonificacionesPorMontoGeneral);
+                        listaDeBonificacionesPorMontoGeneral = null;
+                    }
+                );
+
+            }, (err: SqlError) => {
+                callbackError(<Operacion>{ codigo: -1, mensaje: "Error al obtener las bonificaciones por monto general: " + err.message });
+            }
+        );
+    }
+
+    obtenerTodasLasBonificacionPorEscalaPorCliente(cliente: Cliente, callback: (listaDeBonos: Array<Bono>) => void, callbackError: (resultado: Operacion) => void) {
+        SONDA_DB_Session.transaction(
+            (tx) => {
+                var sql = "SELECT DISTINCT";
+                sql += " BLS.BONUS_LIST_ID";
+                sql += " ,BLS.CODE_SKU";
+                sql += " ,BLS.CODE_PACK_UNIT";
+                sql += " ,BLS.LOW_LIMIT";
+                sql += " ,BLS.HIGH_LIMIT";
+                sql += " ,BLS.CODE_SKU_BONUS";
+                sql += " ,BLS.BONUS_QTY";
+                sql += " ,BLS.CODE_PACK_UNIT_BONUES";
+                sql += " ,SP.SKU_NAME";
+                sql += " ,SP.OWNER";
+                sql += " ,SP.OWNER_ID";
+                sql += " ,SP.OWNER_ID";
+                sql += " ,BLS.PROMO_ID";
+                sql += " ,BLS.PROMO_NAME";
+                sql += " ,BLS.PROMO_TYPE";
+                sql += " ,BLS.FREQUENCY";
+                sql += " FROM BONUS_LIST_BY_SKU BLS";
+                sql += " INNER JOIN SKU_PRESALE SP ";
+                sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+                sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;                
+                sql += " ORDER BY BLS.LOW_LIMIT";
+
+                tx.executeSql(sql, [],
+                    (tx: SqlTransaction, results: SqlResultSet) => {
+                        let listaDeBonos = new Array<Bono>();
+                        for (var i = 0; i < results.rows.length; i++) {
+                            let bonoSql: any = results.rows.item(i);
+                            let bono = new Bono();
+                            bono.bonusListId = bonoSql.BONUS_LIST_ID;
+                            bono.codeSku = bonoSql.CODE_SKU;
+                            bono.codePackUnit = bonoSql.CODE_PACK_UNIT;
+                            bono.lowLimitTemp = bonoSql.LOW_LIMIT;
+                            bono.highLimitTemp = bonoSql.HIGH_LIMIT;
+                            bono.codeSkuBonus = bonoSql.CODE_SKU_BONUS;
+                            bono.descriptionSkuBonues = bonoSql.SKU_NAME;
+                            bono.bonusQtyTemp = bonoSql.BONUS_QTY;
+                            bono.codePackUnitBonues = bonoSql.CODE_PACK_UNIT_BONUES;
+                            bono.owner = bonoSql.OWNER;
+                            bono.ownerId = bonoSql.OWNER_ID;
+                            bono.promoIdScale = bonoSql.PROMO_ID;
+                            bono.promoNameScale = bonoSql.PROMO_NAME;
+                            bono.promoTypeScale = bonoSql.PROMO_TYPE;
+                            bono.frequencyScale = bonoSql.FREQUENCY;
+                            listaDeBonos.push(bono);
+                        }                        
+                        callback(listaDeBonos);
+                    }
+                );
+
+            }, (err: SqlError) => {                
+                callbackError(<Operacion>{ codigo: -1, mensaje: "Error al obtener el bonificaciones: " + err.message });                
+            }
+        );
+    }
+
+    obtenerTodasLasBonificacionesDeMultiploPorCliente(cliente: Cliente, callback: (listaDeBonos: Array<Bono>) => void, callbackError: (resultado: Operacion) => void): void {
+        const operacion = new Operacion();
+        try {
+
+            SONDA_DB_Session.transaction((trans) => {
+                let sql = "SELECT DISTINCT";
+                sql += " BLS.BONUS_LIST_ID";
+                sql += " ,BLS.CODE_SKU";
+                sql += " ,BLS.CODE_PACK_UNIT";
+                sql += " ,BLS.MULTIPLE";
+                sql += " ,BLS.CODE_SKU_BONUS";
+                sql += " ,BLS.BONUS_QTY";
+                sql += " ,BLS.CODE_PACK_UNIT_BONUES";
+                sql += " ,SP.SKU_NAME";
+                sql += " ,SP.OWNER";
+                sql += " ,SP.OWNER_ID";
+                sql += " ,BLS.PROMO_ID";
+                sql += " ,BLS.PROMO_NAME";
+                sql += " ,BLS.PROMO_TYPE";
+                sql += " ,BLS.FREQUENCY";
+                sql += " FROM BONUS_LIST_BY_SKU_MULTIPLE BLS";
+                sql += " INNER JOIN SKU_PRESALE SP ";
+                sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+                sql += ` WHERE BLS.BONUS_LIST_ID = ${cliente.bonusListId}`;                
+                sql += " ORDER BY BLS.MULTIPLE";
+
+                console.log(sql);
+                trans.executeSql(sql, [],
+                    (tx: SqlTransaction, results: SqlResultSet) => {
+                        const listaDeBonos = new Array<Bono>();
+                        for (let i = 0; i < results.rows.length; i++) {
+                            const bonoSql: any = results.rows.item(i);
+                            const bono = new Bono();
+                            bono.bonusListId = bonoSql.BONUS_LIST_ID;
+                            bono.codeSku = bonoSql.CODE_SKU;
+                            bono.codePackUnit = bonoSql.CODE_PACK_UNIT;
+                            bono.lowLimitTemp = 0;
+                            bono.highLimitTemp = 0;
+                            bono.multiplo = bonoSql.MULTIPLE;
+                            bono.codeSkuBonus = bonoSql.CODE_SKU_BONUS;
+                            bono.descriptionSkuBonues = bonoSql.SKU_NAME;
+                            bono.bonusQtyTemp = 0;
+                            bono.bonusQtyMultiplo = bonoSql.BONUS_QTY;
+                            bono.codePackUnitBonues = bonoSql.CODE_PACK_UNIT_BONUES;
+                            bono.owner = bonoSql.OWNER;
+                            bono.ownerId = bonoSql.OWNER_ID;
+                            bono.promoIdMultiple = bonoSql.PROMO_ID;
+                            bono.promoNameMultiple = bonoSql.PROMO_NAME;
+                            bono.promoTypeMultiple = bonoSql.PROMO_TYPE;
+                            bono.frequencyMultiple = bonoSql.FREQUENCY;
+                            listaDeBonos.push(bono);
+                        }
+                        callback(listaDeBonos);
+                    }
+                );
+
+            }, (error: SqlError) => {
+                operacion.codigo = -1;
+                operacion.mensaje = error.message;
+                console.log(operacion);
+                callbackError(operacion);
+            });
+        } catch (e) {
+            operacion.codigo = -1;
+            operacion.mensaje = e.message;
+            console.log(operacion.mensaje);
+            callbackError(operacion);
+        }
+    }
 }

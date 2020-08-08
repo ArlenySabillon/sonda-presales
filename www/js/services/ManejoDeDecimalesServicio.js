@@ -7,6 +7,8 @@ var ManejoDeDecimalesServicio = (function () {
         decimales.defaultDisplayDecimals = parseInt(localStorage.getItem("DEFAULT_DISPLAY_DECIMALS"));
         decimales.displayDecimalsRoundConfiguration = localStorage.getItem("DISPLAY_DECIMALS_ROUND_CONFIGURATION");
         decimales.displayDecimalsRoundType = localStorage.getItem("DISPLAY_DECIMALS_ROUND_TYPE");
+        decimales.currencySymbol =
+            localStorage.getItem("DISPLAY_SYMBOL_CURRENCY") || "Q";
         callback(decimales);
     };
     ManejoDeDecimalesServicio.prototype.calcularPorTipoDecimales = function (manejoDeDecimales, valor) {
@@ -30,7 +32,6 @@ var ManejoDeDecimalesServicio = (function () {
         }
         return resultadoValor;
     };
-    ;
     return ManejoDeDecimalesServicio;
 }());
 //# sourceMappingURL=ManejoDeDecimalesServicio.js.map

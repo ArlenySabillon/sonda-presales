@@ -12,7 +12,7 @@ var CambiosEnClienteControlador = (function () {
         subcriber.cliente = JSON.parse(JSON.stringify(mensaje.cliente));
     };
     CambiosEnClienteControlador.prototype.delegarCambiosEnClienteControlador = function () {
-        var _this = this;
+        var _this_1 = this;
         var este = this;
         document.addEventListener("backbutton", function () {
             este.usuarioDeseaRegresarAPaginaAnterior();
@@ -32,11 +32,11 @@ var CambiosEnClienteControlador = (function () {
         });
         $("#UiPageCustomerInfo").on("click", "#UiModificacionDeClienteListaEtiquetas a", function (event) {
             var id = event.currentTarget.attributes["id"].nodeValue;
-            _this.usuarioDeseaEliminarEtiqueta("#" + id);
+            _this_1.usuarioDeseaEliminarEtiqueta("#" + id);
         });
         $("#UiPageCustomerInfo").on("click", "#UiModificarClienteListadoDeEtiquetas li", function (event) {
             var id = event.currentTarget.attributes["id"].nodeValue;
-            _this.usuarioDeseaAgregarEtiqueta("#" + id);
+            _this_1.usuarioDeseaAgregarEtiqueta("#" + id);
         });
         $("#UiBtnMostrarListadoDeEtiquetasModificacionDeCliente").on("click", function () {
             var myPanel = $.mobile.activePage.children('[id="UiModificarClientePanelDeEtiquetas"]');
@@ -54,13 +54,13 @@ var CambiosEnClienteControlador = (function () {
         });
     };
     CambiosEnClienteControlador.prototype.usuarioDeseaRegresarAPaginaAnterior = function () {
-        var _this = this;
+        var _this_1 = this;
         switch ($.mobile.activePage[0].id) {
             case "UiPageCustomerInfo":
                 if (this.viendoMapa === false) {
                     navigator.notification.confirm("¿Está Seguro de abandonar la modificación del cliente?", function (buttonIndex) {
                         if (buttonIndex === 2) {
-                            _this.regresarAPantallaAnterior();
+                            _this_1.regresarAPantallaAnterior();
                         }
                     }, 'Sonda® ' + SondaVersion, 'No,Si');
                 }
@@ -264,16 +264,16 @@ var CambiosEnClienteControlador = (function () {
         });
     };
     CambiosEnClienteControlador.prototype.usuarioDeseaVerMapa = function () {
-        var _this = this;
+        var _this_1 = this;
         ObtenerPosicionGPS(function () {
-            _this.viendoMapa = true;
+            _this_1.viendoMapa = true;
             var uiModificarClienteDatosGenerales = $("#UiModificarClienteDatosGenerales");
             var uiModificarClienteMapa = $("#UiModificarClienteMapa");
             uiModificarClienteDatosGenerales.hide();
             uiModificarClienteMapa.show();
             uiModificarClienteDatosGenerales = null;
             uiModificarClienteMapa = null;
-            _this.mostarMapa(gCurrentGPS.toString());
+            _this_1.mostarMapa(gCurrentGPS.toString());
             ToastThis("GPS obtenido");
         });
     };
@@ -336,13 +336,13 @@ var CambiosEnClienteControlador = (function () {
         }, "Sonda\u00AE " + SondaVersion, ["No", "Si"]);
     };
     CambiosEnClienteControlador.prototype.cargarMapa = function () {
-        var _this = this;
+        var _this_1 = this;
         var defaultLatLng = new google.maps.LatLng(14.645866, -90.55291745);
         var self = this;
         try {
             if (navigator.geolocation) {
                 var success = function (pos) {
-                    _this.mostarMapa(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+                    _this_1.mostarMapa(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
                 };
                 var fail = function () {
                     self.mostarMapa(defaultLatLng);
@@ -358,7 +358,7 @@ var CambiosEnClienteControlador = (function () {
         }
     };
     CambiosEnClienteControlador.prototype.mostarMapa = function (latlng) {
-        var _this = this;
+        var _this_1 = this;
         try {
             var myOptions = {
                 zoom: 18,
@@ -367,7 +367,7 @@ var CambiosEnClienteControlador = (function () {
             };
             var map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
             map.addListener('click', function (e) {
-                _this.colocarPuntoEnMapa(e.latLng, map);
+                _this_1.colocarPuntoEnMapa(e.latLng, map);
             });
             var marker = new google.maps.Marker({
                 position: latlng,
@@ -401,7 +401,6 @@ var CambiosEnClienteControlador = (function () {
                 $.mobile.changePage("pos_skus_page", {
                     transition: "pop",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false,
                     data: {
                         "cliente": this.cliente,
@@ -415,7 +414,6 @@ var CambiosEnClienteControlador = (function () {
                 $.mobile.changePage("#taskdetail_page", {
                     transition: "flow",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
                 break;
@@ -427,7 +425,6 @@ var CambiosEnClienteControlador = (function () {
                 $.mobile.changePage("#UiPageRepPreSale", {
                     transition: "pop",
                     reverse: true,
-                    changeHash: false,
                     showLoadMsg: false
                 });
                 break;

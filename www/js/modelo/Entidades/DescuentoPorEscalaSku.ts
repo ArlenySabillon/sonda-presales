@@ -13,4 +13,5 @@
     promoName: string = "";
     promoType: string = "";
     frequency: string = "";
+    isUnique: boolean = false;
 } 

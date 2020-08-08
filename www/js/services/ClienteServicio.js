@@ -25,6 +25,11 @@ var ClienteServicio = (function () {
             sql += " ,C.NEW";
             sql += " ,C.PREVIUS_BALANCE";
             sql += " ,C.LAST_PURCHASE";
+            sql += " ,C.LAST_PURCHASE_DATE";
+            sql += " ,C.SPECIAL_PRICE_LIST_ID";
+            sql += " ,C.CODE_CHANNEL";
+            sql += " ,C.OUTSTANDING_BALANCE";
+            sql += " ,C.DFPT_LIST_ID";
             sql += " FROM CLIENTS C";
             sql += " WHERE C.CLIENT_ID = '" + cliente.clientId + "' ";
             tx.executeSql(sql, [], function (tx, results) {
@@ -53,19 +58,32 @@ var ClienteServicio = (function () {
                         discountListId: clienteTemp.DISCOUNT_LIST_ID,
                         priceListId: clienteTemp.PRICE_LIST_ID,
                         salesByMultipleListId: clienteTemp.SALES_BY_MULTIPLE_LIST_ID,
-                        isNew: (clienteTemp.NEW === "1" || clienteTemp.NEW === 1) ? true : false,
+                        isNew: clienteTemp.NEW === "1" || clienteTemp.NEW === 1 ? true : false,
                         previousBalance: clienteTemp.PREVIUS_BALANCE,
                         lastPurchase: clienteTemp.LAST_PURCHASE,
-                        bonoPorCombos: new Array()
+                        bonoPorCombos: new Array(),
+                        spcialPriceListId: clienteTemp.SPECIAL_PRICE_LIST_ID,
+                        channel: clienteTemp.CODE_CHANNEL,
+                        lastPurchaseDate: clienteTemp.LAST_PURCHASE_DATE
+                            ? clienteTemp.LAST_PURCHASE_DATE.split("T")[0]
+                            : null,
+                        outStandingBalance: clienteTemp.OUTSTANDING_BALANCE,
+                        discountByFamilyAndPaymentTypeListId: clienteTemp.DFPT_LIST_ID
                     };
                     callback(clienteRespuesta);
                 }
                 else {
-                    callbackError({ codigo: -1, mensaje: "Error al obtener el cliente: No se puede encontrar el cliente" });
+                    callbackError({
+                        codigo: -1,
+                        mensaje: "Error al obtener el cliente: No se puede encontrar el cliente"
+                    });
                 }
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener el Cliente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener el Cliente: " + err.message
+            });
         });
     };
     ClienteServicio.prototype.obtenerListaDePrecioPorCliente = function (cliente, callback, callbackError) {
@@ -86,7 +104,11 @@ var ClienteServicio = (function () {
                 }
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "No se pudo obtener la Lista de Precios del Cliente debido al siguiente error: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "No se pudo obtener la Lista de Precios del Cliente debido al siguiente error: " +
+                    err.message
+            });
         });
     };
     ClienteServicio.prototype.obtenerCuentaCorriente = function (cliente, configuracionDecimales, callback, callbackError) {
@@ -120,7 +142,10 @@ var ClienteServicio = (function () {
             });
         }
         catch (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener el cuenta corriente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener el cuenta corriente: " + err.message
+            });
         }
     };
     ClienteServicio.prototype.obtenerSiTieneFacturasVenciadas = function (cliente, callback, callbackError) {
@@ -141,7 +166,10 @@ var ClienteServicio = (function () {
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener facturas vencidas: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener facturas vencidas: " + err.message
+            });
         });
     };
     ClienteServicio.prototype.obtenerLimiteDeCredito = function (cliente, configuracionDecimales, callback, callbackError) {
@@ -164,7 +192,10 @@ var ClienteServicio = (function () {
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener limite de credito y dias credito: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener limite de credito y dias credito: " + err.message
+            });
         });
     };
     ClienteServicio.prototype.obtenerSiTieneDiasDeCreditoVencidos = function (cliente, callback, callbackError) {
@@ -174,7 +205,10 @@ var ClienteServicio = (function () {
             sql += " FROM INVOICE_HEADER I";
             sql += " WHERE I.CLIENT_ID = '" + cliente.clientId + "'";
             sql += " AND I.IS_POSTED = 3";
-            sql += " AND date(I.POSTED_DATETIME, '+" + cliente.cuentaCorriente.diasCredito + " day') <= DATE()";
+            sql +=
+                " AND date(I.POSTED_DATETIME, '+" +
+                    cliente.cuentaCorriente.diasCredito +
+                    " day') <= DATE()";
             tx.executeSql(sql, [], function (tx, results) {
                 if (results.rows.length > 0) {
                     cliente.cuentaCorriente.diasCreditoVencidos = true;
@@ -185,7 +219,10 @@ var ClienteServicio = (function () {
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener dias de credito vencidos: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener dias de credito vencidos: " + err.message
+            });
         });
     };
     ClienteServicio.prototype.obtenerSaldoActual = function (cliente, configuracionDecimales, callback, callbackError) {
@@ -206,10 +243,12 @@ var ClienteServicio = (function () {
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener facturas vencidas: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener facturas vencidas: " + err.message
+            });
         });
     };
-    ;
     ClienteServicio.prototype.obtenerSaldoDeFacturas = function (cliente, configuracionDecimales, callback, callbackError) {
         SONDA_DB_Session.transaction(function (tx) {
             var sql = "SELECT ";
@@ -228,10 +267,12 @@ var ClienteServicio = (function () {
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener facturas vencidas: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener facturas vencidas: " + err.message
+            });
         });
     };
-    ;
     ClienteServicio.prototype.obtenerSaldoDeOrdenesDeVenta = function (cliente, configuracionDecimales, callback, callbackError) {
         SONDA_DB_Session.transaction(function (tx) {
             var sql = "SELECT ";
@@ -249,20 +290,23 @@ var ClienteServicio = (function () {
                 else {
                     cliente.cuentaCorriente.saldoActualDeOrdenesDeVenta += trunc_number(0, configuracionDecimales.defaultCalculationsDecimals);
                 }
-                cliente.cuentaCorriente.saldoActual += cliente.cuentaCorriente.saldoActualDeOrdenesDeVenta;
+                cliente.cuentaCorriente.saldoActual +=
+                    cliente.cuentaCorriente.saldoActualDeOrdenesDeVenta;
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener facturas vencidas: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener facturas vencidas: " + err.message
+            });
         });
     };
-    ;
     ClienteServicio.prototype.validarDatosGeneralesCuentaCorriente = function (cliente, callback, callbackError) {
         var _this = this;
         try {
-            this.tareaServicio.obtenerRegla('NoValidarAntiguedadDeSaldos', function (reglas) {
+            this.tareaServicio.obtenerRegla("NoValidarAntiguedadDeSaldos", function (reglas) {
                 if (reglas.length > 0) {
-                    if (reglas[0].enabled === 'Si') {
+                    if (reglas[0].enabled === "Si") {
                         callback(cliente);
                     }
                     else {
@@ -285,29 +329,47 @@ var ClienteServicio = (function () {
             });
         }
         catch (err) {
-            callbackError({ codigo: -1, mensaje: "Error al validar cuenta corriente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al validar cuenta corriente: " + err.message
+            });
         }
     };
     ClienteServicio.prototype.validarAntiguedadDeSaldos = function (cliente, callback, callbackError) {
         try {
             if (cliente.cuentaCorriente.facturasVencidas) {
-                callbackError({ codigo: -1, mensaje: "Tiene facturas vencidas" });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "Tiene facturas vencidas"
+                });
             }
             else if (cliente.cuentaCorriente.limiteDeCredito <= 0) {
-                callbackError({ codigo: -1, mensaje: "El cliente no tiene configurado el límite de crédito" });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "El cliente no tiene configurado el límite de crédito"
+                });
             }
             else if (cliente.cuentaCorriente.diasCredito <= 0) {
-                callbackError({ codigo: -1, mensaje: "El cliente no tiene configurado la cantidad de días de crédito" });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "El cliente no tiene configurado la cantidad de días de crédito"
+                });
             }
             else if (cliente.cuentaCorriente.diasCreditoVencidos) {
-                callbackError({ codigo: -1, mensaje: "Tiene una factura emitida que ya vencieron los días de crédito" });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "Tiene una factura emitida que ya vencieron los días de crédito"
+                });
             }
             else {
                 callback(cliente);
             }
         }
         catch (err) {
-            callbackError({ codigo: -1, mensaje: "Error al validar cuenta corriente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al validar cuenta corriente: " + err.message
+            });
         }
     };
     ClienteServicio.prototype.validarCuentaCorriente = function (cliente, listasku, ordenDeVentaTipo, configuracionDecimales, callback, callbackError) {
@@ -315,38 +377,46 @@ var ClienteServicio = (function () {
             var totalSku = 0;
             for (var i = 0; i < listasku.length; i++) {
                 var sku = listasku[i];
-                totalSku += trunc_number((sku.qty * sku.cost), configuracionDecimales.defaultCalculationsDecimals);
+                totalSku += trunc_number(sku.qty * sku.cost, configuracionDecimales.defaultCalculationsDecimals);
             }
             if (ordenDeVentaTipo === OrdenDeVentaTipo.Contado) {
                 callback(cliente);
             }
             else {
-                if (trunc_number((cliente.cuentaCorriente.saldoActual + cliente.totalAmout + totalSku), configuracionDecimales.defaultCalculationsDecimals) <= trunc_number((cliente.cuentaCorriente.limiteDeCredito), configuracionDecimales.defaultCalculationsDecimals)) {
+                if (trunc_number(cliente.cuentaCorriente.saldoActual + cliente.totalAmout + totalSku, configuracionDecimales.defaultCalculationsDecimals) <=
+                    trunc_number(cliente.cuentaCorriente.limiteDeCredito, configuracionDecimales.defaultCalculationsDecimals)) {
                     my_dialog("", "", "closed");
                     callback(cliente);
                 }
                 else {
                     my_dialog("", "", "close");
-                    callbackError({ codigo: -1, mensaje: "El crédito es insuficiente" });
+                    callbackError({
+                        codigo: -1,
+                        mensaje: "El crédito es insuficiente"
+                    });
                 }
             }
         }
         catch (err) {
-            callbackError({ codigo: -1, mensaje: "Error al validar cuenta corriente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al validar cuenta corriente: " + err.message
+            });
         }
     };
     ClienteServicio.prototype.enviarSolicitudParaObtenerCuentaCorriente = function (socketIo, cliente, opcionValidarSaldoCliente, ordenDeVentaTipo, callback, callbackError) {
         try {
             var data = {
-                'Total': cliente.totalAmout + cliente.cuentaCorriente.saldoActualDeOrdenesDeVenta,
-                'CodeCustomer': cliente.clientId,
-                'sku': "",
-                'cantidad': 0,
-                'source': opcionValidarSaldoCliente,
-                'salesOrderType': ordenDeVentaTipo,
-                'dbuser': gdbuser,
-                'dbuserpass': gdbuserpass,
-                'routeid': gCurrentRoute
+                Total: cliente.totalAmout +
+                    cliente.cuentaCorriente.saldoActualDeOrdenesDeVenta,
+                CodeCustomer: cliente.clientId,
+                sku: "",
+                cantidad: 0,
+                source: opcionValidarSaldoCliente,
+                salesOrderType: ordenDeVentaTipo,
+                dbuser: gdbuser,
+                dbuserpass: gdbuserpass,
+                routeid: gCurrentRoute
             };
             socketIo.emit("GetCurrentAccountByCustomer", data);
             callback(cliente);
@@ -377,8 +447,24 @@ var ClienteServicio = (function () {
                 sql += " ,C.RGA_CODE";
                 sql += " ,C.PRICE_LIST_ID";
                 sql += " FROM CLIENTS C";
-                sql += " WHERE C.CLIENT_ID NOT IN(SELECT RELATED_CLIENT_CODE FROM PRESALES_ROUTE) AND";
-                sql += " (C.CLIENT_ID LIKE '" + "%" + criterio + "%" + "' OR C.CLIENT_NAME LIKE '" + "%" + criterio + "%" + "' OR C.ADDRESS LIKE '" + "%" + criterio + "%" + "' OR C.RGA_CODE = '" + criterio + "' )";
+                sql +=
+                    " WHERE C.CLIENT_ID NOT IN(SELECT RELATED_CLIENT_CODE FROM PRESALES_ROUTE) AND";
+                sql +=
+                    " (C.CLIENT_ID LIKE '" +
+                        "%" +
+                        criterio +
+                        "%" +
+                        "' OR C.CLIENT_NAME LIKE '" +
+                        "%" +
+                        criterio +
+                        "%" +
+                        "' OR C.ADDRESS LIKE '" +
+                        "%" +
+                        criterio +
+                        "%" +
+                        "' OR C.RGA_CODE = '" +
+                        criterio +
+                        "' )";
                 tx.executeSql(sql, [], function (tx, results) {
                     for (var i = 0; i < results.rows.length; i++) {
                         var clienteTemp = results.rows.item(i);
@@ -406,7 +492,10 @@ var ClienteServicio = (function () {
                     callback(clientes);
                 });
             }, function (err) {
-                callbackError({ codigo: -1, mensaje: "Error al obtener el Cliente: " + err.message });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "Error al obtener el Cliente: " + err.message
+                });
             });
         }
         catch (err) {
@@ -442,7 +531,10 @@ var ClienteServicio = (function () {
                 callback(cliente);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener etiquetas del Cliente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener etiquetas del Cliente: " + err.message
+            });
         });
     };
     ClienteServicio.prototype.obtnerFormatoSqlDeInsertarClienteModificado = function (cliente, sequence) {
@@ -464,7 +556,10 @@ var ClienteServicio = (function () {
                 }
                 callback(cliente);
             }, function (err) {
-                callbackError({ codigo: -1, mensaje: "Error al insertar el los cambios del cliente: " + err.message });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "Error al insertar el los cambios del cliente: " + err.message
+                });
             });
         });
     };
@@ -487,7 +582,10 @@ var ClienteServicio = (function () {
             sql += " ,T.TAG_PRIORITY";
             sql += " ,T.TAG_COMMENTS";
             sql += " FROM TAGS T";
-            sql += " LEFT JOIN TAGS_X_CUSTOMER TC ON (T.TAG_COLOR = TC.TAG_COLOR) AND CUSTOMER = '" + cliente.clientId + "'";
+            sql +=
+                " LEFT JOIN TAGS_X_CUSTOMER TC ON (T.TAG_COLOR = TC.TAG_COLOR) AND CUSTOMER = '" +
+                    cliente.clientId +
+                    "'";
             sql += " WHERE CUSTOMER IS NULL";
             tx.executeSql(sql, [], function (tx, results) {
                 var listaEtiquetas = [];
@@ -504,7 +602,10 @@ var ClienteServicio = (function () {
                 callback(listaEtiquetas);
             });
         }, function (err) {
-            callbackError({ codigo: -1, mensaje: "Error al obtener etiquetas no asociadas al cliente: " + err.message });
+            callbackError({
+                codigo: -1,
+                mensaje: "Error al obtener etiquetas no asociadas al cliente: " + err.message
+            });
         });
     };
     ClienteServicio.prototype.obtenerClienteBo = function (cliente, callback, callbackError) {
@@ -521,12 +622,18 @@ var ClienteServicio = (function () {
                         cliente.clientId = clienteTemp.CLIENT_ID;
                     }
                     else {
-                        callbackError({ codigo: -1, mensaje: "Error al obtener el codigo de cliente: Sin resultados" });
+                        callbackError({
+                            codigo: -1,
+                            mensaje: "Error al obtener el codigo de cliente: Sin resultados"
+                        });
                     }
                     callback(cliente);
                 });
             }, function (err) {
-                callbackError({ codigo: -1, mensaje: "Error al obtener el codigo de cliente: " + err.message });
+                callbackError({
+                    codigo: -1,
+                    mensaje: "Error al obtener el codigo de cliente: " + err.message
+                });
             });
         }
         catch (err) {

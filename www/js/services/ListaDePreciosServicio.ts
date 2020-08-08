@@ -83,9 +83,9 @@
             let sql = "";
             SONDA_DB_Session.transaction((trans) => {
 
-                sql = `DELETE FROM PRICE_LIST_BY_SKU_PACK_SCALE WHERE CODE_PRICE_LIST = '${paqueteDeListaDePrecios[0].CODE_PRICE_LIST}'`;
-                console.log(sql);
-                trans.executeSql(sql);
+                //sql = `DELETE FROM PRICE_LIST_BY_SKU_PACK_SCALE WHERE CODE_PRICE_LIST = '${paqueteDeListaDePrecios[0].CODE_PRICE_LIST}'`;
+                //console.log(sql);
+                //trans.executeSql(sql);
 
                 for (let i=0; i < paqueteDeListaDePrecios.length; i++) {
                     let listaDePrecio = paqueteDeListaDePrecios[i];
