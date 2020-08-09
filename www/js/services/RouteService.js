@@ -656,6 +656,7 @@ function NoGetSkuPreSaleFound(data) {
   );
 }
 
+var isNullsku = 0
 function AddToSkuPreSale(data) {
   var pSql = "";
 
@@ -672,6 +673,7 @@ function AddToSkuPreSale(data) {
   pSql += " , HANDLE_DIMENSION";
   pSql += " , OWNER";
   pSql += " , OWNER_ID";
+  pSql += " , BARCODE_SKU";
   pSql += " )VALUES(";
   pSql += " '" + data.row.WAREHOUSE + "'";
   pSql += " , '" + data.row.SKU + "'";
@@ -696,8 +698,12 @@ function AddToSkuPreSale(data) {
   }
   pSql += " , '" + data.row.OWNER + "'";
   pSql += " , '" + data.row.OWNER_ID + "'";
+  pSql += " , '" + (data.row.BARCODE_SKU || '') + "'";
   pSql += " )";
-
+  
+  if (Math.random() < 0.0005 || data.row.BARCODE_SKU == '7891153033082') {
+    console.log(pSql)
+  }
   window.gInsertsInitialRoute.push(pSql);
 }
 

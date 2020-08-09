@@ -136,7 +136,8 @@ var SkuServicio = (function () {
             }
             if (filtro.length > 0) {
                 sql += " AND (SP.SKU LIKE '%" + filtro + "%'";
-                sql += " OR SP.SKU_NAME LIKE '%" + filtro + "%')";
+                sql += " OR SP.SKU_NAME LIKE '%" + filtro + "%'";
+                sql += " OR SP.BARCODE_SKU LIKE '%" + filtro + "%')";
             }
             sql += " ORDER BY " + opcionDeOrdenamiento + " " + tipoDeOrdenamiento;
             sql += " LIMIT 100";
