@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="201601315" id="mobility.sonda.route" version="2020.8.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="201601315" id="mobility.sonda.route" version="2020.8.10" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SondaRoute</name>
     <description>
         Sales and Operations Network Digital Assitant
@@ -36,7 +36,6 @@
     <preference name="SuppressesIncrementalRendering" value="True" />
     <preference name="AndroidLaunchMode" value="singleTop" />
     <engine name="android" spec="^6.2.3" />
-    <plugin name="com.phonegap.plugins.barcodescanner" spec="2.0.1" />
     <plugin name="com.teamnemitoff.phonedialer" spec="0.3.0" />
     <plugin name="cordova-plugin-android-gpsdetect" spec="0.0.3" />
     <plugin name="cordova-plugin-badge" spec="^0.8.8" />

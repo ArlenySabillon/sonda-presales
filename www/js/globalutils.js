@@ -95,7 +95,7 @@ var SondaServerURL = "";
 
 var currentBranch = "Pacasa";
 var currentSprint = "Agosto1";
-var SondaVersion = "2020.8.8";
+var SondaVersion = "2020.8.10";
 var SondaServerOptions = {
   reconnect: true,
   "max reconnection attempts": 60000

@@ -166,8 +166,9 @@ function InsertarRegistrosBDCompleta(callBack, errorCallBack) {
         console.log("Error al procesar instruccion SQL de inicio de ruta =>");
         console.log({
           "Ejecucion No.": iterationNumber,
-          Instruccion: lastQuery
+          Instruccion: window.gInsertsInitialRoute[iterationNumber]
         });
+        console.error(error)
         errorCallBack(error.message);
       }
     );
@@ -698,12 +699,9 @@ function AddToSkuPreSale(data) {
   }
   pSql += " , '" + data.row.OWNER + "'";
   pSql += " , '" + data.row.OWNER_ID + "'";
-  pSql += " , '" + (data.row.BARCODE_SKU || '') + "'";
+  pSql += " , '" + (data.row.BARCODE_SKU.replace("'", '') || '') + "'";
   pSql += " )";
-  
-  if (Math.random() < 0.0005 || data.row.BARCODE_SKU == '7891153033082') {
-    console.log(pSql)
-  }
+    
   window.gInsertsInitialRoute.push(pSql);
 }
 

@@ -7,7 +7,6 @@
             "android"
         ],
         "plugins": {
-            "com.phonegap.plugins.barcodescanner": {},
             "com.teamnemitoff.phonedialer": {},
             "cordova-plugin-android-gpsdetect": {},
             "cordova-plugin-battery-status": {},
@@ -40,7 +39,6 @@
         }
     },
     "dependencies": {
-        "com.phonegap.plugins.barcodescanner": "2.0.1",
         "com.teamnemitoff.phonedialer": "0.3.0",
         "cordova-android": "^6.2.3",
         "cordova-plugin-android-gpsdetect": "0.0.3",
