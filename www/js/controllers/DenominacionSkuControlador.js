@@ -569,6 +569,12 @@ var DenominacionSkuControlador = (function () {
                     value: p.codePackUnit
                 });
             });
+            listaDeUnidadesDeMedida_1 = listaDeUnidadesDeMedida_1.reduce((a, b) => {
+                if (a.filter(a => a.value == b.value).length == 0) {
+                    a.push(b)
+                }
+                return a
+            }, [])
             var configOptions = {
                 title: "Listado de Unidades de Medida",
                 items: listaDeUnidadesDeMedida_1,
