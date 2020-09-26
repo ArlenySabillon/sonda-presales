@@ -4800,9 +4800,9 @@ function navigateto() {
     var pUrl = gtaskgps.split(",");
 
     //launchnavigator.navigateByLatLon(pUrl[0], pUrl[1], function(){}, function(err){});
-    var pGPS = "waze://?ll=" + pUrl[0] + "," + pUrl[1] + "&navigate=yes";
-
-    WazeLink.open(pGPS);
+    var pGPS = `https://www.waze.com/ul?ll=${gtaskgps}&navigate=yes`;
+    
+    window.open(encodeURI(pGPS), '_blank', 'location=yes')
   } catch (e) {
     notify(e.message);
   }
