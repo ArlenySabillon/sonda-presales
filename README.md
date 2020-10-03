@@ -24,13 +24,3 @@ tsc
 ```bash
 cordova build android
 ```
-
-
-## Config
-El archivo `conf.json` va aquí:
-```Memoria interna\Android\data\mobility.sonda.sd\files```
-
-El formato es:
-```json
-{"url":"<URL DEL CLIENTE>"}
-```

@@ -1,14 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="201601315" id="mobility.sonda.sd" version="2020.9.18" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>SondaSD</name>
+<widget android-versionCode="201601315" id="mobility.sonda.route" version="2020.9.19" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>SondaRoute</name>
     <description>
         Sales and Operations Network Digital Assitant
     </description>
-    <author email="soporte@mobilityscm.com" href="http://www.mobilityscm.com/">
-        MobilitySCM
+    <author email="soporte@procesoseficientes.com" href="http://www.procesoseficientes.com/">
+        Procesos Eficientes
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <icon src="res/icon.png" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
@@ -23,7 +24,7 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <preference name="KeepRunning" value="True" />
-    <preference name="LoadingDialog" value="SondaSD,Cargando..." />
+    <preference name="LoadingDialog" value="SondaRoute,Cargando..." />
     <preference name="ShowTitle" value="True" />
     <preference name="Fullscreen" value="false" />
     <preference name="Orientation" value="portrait" />

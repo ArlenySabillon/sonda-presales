@@ -2,58 +2,41 @@ var ConfirmacionDePagoControlador = (function () {
     function ConfirmacionDePagoControlador(mensajero) {
         this.mensajero = mensajero;
         this.pagoProcesado = new PagoDeFacturaVencidaEncabezado();
-        this.pagoServicio = new PagoServicio();
-        this.tokenDePago = mensajero.subscribe(this.pagoEntregado, getType(PagoMensaje), this);
+        this.pagoServicio = new PagoDeFacturaVencidaServicio();
+        this.funcionDeRetornoAPocesoPrincipal = null;
+        this.tokenDePago = mensajero.subscribe(this.pagoEntregado, getType(PagoDeFacturaVencidaMensaje), this);
     }
     ConfirmacionDePagoControlador.prototype.pagoEntregado = function (message, subscriber) {
         subscriber.pagoProcesado = message.pago;
         subscriber.clienteProcesado = message.cliente;
+        subscriber.funcionDeRetornoAPocesoPrincipal =
+            message.funcionDeRetornoAPocesoPrincipal;
     };
     ConfirmacionDePagoControlador.prototype.delegarConfirmacionDePagoControlador = function () {
-        var _this_1 = this;
+        var _this = this;
         $("#UiPaymentConfirmationPage").on("pageshow", function () {
-            _this_1.cargarDatosPrincipales();
+            _this.cargarDatosPrincipales();
         });
         $("#UiBtnPaymentConfirmed").on("click", function () {
-            _this_1.definirPantallaDeDestinoEnBaseAParametroDePorcentajeMinimoDePago(function (pantallaDeDestino) {
-                _this_1.irAPantalla(pantallaDeDestino);
+            _this.definirPantallaDeDestinoEnBaseAParametroDePorcentajeMinimoDePago(function () {
+                window.history.back();
             });
         });
         $("#UiBtnPrintPaidProcessed").on("click", function () {
-            _this_1.pagoProcesado.printsQuantity = 0;
+            _this.pagoProcesado.printsQuantity = 0;
             InteraccionConUsuarioServicio.bloquearPantalla();
-            _this_1.imprimirDocumentoDePago(function () {
+            _this.imprimirDocumentoDePago(function () {
                 InteraccionConUsuarioServicio.desbloquearPantalla();
             });
         });
     };
-    ConfirmacionDePagoControlador.prototype.irAPantalla = function (pantalla) {
-        $.mobile.changePage("#" + pantalla, {
-            transition: "pop",
-            reverse: false,
-            changeHash: false,
-            showLoadMsg: false
-        });
-    };
     ConfirmacionDePagoControlador.prototype.definirPantallaDeDestinoEnBaseAParametroDePorcentajeMinimoDePago = function (callback) {
-        var _this_1 = this;
-        var procesarVentaDeCliente = function () {
-            var nitDeCliente = $("#txtNIT");
-            nitDeCliente.val(gNit);
-            nitDeCliente = null;
-            ShowSkusToPOS();
-        };
+        var _this = this;
         if (this.pagoProcesado.validateMinimumPercentOfPaid) {
             if (this.pagoProcesado.percentCoveredWhitThePaid >=
                 this.pagoProcesado.minimumPercentOfPaid) {
                 this.enviarInformacionDeDetalleDePagos(function () {
-                    if (_this_1.pagoProcesado.paymentType ===
-                        TipoDePagoDeFactura.FacturaVencida) {
-                        procesarVentaDeCliente();
-                    }
-                    else {
-                        ShorSummaryPage();
-                    }
+                    _this.funcionDeRetornoAPocesoPrincipal();
                 });
             }
             else {
@@ -61,31 +44,17 @@ var ConfirmacionDePagoControlador = (function () {
             }
         }
         else {
-            if (this.pagoProcesado.paymentType === TipoDePagoDeFactura.FacturaVencida) {
-                this.regresarAPantallaDeFacturasVendidasDebidoANoAlcanzarElPagoMinimoParaNuevaVenta(null, callback);
-            }
-            else {
-                ShorSummaryPage();
-                notify("Puede seguir con el proceso de facturación.");
-            }
+            this.enviarInformacionDeDetalleDePagos(function () {
+                _this.funcionDeRetornoAPocesoPrincipal();
+                notify("Puede seguir con el proceso de venta.");
+            });
         }
     };
     ConfirmacionDePagoControlador.prototype.regresarAPantallaDeFacturasVendidasDebidoANoAlcanzarElPagoMinimoParaNuevaVenta = function (porcentajeMinimo, callback) {
-        var _this_1 = this;
-        if (this.pagoProcesado.paymentType === TipoDePagoDeFactura.FacturaVencida) {
-            publicarClienteParaProcesoDeCobroDeFacturasVencidas(function () {
-                _this_1.enviarInformacionDeDetalleDePagos(function () {
-                    callback("UiOverdueInvoicePaymentPage");
-                });
-            });
-        }
-        else {
-            this.enviarInformacionDeClientePertenecienteAlPagoActual(function () {
-                _this_1.enviarInformacionDeDetalleDePagos(function () {
-                    callback("UiOverdueInvoicePaymentPage");
-                });
-            });
-        }
+        var _this = this;
+        this.enviarInformacionDeClientePertenecienteAlPagoActual(function () {
+            _this.enviarInformacionDeDetalleDePagos(callback);
+        });
         notify("El pago realizado no cubre el porcentaje: " + (porcentajeMinimo ? porcentajeMinimo : 100) + "% m\u00EDnimo necesario para realizar una nueva venta.");
     };
     ConfirmacionDePagoControlador.prototype.cargarDatosPrincipales = function () {
@@ -95,17 +64,17 @@ var ConfirmacionDePagoControlador = (function () {
         etiquetaDePagoProcesado = null;
     };
     ConfirmacionDePagoControlador.prototype.imprimirDocumentoDePago = function (callback) {
-        var _this_1 = this;
+        var _this = this;
         try {
-            if (this.pagoProcesado.printsQuantity === 2)
+            if (this.pagoProcesado.printsQuantity === 2) {
                 return callback();
+            }
             this.pagoServicio.imprimirPago(this.pagoProcesado, function () {
-                _this_1.pagoProcesado.isReprint = true;
-                _this_1.pagoProcesado.printsQuantity++;
-                _this_1.imprimirDocumentoDePago(callback);
+                _this.pagoProcesado.isReprint = true;
+                _this.pagoProcesado.printsQuantity++;
+                _this.imprimirDocumentoDePago(callback);
             }, function (error) {
                 InteraccionConUsuarioServicio.desbloquearPantalla();
-                console.log("Error al imprimir el documento de pago debido a: " + error);
                 notify("Ha ocurrido un error al imprimir el documento de pago, por favor vuelva a intentar.");
             });
         }
@@ -129,8 +98,7 @@ var ConfirmacionDePagoControlador = (function () {
         this.mensajero.publish(clienteMensaje, getType(ClienteMensaje));
         callback();
     };
-    ConfirmacionDePagoControlador.prototype.enviarSolicitudDeActualizacionDeInformacionDePagoActual = function () {
-    };
+    ConfirmacionDePagoControlador.prototype.enviarSolicitudDeActualizacionDeInformacionDePagoActual = function () { };
     return ConfirmacionDePagoControlador;
 }());
 //# sourceMappingURL=ConfirmacionDePagoControlador.js.map
