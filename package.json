@@ -1,6 +1,6 @@
 {
     "name": "mobility.sonda.route",
-    "version": "2020.10.15",
+    "version": "2020.11.10",
     "displayName": "SondaRoute",
     "cordova": {
         "platforms": [
@@ -8,7 +8,6 @@
         ],
         "plugins": {
             "com.phonegap.plugins.barcodescanner": {},
-            "com.teamnemitoff.phonedialer": {},
             "cordova-plugin-android-gpsdetect": {},
             "cordova-plugin-battery-status": {},
             "cordova-plugin-camera": {},
@@ -17,7 +16,6 @@
             "cordova-plugin-dialogs": {},
             "cordova-plugin-file": {},
             "cordova-plugin-geolocation": {},
-            "cordova-plugin-linkos-plugin": {},
             "cordova-plugin-listpicker": {},
             "cordova-plugin-media": {},
             "cordova-plugin-network-information": {},
@@ -28,19 +26,16 @@
             "cordova-plugin-whitelist": {},
             "cordova-plugin-x-toast": {},
             "cordova.plugins.diagnostic": {},
-            "cr.encke.WazeLink": {},
             "de.appplant.cordova.plugin.badge": {},
             "es6-promise-plugin": {},
             "uk.co.workingedge.phonegap.plugin.launchnavigator": {},
             "cordova-plugin-badge": {},
             "phonegap-plugin-barcodescanner": {},
-            "cordova-plugin-bluetooth-serial": {},
-            "nl.x-services.plugins.toast": {}
+            "cordova-plugin-bluetooth-serial": {}
         }
     },
     "dependencies": {
         "com.phonegap.plugins.barcodescanner": "2.0.1",
-        "com.teamnemitoff.phonedialer": "0.3.0",
         "cordova-android": "^6.2.3",
         "cordova-plugin-android-gpsdetect": "0.0.3",
         "cordova-plugin-badge": "^0.8.8",
@@ -53,7 +48,6 @@
         "cordova-plugin-dialogs": "^1.2.0",
         "cordova-plugin-file": "^3.0.0",
         "cordova-plugin-geolocation": "^2.1.0",
-        "cordova-plugin-linkos-plugin": "0.0.1",
         "cordova-plugin-listpicker": "^2.2.1",
         "cordova-plugin-media": "^1.0.1",
         "cordova-plugin-network-information": "^1.3.2",
@@ -64,11 +58,9 @@
         "cordova-plugin-whitelist": "^1.3.4",
         "cordova-plugin-x-toast": "^2.6.0",
         "cordova.plugins.diagnostic": "^3.4.2",
-        "cr.encke.WazeLink": "1.0.1",
         "de.appplant.cordova.plugin.badge": "^0.7.1",
         "es6-promise-plugin": "^3.0.2",
         "phonegap-plugin-barcodescanner": "^6.0.8",
-        "uk.co.workingedge.phonegap.plugin.launchnavigator": "^2.9.7",
-        "nl.x-services.plugins.toast": "2.0.4"
+        "uk.co.workingedge.phonegap.plugin.launchnavigator": "^2.9.7"
     }
 }

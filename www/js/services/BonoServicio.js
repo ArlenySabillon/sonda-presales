@@ -23,7 +23,7 @@ var BonoServicio = (function () {
             sql += " ,BLS.FREQUENCY";
             sql += " FROM BONUS_LIST_BY_SKU BLS";
             sql += " INNER JOIN SKU_PRESALE SP ";
-            sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+            sql += " ON (SP.SKU = BLS.CODE_SKU)";
             sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;
             sql += " AND BLS.CODE_SKU = '" + sku.sku + "'";
             sql += " ORDER BY BLS.LOW_LIMIT";
@@ -201,7 +201,7 @@ var BonoServicio = (function () {
                 sql += " ,BLS.FREQUENCY";
                 sql += " FROM BONUS_LIST_BY_SKU_MULTIPLE BLS";
                 sql += " INNER JOIN SKU_PRESALE SP ";
-                sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+                sql += " ON (SP.SKU = BLS.CODE_SKU)";
                 sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;
                 sql += " AND BLS.CODE_SKU = '" + sku.sku + "'";
                 sql += " ORDER BY BLS.MULTIPLE";
@@ -503,7 +503,7 @@ var BonoServicio = (function () {
             listaDeLi.push(" ,BLGA.FREQUENCY");
             listaDeLi.push(" FROM BONUS_LIST_BY_GENERAL_AMOUNT BLGA");
             listaDeLi.push(" INNER JOIN SKU_PRESALE SP ");
-            listaDeLi.push(" ON (SP.SKU = BLGA.CODE_SKU_BONUS)");
+            listaDeLi.push(" ON (SP.SKU = BLGA.CODE_SKU)");
             listaDeLi.push(" INNER JOIN PACK_UNIT PU ");
             listaDeLi.push(" ON (PU.PACK_UNIT = BLGA.CODE_PACK_UNIT_BONUS)");
             listaDeLi.push(" WHERE BLGA.BONUS_LIST_ID = " + cliente.bonusListId);
@@ -556,7 +556,7 @@ var BonoServicio = (function () {
             listaDeLi.push(" ,BLGA.FREQUENCY");
             listaDeLi.push(" FROM BONUS_LIST_BY_GENERAL_AMOUNT BLGA");
             listaDeLi.push(" INNER JOIN SKU_PRESALE SP ");
-            listaDeLi.push(" ON (SP.SKU = BLGA.CODE_SKU_BONUS)");
+            listaDeLi.push(" ON (SP.SKU = BLGA.CODE_SKU)");
             listaDeLi.push(" INNER JOIN PACK_UNIT PU ");
             listaDeLi.push(" ON (PU.PACK_UNIT = BLGA.CODE_PACK_UNIT_BONUS)");
             listaDeLi.push(" WHERE BLGA.BONUS_LIST_ID = " + cliente.bonusListId);
@@ -610,7 +610,7 @@ var BonoServicio = (function () {
             sql += " ,BLS.FREQUENCY";
             sql += " FROM BONUS_LIST_BY_SKU BLS";
             sql += " INNER JOIN SKU_PRESALE SP ";
-            sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+            sql += " ON (SP.SKU = BLS.CODE_SKU)";
             sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;
             sql += " ORDER BY BLS.LOW_LIMIT";
             tx.executeSql(sql, [], function (tx, results) {
@@ -662,7 +662,7 @@ var BonoServicio = (function () {
                 sql += " ,BLS.FREQUENCY";
                 sql += " FROM BONUS_LIST_BY_SKU_MULTIPLE BLS";
                 sql += " INNER JOIN SKU_PRESALE SP ";
-                sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+                sql += " ON (SP.SKU = BLS.CODE_SKU)";
                 sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;
                 sql += " ORDER BY BLS.MULTIPLE";
                 console.log(sql);
