@@ -145,6 +145,7 @@ var OrdenDeVentaServicio = (function () {
         sql += ", IS_POSTED_OFFLINE ";
         sql += ", TOTAL_AMOUNT_DISPLAY";
         sql += ", GOAL_HEADER_ID";
+        sql += ", PURCHASE_ORDER_NUMBER";
         sql += ") VALUES(";
         sql += "" + ordenDeVenta.salesOrderId;
         sql += ",'" + ordenDeVenta.terms + "'";
@@ -269,6 +270,7 @@ var OrdenDeVentaServicio = (function () {
         sql += "," + (gIsOnline === SiNo.Si ? 0 : 1);
         sql += "," + (ordenDeVenta.totalAmountDisplay ? ordenDeVenta.totalAmountDisplay : 0);
         sql += "," + ordenDeVenta.goalHeaderId;
+        sql += ordenDeVenta.purchaseOrderNumber && ordenDeVenta.purchaseOrderNumber.length ? ", '" + ordenDeVenta.purchaseOrderNumber + "'" : ", NULL";
         sql += ")";
         return sql;
     };

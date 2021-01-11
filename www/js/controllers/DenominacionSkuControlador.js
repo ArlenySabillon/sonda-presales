@@ -91,6 +91,7 @@ var DenominacionSkuControlador = (function () {
                     este.usuarioCambioCantidaDePaquete(function () {
                         este.validarBonificacionesIngresadas(function () {
                             este.validarIngresoDeDescuento(function (resultado) {
+                                console.log("valida descuento")
                                 notify(resultado.mensaje);
                             });
                         }, function (resultado) {

@@ -797,6 +797,7 @@ function ActualizarEtiqutaPorClienteHandHeld(etiquetaPorCliente) {
                 IsPostedOffline: results.rows.item(i).IS_POSTED_OFFLINE,
                 GoalHeaderId: results.rows.item(i).GOAL_HEADER_ID,
                 TotalAmountDisplay: results.rows.item(i).TOTAL_AMOUNT_DISPLAY,
+                PurchaseOrderNumber: results.rows.item(i).PURCHASE_ORDER_NUMBER,
                 SaleDetails: []
               };
               ordenesDeCompra.push(ordenDeCompra);

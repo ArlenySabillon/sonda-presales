@@ -211,6 +211,9 @@ var ResumenDePedidoControlador = (function () {
             this.mostrarTipoDePago();
         }
         uiListaFormaDePago = null;
+        var uiLblReferenciaOrdenDeCompra = $("#UiLblReferenciaOrdenDeCompra");
+        uiLblReferenciaOrdenDeCompra.text(this.cliente.purchaseOrderNumber);
+        uiLblReferenciaOrdenDeCompra = null;
         callback();
     };
     ResumenDePedidoControlador.prototype.mostrarTipoDePago = function () {
@@ -721,6 +724,7 @@ var ResumenDePedidoControlador = (function () {
                     ordenDeVenta.goalHeaderId = localStorage.getItem("GOAL_HEADER_ID")
                         ? parseInt(localStorage.getItem("GOAL_HEADER_ID"))
                         : null;
+                    ordenDeVenta.purchaseOrderNumber = controlador.cliente.purchaseOrderNumber;
                     var total = 0;
                     var lineSequence = 0;
                     var ordenDeVentaDetalle = new OrdenDeVentaDetalle();

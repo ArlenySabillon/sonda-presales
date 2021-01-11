@@ -4,6 +4,7 @@ var OrdenDeVenta = (function () {
         this.isPostedOffLine = 0;
         this.deviceNetworkType = "";
         this.goalHeaderId = 0;
+        this.purchaseOrderNumber = "";
     }
     return OrdenDeVenta;
 }());

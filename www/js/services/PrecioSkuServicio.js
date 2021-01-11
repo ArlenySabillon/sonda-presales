@@ -28,7 +28,7 @@ var PrecioSkuServicio = (function () {
             tx.executeSql(listaParaEjecucion.join(""), [], function (tx, results) {
                 if (results.rows.length > 0) {
                     var stPaquete = results.rows.item(0);
-                    if (sku.canNegotiatePrice && sku.skuPrice > 0) {
+                    if (sku.skuPrice > 0) {
                         paquete.price = trunc_number(sku.canNegotiatePrice ? sku.cost : sku.skuPrice, decimales.defaultCalculationsDecimals);
                         paquete.originalPrice = trunc_number(sku.originalPrice, decimales.defaultCalculationsDecimals);
                     }

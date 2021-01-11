@@ -1,47 +1,40 @@
-var mensajero;
+﻿var mensajero;
+var currencySymbol = "Q";
+var configurationDecimalsForResummePage = {};
+var resumeInvoiceObject = {};
+var methodCalculationType = "";
+var gcountPrints = 0;
+var mainInvoiceHasBeenPrinted = false;
+var invoiceCopyHasBeenPrinted = false;
 var gMaxImpresiones = 5;
 var pictureSource; // picture source
 var destinationType; // sets the format of returned value
 var SONDA_DB_Session;
 var gInvoiceNUM;
+var gInvocingTotal = 0;
+var gInvocingTotalToSave = 0;
 var gTotalInvoiced = new Number();
 var gTotalInvoicesProc = new Number();
-var gClientName = "";
-var gClientID = "";
-var gpackages = new Number();
-var pSignature = "";
-var gSignated = false;
-var gSignatedDelivery = false;
-var gTimeout = 0;
-var gTimeout2 = 0;
-var gdbuserpass = "";
-var gdbuser = "";
-var gLastGPS = "";
-var gtaskStatus = "";
-var gTaskIsFrom = "";
-var estaEnControlDeFinDeRuta = false;
-var tipoDeRedALaQueEstaConectadoElDispositivo = "";
-
-var gPACKAGES_ToDeliver = "";
-var gRELATED_CLIENT_NAME_ToDeliver = "";
-var gDESTINATION_CLIENTNAME_ToDeliver = "";
-
-var gNoVisitDesc = "";
-var gpicture = default_image;
-var gUserCD = 0;
-var gLoginStatus = "CLOSED";
-var pNewGuideID = "";
-var gTaskOffPlanID = 0;
-var gGuideToDeliver = "";
-var gInputedName_formated = "";
-var gInputedAdress_formated = "";
-
-var gGuideScannedPacks = parseInt(0);
-var gManifestID = parseInt(0);
-var gManifestPresent = parseInt(0);
-
-var canvas;
-var signaturePad;
+var gSkuList = new Array();
+var facturaTieneConsignacion = false;
+var vieneDeIngresoCantidad = false;
+var vieneDeListadoDeDocumentosDeEntrega = false;
+var esEntregaParcial = false;
+var estaEnEscaneoDeRga = false;
+var esFacturaDeEntrega = false;
+var demandaDeDespachoEnProcesoDeEntrega;
+var gDefaultWhs = "";
+var gBranchName = "";
+var gCompanyName = "";
+var gBranchAddress = "";
+var pInvoiceJson;
+var gPhoneNumber = "";
+var gCarrierName = "";
+var gClientCode = "";
+var gTaskId = null;
+var gTaskType = "";
+var gCountReload = 0;
+var gDiscount = 0;
 
 var gBatteryLevel = 0;
 var gSKUsJson = "";
@@ -49,23 +42,43 @@ var gNetworkState = 0;
 var gPrepared = 0;
 var gPanelOptionsIsOpen = 0;
 var pPOSStatus = "CLOSED";
-var gtaskid = 0;
-var gTaskOffPlan = 0;
-var gtaskgps = "";
-var socket;
+var pCpCl = "";
 var states = {};
 var gMyLocalIP = "";
 var pUserID = "";
-var gUserCode = 0;
 var socketConnectTimeInterval;
 var gPrintAddress = "";
 var gBankName = "";
+var gdbuser = "";
+var gdbuserpass = "";
 
-var gBranches = [];
+var gVoidReasons = [];
 var gBankAccounts = [];
-var objetoImagen;
-var gInsertsInitialRoute = [];
 var gSelectedAccount;
+var gCalculaImpuesto = false;
+var gImpuestoDeFactura = 0;
+var gUsuarioEntraAResumenDeFacturacionDesdeListadoDeSkus = true;
+var gNit = "";
+var gClientName = "";
+var lastDeliveryNoteId = 0;
+var listaDeDetalleDeDemandaDeDespachoParaProcesoDeEntrega = [];
+var listaDeDemandasDeDespachoEnProcesoDeEntrega = [];
+var esEntregaConsolidada = false;
+var esEntregaPorDocumento = false;
+var guardarInventarioDeFacturaCancelada = false;
+var estaEnFacturaTemporal = false;
+
+var tokenListaDeDetalleDeDemandaDeDespachoConsolidado;
+var clienteProcesadoConInformacionDeCuentaCorrienteParaPagoDeFacturasAbiertas;
+var clienteProcesadoConInformacionDeCuentaCorriente;
+
+var _globalUtils = this;
+var tipoDePagoProcesadoEnCobroDeFacturasVencidas;
+
+var SondaServerURL = ""; //DA
+
+var logOb;
+
 var gTaskType = "";
 var gCurrentRoute = "";
 var gDefaultWhs = "";
@@ -93,165 +106,156 @@ var default_image;
 //var SondaServerURL = "http://190.56.115.27:9596"; //IP Publica Servidor QA Mobility
 var SondaServerURL = "";
 
-var currentBranch = "Pacasa";
-var currentSprint = "Agosto1";
-var SondaVersion = "2020.9.26";
+var currentBranch = "cendalzaRoute";
+var SondaVersion = "2020.11.10";
 var SondaServerOptions = {
   reconnect: true,
   "max reconnection attempts": 60000
 };
-
 var gCurrentGPS = "0,0";
+var gImageURI_1 = "";
+var gImageURI_2 = "";
+var gImageURI_3 = "";
+var gImageURI_Deposit = "";
+var gInitialTaskImage = "";
 
-var gNewTask = 1;
+var gPagado = 0;
 var gPrinterIsAvailable = 0;
 var gLastLogin = "";
-var gLoggedUser = "";
+var gCurrentRoute = "";
+var gRouteReturnWarehouse = "";
 var gIsOnline = 0;
+
+var pCurrentInvoiceID = 0;
+var pCurrentNoteID = 0;
+
+var pCurrentSAT_Resolution = 0;
+var pCurrentSAT_Res_Serie = 0;
+
+var pCurrentSAT_Resolution_notes = 0;
+var pCurrentSAT_Res_Serie_notes = 0;
+
+var pCurrentSAT_Res_DocStart = 0;
+var pCurrentSAT_Res_DocFinish = 0;
+var pCurrentSAT_Res_Date = "";
+
+var pCurrentSAT_Res_DocStart_notes = 0;
+var pCurrentSAT_Res_DocFinish_notes = 0;
+var pCurrentSAT_Res_Date_notes = "";
+
+var pCurrentDepositID = 0;
+
+var gTotalDeposited = new Number();
 
 var gHeaderSerial = "";
 var gDetailSerial = "";
 
+var gTaskOnRoutePlan = 1;
+var gIsOnNotificationPage = false;
+
+var currentBranch = "G-Force@Jakarta";
+var SondaVersion = "9.2.1";
+
+var estaEnConfirmacionDeFacturacion = false;
+
+var gPuedeIniciarRuta = false;
+var gInvoiceHeader;
+
+// INFO: variables globales para controladores
+var imagenDeEntregaControlador;
+var firmaControlador;
+var manifiestoControlador;
+var estadisticaDeVentaPorDiaControlador;
+var estadisticaDeVentaControlador;
+var resumenDeTareaControlador;
+var tareaControladorADelegar;
+var confirmacionControlador;
+
+// INFO: variable global para observacion de posicionamiento
+var identificadorDeObservacionDePosicionamiento = null;
+
+// INFO: variables globales para servicios
+var controlDeSecuenciaServicio;
+var facturacionElectronicaServicio;
+
 function onMenuKeyDown() {
+  var myFooter;
+
   try {
-    var globalUtilsServicio = new GlobalUtilsServicio(mensajero);
-    var myPanel;
     switch ($.mobile.activePage[0].id) {
-      case "deliver_guides_page":
-        scanpackage();
+      case "pos_client_page":
+        myFooter = $("#navFooter_POS_CUST");
+        if (myFooter.css("visibility") === "hidden") {
+          myFooter.css("visibility", "visible");
+        } else {
+          myFooter.css("visibility", "hidden");
+        }
         break;
-      case "scanmanifest_page":
-        cordova.plugins.barcodeScanner.scan(
-          function(result) {
-            if (!result.cancelled) {
-              $("#lblScannedManifest").text(result.text);
-              gManifestID = parseInt(result.text);
-
-              my_dialog("Verificando", "Buscando manifiesto", "open");
-
-              globalUtilsServicio.socketIo.emit("manifest_scanned", {
-                scanned: gManifestID
-              });
-            }
-          },
-          function(error) {
-            notify("Scanning failed: " + error);
-          }
-        );
+      case "pos_skus_page":
+        if (!vieneDeListadoDeDocumentosDeEntrega) {
+          PopulateAndShowSKUPanel();
+        }
         break;
       case "login_page":
-        myPanel = $.mobile.activePage.children('[data-role="panel"]');
-        myPanel.panel("toggle");
-        break;
-      case "menu_page":
-        myPanel = $.mobile.activePage.children('[data-role="panel"]');
-        myPanel.panel("toggle");
-        break;
-
-      case "taskpickupguide_page":
-        GetAvailablePackageTypes();
-        break;
-      case "pickupplan_page":
-        myPanel = $.mobile.activePage.children('[data-role="presales_panel"]');
-        myPanel.panel("toggle");
-        break;
-      case "UiPageRepPreSale":
-        myPanel = $.mobile.activePage.children('[data-role="UiPanelDerrecho"]');
-        myPanel.panel("toggle");
         break;
       default:
-        myPanel = $.mobile.activePage.children('[data-role="panel"]');
+        var myPanel = $.mobile.activePage.children('[data-role="panel"]');
         myPanel.panel("toggle");
         break;
     }
-    globalUtilsServicio = null;
-  } catch (e) {
-    console.log(e.message);
-  }
+  } catch (e) {}
 }
 function onSuccessGPS(position) {
-  window.plugins.spinnerDialog.hide();
+  navigator.notification.activityStop();
   gCurrentGPS = position.coords.latitude + "," + position.coords.longitude;
-  gLastGPS = gCurrentGPS;
-
-  $(".gpsclass").text(
+  $("#myCurrentGPS").text(
     position.coords.latitude + "," + position.coords.longitude
   );
 }
 function DeviceIsOnline() {
   try {
-    gNetworkState = navigator.connection.type.toUpperCase();
+    gNetworkState = navigator.connection.type;
 
-    states[0] = "[]";
-    states[Connection.UNKNOWN.toUpperCase()] = "?";
-    states[Connection.ETHERNET.toUpperCase()] = "Ethernet";
-    states[Connection.WIFI.toUpperCase()] = "WiFi";
-    states[Connection.CELL_2G.toUpperCase()] = "2G";
-    states[Connection.CELL_3G.toUpperCase()] = "3G";
-    states[Connection.CELL_4G.toUpperCase()] = "4G";
-    states[Connection.CELL.toUpperCase()] = "EDGE";
-    states[Connection.NONE.toUpperCase()] = "NONE";
-    tipoDeRedALaQueEstaConectadoElDispositivo =
-      gNetworkState.toString() === "0" ? "[]" : states[gNetworkState];
+    states[Connection.UNKNOWN] = "Unknown";
+    states[Connection.ETHERNET] = "Ethernet";
+    states[Connection.WIFI] = "WiFi";
+    states[Connection.CELL_2G] = "2G";
+    states[Connection.CELL_3G] = "3G";
+    states[Connection.CELL_4G] = "4G";
+    states[Connection.CELL] = "EDGE";
+    states[Connection.NONE] = "NONE";
 
-    $(".networkclass").text(tipoDeRedALaQueEstaConectadoElDispositivo);
-    $(".networkclass").buttonMarkup({ icon: "cloud" });
+    $("#login_isonline").text("OnLine: " + states[gNetworkState]);
+    $("#lblNetworkLogin").text(states[gNetworkState]);
+    $("#lblNetworkDeliveryMenu").text(states[gNetworkState]);
 
     navigator.geolocation.getCurrentPosition(onSuccessGPS, onErrorGPS, {
       maximumAge: 30000,
       timeout: 15000,
       enableHighAccuracy: true
     });
-
-    if (gLoginStatus === "OPEN") {
-      if (!socket || !socket.connected) {
-        var validacionDeLicencia = new ValidacionDeLicenciaControlador(
-          new Messenger()
-        );
-        validacionDeLicencia.validarLicencia(
-          localStorage.getItem("pUserID"),
-          localStorage.getItem("pUserCode"),
-          false
-        );
-      }
-    }
-
-    if (socket) {
-      socket.emit("IdentifyDeviceInRoute", {
-        user: localStorage.getItem("pUserID"),
-        routeId: gCurrentRoute,
-        deviceId: device.uuid,
-        message: "Registrando desde la aplicacion " + SondaVersion
-      });
-
-      socket.emit("RegisterClientSocketConnected", { routeid: gCurrentRoute });
-    }
   } catch (e) {
     notify("DeviceIsOnline: " + e.message);
-    console.log("DeviceIsOnline: " + e.message);
   }
 }
 function DeviceIsOffline() {
-  $("#login_isonline").text("OFF");
+  $("#login_isonline").text("Offline");
 
-  $("#login_isonline").text("OFF");
-  $("#lblNetworkLogin").text("OFF");
-  $("#lblNetworkDeliveryMenu").text("OFF");
-  $("#btnNetworkStatus").buttonMarkup({ icon: "forbidden" });
-  $(".networkclass").text("OFF");
-  $(".networkclass").buttonMarkup({ icon: "forbidden" });
+  $("#login_isonline").text("OffLine");
+  $("#lblNetworkLogin").text("OffLine");
+  $("#lblNetworkDeliveryMenu").text("OffLine");
 
-  gIsOnline = 0;
+  gIsOnline = EstaEnLinea.No;
 }
 function my_dialog(pTitle, pMessage, pAction) {
   if (pAction === "open") {
-    window.plugins.spinnerDialog.show(pTitle, pMessage);
+    navigator.notification.activityStart(pTitle, pMessage);
   } else {
-    window.plugins.spinnerDialog.hide();
+    navigator.notification.activityStop();
   }
 }
 function onErrorGPS(error) {
-  window.plugins.spinnerDialog.hide();
+  navigator.notification.activityStop();
   $("#myCurrentGPS").text("GPS is unable at this moment");
   ToastThis("GPS is unreachable at this moment.");
 }
@@ -262,279 +266,638 @@ function onBackKeyDown() {
   var myPanel = $.mobile.activePage.children('[data-role="panel"]');
 
   switch ($.mobile.activePage[0].id) {
-    case "pageDeliveryOrder":
+    case "UiScoutingPage":
+      navigator.notification.confirm(
+        "¿Está seguro de cancelar el scouting? \n",
+        function(buttonIndex) {
+          if (buttonIndex === 2) {
+            var scoutingControlador = new ScoutingControlador(new Messenger());
+            scoutingControlador.limpiarCamposDeScouting(function() {
+              $.mobile.changePage("#menu_page", {
+                transition: "flow",
+                reverse: true,
+                changeHash: true,
+                showLoadMsg: false
+              });
+              scoutingControlador = null;
+            });
+          }
+        },
+        "Sonda® SD " + SondaVersion,
+        ["No", "Si"]
+      );
+      break;
+    case "UiPagetoAssociatePhoneNumerWithInvoice":
+      navigator.notification.confirm(
+        "¿Está seguro de cancelar el proceso? \n",
+        function(buttonIndex) {
+          if (buttonIndex === 2) {
+            ShowInvoiceListPage();
+          }
+        },
+        "Sonda® SD " + SondaVersion,
+        ["No", "Si"]
+      );
+      break;
+    case "remote_invoice_page":
+      $("#lblRemoteInvoice_NIT").text("");
+      $("#lblRemoteInvoice_Nombre").text("");
+      $("#lblRemoteInvoice_Monto").text("Q 0.00");
+      $("#lblRemoteInvoice_FechaHora").text("");
+
       $.mobile.changePage("#menu_page", {
-        transition: "flow",
+        transition: "none",
         reverse: true,
-
+        changeHash: true,
         showLoadMsg: false
       });
       break;
-    case "NotDeliveryReason_page":
-      $.mobile.changePage("#pageDeliveryOrder", {
-        transition: "flow",
+    case "printer_page":
+      $.mobile.changePage("#menu_page", {
+        transition: "none",
         reverse: true,
-
+        changeHash: true,
         showLoadMsg: false
       });
       break;
-
-    case "series_page":
+    case "skus_list_page":
+      window.vieneDeIngresoCantidad = false;
       $.mobile.changePage("#pos_skus_page", {
         transition: "none",
         reverse: true,
-
+        changeHash: true,
         showLoadMsg: false
       });
       break;
-    case "dialog_startpos":
-      $.mobile.changePage("#login_page", {
+    case "void_invoice_page":
+      $.mobile.changePage("#menu_page", {
         transition: "flow",
         reverse: true,
-
+        changeHash: true,
         showLoadMsg: false
       });
       break;
-    case "offplan_task_page":
-      $.mobile.changePage("#pickupplan_page", {
-        transition: "flow",
+    case "deposit_list_page":
+      $.mobile.changePage("#menu_page", {
+        transition: "slide",
         reverse: true,
-
+        changeHash: true,
         showLoadMsg: false
       });
       break;
-    case "deliver_guides_page":
-      $.mobile.changePage("#manifest_guides_page", {
-        transition: "flow",
+    case "deposit_page":
+      $.mobile.changePage("#menu_page", {
+        transition: "slide",
         reverse: true,
-
+        changeHash: true,
         showLoadMsg: false
       });
       break;
-    case "manifest_guides_page":
-      if (gManifestPresent === 1) {
+    case "view_invoice_page":
+      $.mobile.changePage("#invoice_list_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "invoice_list_page":
+      var myDialog = $("#invoice_actions_dialog");
+
+      guardarInventarioDeFacturaCancelada = false;
+
+      if (gPanelOptionsIsOpen === 1) {
+        myDialog.popup("close");
+      } else {
         $.mobile.changePage("#menu_page", {
-          transition: "flow",
+          transition: "none",
           reverse: true,
+          changeHash: true,
+          showLoadMsg: false
+        });
+      }
+      break;
 
+    case "inv_page":
+      $.mobile.changePage("#menu_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "skucant_page":
+      window.vieneDeIngresoCantidad = true;
+
+      $.mobile.changePage("#pos_skus_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+
+    case "summary_page":
+      if (PagoConsignacionesControlador.EstaEnPagoDeConsignacion) {
+        PagoConsignacionesControlador.MostrarPantallaPrincipalDePagoDeConsignacion();
+        PagoConsignacionesControlador.EliminarSkusDeProcesoDePago();
+        PagoConsignacionesControlador.ConsignacionesPagadas.length = 0;
+      } else {
+        window.vieneDeIngresoCantidad = false;
+        $.mobile.changePage("#pos_skus_page", {
+          transition: "none",
+          reverse: true,
+          changeHash: true,
+          showLoadMsg: false
+        });
+      }
+      break;
+    case "series_page":
+      window.vieneDeIngresoCantidad = false;
+      $.mobile.changePage("#pos_skus_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "pos_skus_page":
+      if (gClientCode === "C000000") {
+        navigator.notification.confirm(
+          "Esta seguro de abandonar la tarea actual? \n",
+          function(buttonIndex) {
+            if (buttonIndex === 2) {
+              onResume(function() {
+                $.mobile.changePage("#menu_page", {
+                  transition: "pop",
+                  reverse: true,
+                  changeHash: true,
+                  showLoadMsg: false
+                });
+              });
+            }
+          },
+          "Sonda® SD " + SondaVersion,
+          ["No", "Si"]
+        );
+      } else {
+        if (!vieneDeListadoDeDocumentosDeEntrega) {
+          ClasificacionesServicio.ObtenerRasones(
+            TiposDeRazones.NoFacturacion,
+            function(razones) {
+              if (razones.length > 0) {
+                var listaRazones = new Array();
+                for (var i = 0; i < razones.length; i++) {
+                  var item = {
+                    text: razones[i].REASON_PROMPT,
+                    value: razones[i].REASON_VALUE
+                  };
+                  listaRazones.push(item);
+                }
+
+                var configOptions = {
+                  title: "¿Por qué abandona la tarea?: ",
+                  items: listaRazones,
+                  doneButtonLabel: "OK",
+                  cancelButtonLabel: "CANCELAR"
+                };
+                window.plugins.listpicker.showPicker(configOptions, function(
+                  item
+                ) {
+                  var reglaServicio = new ReglaServicio();
+                  reglaServicio.obtenerRegla(
+                    "NuevaTareaConBaseEnTareaSinGestion",
+                    regla => {
+                      if (
+                        regla.rows.length > 0 &&
+                        regla.rows.item(0).ENABLED.toUpperCase() === "SI"
+                      ) {
+                        navigator.notification.confirm(
+                          "¿Desea crear una nueva tarea?",
+                          buttonIndex => {
+                            switch (buttonIndex) {
+                              case 1:
+                                // InteraccionConUsuarioServicio.bloquearPantalla();
+                                actualizarEstadoDeTarea(
+                                  gTaskId,
+                                  TareaGeneroGestion.No,
+                                  item,
+                                  () => {
+                                    onResume(() => {
+                                      EnviarData();
+                                      gTaskOnRoutePlan = 1;
+                                      $.mobile.changePage("#menu_page", {
+                                        transition: "pop",
+                                        reverse: true,
+                                        changeHash: true,
+                                        showLoadMsg: false
+                                      });
+                                    });
+                                  },
+                                  TareaEstado.Completada
+                                );
+                                break;
+                              case 2:
+                                resumenDeTareaControlador.crearNuevaTarea();
+                                actualizarEstadoDeTarea(
+                                  gTaskId,
+                                  TareaGeneroGestion.No,
+                                  item,
+                                  () => {
+                                    onResume(() => {
+                                      EnviarData();
+                                      gTaskOnRoutePlan = 1;
+                                    });
+                                  },
+                                  TareaEstado.Completada
+                                );
+                                break;
+                              default:
+                                break;
+                            }
+                          },
+                          "Sonda® SD " + SondaVersion,
+                          ["No", "Si"]
+                        );
+                      } else {
+                        actualizarEstadoDeTarea(
+                          gTaskId,
+                          TareaGeneroGestion.No,
+                          item,
+                          () => {
+                            onResume(() => {
+                              EnviarData();
+                              gTaskOnRoutePlan = 1;
+                              $.mobile.changePage("#menu_page", {
+                                transition: "pop",
+                                reverse: true,
+                                changeHash: true,
+                                showLoadMsg: false
+                              });
+                            });
+                          },
+                          TareaEstado.Completada
+                        );
+                      }
+                    }
+                  );
+                });
+              } else {
+                notify(
+                  "Lo sentimos, no se han encontrado razones de No Facturación, por favor, intente nuevamente."
+                );
+              }
+            },
+            function(error) {
+              notify(error);
+            }
+          );
+        } else {
+          var entregaServicio = new EntregaServicio();
+          entregaServicio.obtenerSkuModificados(
+            entregaServicio,
+            EstadoDeFactura.EnProceso,
+            function(listaSkuModificados, entregaServicio) {
+              if (listaSkuModificados.length > 0) {
+                navigator.notification.confirm(
+                  "¿Confirma salir, esto perdera sus cambios.?",
+                  function(buttonIndex) {
+                    if (UsuarioSeleccionoBotonSi(buttonIndex)) {
+                      onResume(function() {
+                        EnviarData();
+                        var tarea = new Tarea();
+                        tarea.taskId = gTaskId;
+                        tarea.taskType = gTaskType;
+
+                        PublicarTareaDeEntrega(tarea);
+
+                        $.mobile.changePage("#UiDeliveryDetailPage", {
+                          transition: "pop",
+                          reverse: true,
+                          changeHash: true,
+                          showLoadMsg: false
+                        });
+                      });
+                    } else {
+                      vieneDeListadoDeDocumentosDeEntrega = true;
+                    }
+                  },
+                  "Sonda® " + SondaVersion,
+                  ["No", "Si"]
+                );
+              } else {
+                onResume(function() {
+                  EnviarData();
+                  var tarea = new Tarea();
+                  tarea.taskId = gTaskId;
+                  tarea.taskType = gTaskType;
+
+                  PublicarTareaDeEntrega(tarea);
+
+                  $.mobile.changePage("#UiDeliveryDetailPage", {
+                    transition: "pop",
+                    reverse: true,
+                    changeHash: true,
+                    showLoadMsg: false
+                  });
+                });
+              }
+            },
+            function(error) {
+              notify(error.mensaje);
+            }
+          );
+
+          esFacturaDeEntrega = false;
+          demandaDeDespachoEnProcesoDeEntrega = new DemandaDeDespachoEncabezado();
+          PagoConsignacionesControlador.EstaEnPagoDeConsignacion = false;
+          PagoConsignacionesControlador.EstaEnDetalle = false;
+          gcountPrints = 0;
+          mainInvoiceHasBeenPrinted = false;
+          invoiceCopyHasBeenPrinted = false;
+          vieneDeListadoDeDocumentosDeEntrega = false;
+          listaDeDetalleDeDemandaDeDespachoParaProcesoDeEntrega.length = 0;
+          listaDeDemandasDeDespachoEnProcesoDeEntrega.length = 0;
+          esEntregaConsolidada = false;
+          esEntregaPorDocumento = false;
+        }
+      }
+
+      break;
+    case "dialog_sku_list":
+      $.mobile.changePage("#pos_client_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+
+    case "dialog_cust_list":
+      $.mobile.changePage("#pos_client_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+
+    case "pos_client_page":
+      if (myPanel.css("visibility") === "hidden") {
+        $.mobile.changePage("#menu_page", {
+          transition: "none",
+          reverse: true,
+          changeHash: true,
           showLoadMsg: false
         });
       } else {
-        $.mobile.changePage("#scanmanifest_page", {
-          transition: "flow",
-          reverse: true,
+        myPanel.panel("toggle");
+      }
 
+      break;
+    case "dialog_startpos":
+      if (
+        localStorage.getItem("POS_STATUS") === "CLOSED" ||
+        localStorage.getItem("POS_STATUS") === null ||
+        localStorage.getItem("POS_STATUS") === undefined
+      ) {
+        return;
+      } else {
+        $.mobile.changePage("#menu_page", {
+          transition: "pop",
+          reverse: false,
+          changeHash: false,
           showLoadMsg: false
         });
       }
 
-      break;
-    case "scanmanifest_page":
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      break;
-    case "PantallaDeControlDeFinDeRuta":
-      estaEnControlDeFinDeRuta = false;
-      $.mobile.changePage("#menu_page", {
-        transition: "pop",
-        reverse: true,
-        showLoadMsg: false
-      });
-      break;
-    case "pickupsignature_page":
-      window.history.back();
-      break;
-    case "taskpickup_page":
-      $.mobile.changePage("#pickupplan_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-      break;
-
-    case "pickupplan_page":
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-      break;
-    case "pageDeliverys":
-      gotomypickupplan();
-      break;
-    case "pageManifestHeader":
-      var panel = $("#UiManifestPanel");
-      if (panel.panel("open")) {
-        panel.panel("close");
-      }
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      panel = null;
-      break;
-    case "pageInfInvoce":
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      break;
-    case "taskdetail_page":
-      $.mobile.changePage("#pickupplan_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      break;
-
-    case "taskpickupguide_page":
-      $.mobile.changePage("#taskpickup_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      break;
-
-    case "taskpickuppackage_page":
-      $.mobile.changePage("#taskpickupguide_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      break;
-
-    case "printers_page":
-      window.history.back();
       break;
 
     case "login_page":
       if (myPanel.css("visibility") === "hidden") {
-        bluetoothSerial.disconnect(
-          function() {},
-          function() {
-            notify("Printer is unable to get disconnected");
-          }
-        );
         navigator.app.exitApp();
       } else {
         myPanel.panel("toggle");
       }
       break;
     case "menu_page":
-      if (myPanel.css("visibility") === "visible") {
-        myPanel.panel("toggle");
-      } else {
-        bluetoothSerial.disconnect(
-          function() {},
-          function() {
-            notify("Printer is unable to get disconnected");
-          }
-        );
-        navigator.app.exitApp();
-      }
-      break;
-    case "page_new_client":
-      var newClientPanel = $.mobile.activePage.children(
-        '[id="new_client_panel"] '
-      );
-      var clientPanel = $.mobile.activePage.children('[id="client_panel"] ');
-
-      if (
-        newClientPanel.css("visibility") === "hidden" &&
-        clientPanel.css("visibility") === "hidden"
-      ) {
-        UsuarioDeseaCancelarClienteNuevo();
-      } else {
-        if (newClientPanel.css("visibility") !== "hidden")
-          newClientPanel.panel("toggle");
-        else clientPanel.panel("toggle");
-      }
-
-      break;
-    case "page_report_client":
-      $.mobile.changePage("#pickupplan_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-      break;
-    case "UiPageRepPreSale":
-      if (!$("#listaFirmFotoPreVenta").is(":visible")) {
-        $.mobile.changePage("#pickupplan_page", {
-          transition: "flow",
-          reverse: true,
-          showLoadMsg: false
-        });
-      }
-      break;
-
-    case "UiPageSalesOrderList":
-      window.history.back();
-      break;
-
-    case "UiPageDocsDraft":
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-      break;
-    case "UiPageTaskCompletedWithReason":
-      $.mobile.changePage("#pickupplan_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-      break;
-    case "map-page":
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-      break;
-    case "UiOverdueInvoicePaymentPage":
-      cobroDeFacturaVencidaControlador.irAPantallaDeCliente();
-      break;
-    case "UiOverdueInvoicePaymentDetailPage":
-      tipoDePagoDeFacturaVencidaControlador.enviarInformacionDeDetalleDePagos(
-        function() {
-          window.history.back();
+      if (estaEnEscaneoDeRga === false) {
+        if (myPanel.css("visibility") === "visible") {
+          myPanel.panel("toggle");
+        } else {
+          navigator.app.exitApp();
         }
+      } else {
+        estaEnEscaneoDeRga = false;
+      }
+      break;
+    case "pageDevolucion":
+      $.mobile.changePage("#menu_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "PageConsignmentList":
+      $.mobile.changePage("#menu_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "UiVentanaDetalleConsignacion":
+      $.mobile.changePage("#PageConsignmentList", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "UiCantidadAConsignacionPage":
+      RegresarAPantallaDeConsignacion();
+      break;
+    case "PageConsignment":
+      CancelarIngresoConsignacion();
+      break;
+    case "UiPageConsignmentPayment":
+      if (PagoConsignacionesControlador.EstaEnDetalle) {
+        document.getElementById(
+          "DivUiListaConsignacionesAPagar"
+        ).style.display = "block";
+        document.getElementById(
+          "DivUiListaDetalleDeConsignacionAPagar"
+        ).style.display = "none";
+        PagoConsignacionesControlador.EstaEnDetalle = false;
+      } else {
+        PagoConsignacionesControlador.VolverAPantallaPrincipal();
+        //PagoConsignacionesControlador.EstaEnPagoDeConsignacion = false;
+      }
+      break;
+    case "UiInsertQtySkuConsignmnetPage":
+      CantidadSkuEnConsignacionControlador.VolverAPantallaAnterior();
+      //PagoConsignacionesControlador.EstaEnIngresoDeCantidadSku = false;
+      break;
+    case "UiPageCollectQtySkuFromConsignment":
+      CantidadSkuARecogerProductoEnConsignacionControlador.VolverAPantallaAnterior();
+      break;
+    case "UiDevolutionDocumentsPage":
+      if (DocumentosDeDevolucionControlador.EstaEnDetalle) {
+        document.getElementById("navBarHeader").style.display = "block";
+        document.getElementById("navBarDetail").style.display = "none";
+
+        document.getElementById(
+          "DivUiListaDocumentosDevolucion"
+        ).style.display = "block";
+        document.getElementById(
+          "DivUiListaDetalleDeDocumentoDeDevolucion"
+        ).style.display = "none";
+        DocumentosDeDevolucionControlador.EstaEnDetalle = false;
+      } else {
+        DocumentosDeDevolucionControlador.VolverAMenu();
+      }
+      break;
+    case "UiConfirmationProcessPaidPage":
+      PagoConsignacionesControlador.EstaEnDetalle = false;
+      PagoConsignacionesControlador.EstaEnPagoDeConsignacion = false;
+      PagoConsignacionesControlador.EstaEnIngresoDeCantidadSku = false;
+      DocumentosDeDevolucionControlador.VolverAMenu();
+      break;
+    case "UiConfirmationRecollectPage":
+      PagoConsignacionesControlador.EstaEnDetalle = false;
+      PagoConsignacionesControlador.EstaEnPagoDeConsignacion = false;
+      PagoConsignacionesControlador.EstaEnIngresoDeCantidadSku = false;
+      DocumentosDeDevolucionControlador.VolverAMenu();
+      break;
+    case "confirmation_consignment":
+      DocumentosDeDevolucionControlador.VolverAMenu();
+      break;
+    case "UiLiquidationReportPage":
+      DocumentosDeDevolucionControlador.VolverAMenu();
+      break;
+    case "UiNewTaskOutsideOfRoutePlanPage":
+      $.mobile.changePage("#menu_page", {
+        transition: "pop",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
+      break;
+    case "businnes_rival_poll":
+      navigator.notification.confirm(
+        "Esta seguro que desea cancelar la encuesta?",
+        function(buttonIndex) {
+          if (buttonIndex === 2) {
+            $.mobile.changePage("#confirmation_page", {
+              transition: "none",
+              reverse: true,
+              changeHash: true,
+              showLoadMsg: false
+            });
+          }
+        },
+        "Sonda®  " + SondaVersion,
+        "No,Si"
       );
       break;
-    case "UiPaymentDetailPage":
-      detalleDePagoControlador.regresarAPantallaAnterior();
+    case "UiNotificationPage":
+      var notificacionControlador = new NotificacionControlador();
+      notificacionControlador.VolverAMenuPrincipal();
+      notificacionControlador = null;
+      window.gIsOnNotificationPage = false;
       break;
+
+    case "UiDetailTransferPage":
+      var transferenciaDetalleControlador = new TransferenciaDetalleControlador();
+      transferenciaDetalleControlador.IrAPantalla("UiNotificationPage");
+      transferenciaDetalleControlador = null;
+      break;
+
+    case "UiPageScanManifest":
+      manifiestoControlador.regresarAPantallaAnterior("menu_page");
+      break;
+
+    case "UiDeliveryPage":
+      var entregaControlador = new EntregaControlador(mensajero);
+      entregaControlador.irAPantalla("menu_page");
+      entregaControlador = null;
+      break;
+    case "UiDeliveryDetailPage":
+      var entregaDetalleControlador = new EntregaDetalleControlador(mensajero);
+      entregaDetalleControlador.irAPantalla("UiDeliveryPage");
+      entregaDetalleControlador = null;
+      break;
+    case "UiDeliveryReportPage":
+      var reporteDeEntregaControlador = new ReporteDeEntregaControlador(
+        new Messenger()
+      );
+      reporteDeEntregaControlador.irAPantalla("menu_page");
+      reporteDeEntregaControlador = null;
+      break;
+
+    case "UiOverdueInvoicePaymentPage":
+      var cobroDeFacturaVencidaControlador = new CobroDeFacturaVencidaControlador(
+        mensajero
+      );
+      cobroDeFacturaVencidaControlador.irAPantallaDeCliente();
+      cobroDeFacturaVencidaControlador = null;
+      break;
+
+    case "UiOverdueInvoicePaymentDetailPage":
+      var tipoDePagoEnFacturaVencidaControlador = new TipoDePagoEnFacturaVencidaControlador(
+        mensajero
+      );
+      tipoDePagoEnFacturaVencidaControlador.irAPantalla(
+        "UiOverdueInvoicePaymentPage"
+      );
+      tipoDePagoEnFacturaVencidaControlador = null;
+      break;
+
     case "UiPaymentListPage":
-      window.history.back();
+      var listaDePagoControlador = new ListaDePagoControlador(mensajero);
+      listaDePagoControlador.irAPantalla("menu_page");
+      listaDePagoControlador = null;
       break;
-    case "UiSelectedSkuImagePage":
-      var contenedorDeImagenSeleccionada = $("#ImagenDeProductoSeleccionada");
-      contenedorDeImagenSeleccionada.attr("src", "");
-      contenedorDeImagenSeleccionada = null;
-      window.history.back();
+
+    case "UiPaymentDetailPage":
+      var detalleDePagoControlador = new DetalleDePagoControlador(mensajero);
+      detalleDePagoControlador.documentoDePago = new PagoDeFacturaVencidaEncabezado();
+      detalleDePagoControlador.irAPantalla("UiPaymentListPage");
       break;
-    case "UiProductCatalogPage":
-      catalogoDeProductoControlador.usuarioDeseaRegresarAPantallaAnterior();
+
+    case "UiDeliveryImagePage":
+      imagenDeEntregaControlador.usuarioDeseaRegresarAPantallaAnterior();
       break;
-    case "UiSkuImagesPage":
-      galeriaDeImagenControlador.usuarioDeseaRegresarAPantallaAnterior();
+    case "UiSignaturePage":
+      firmaControlador.usuarioDeseaVolverAPantallaAnterior();
+      break;
+    case "UiSaleStatisticPage":
+      estadisticaDeVentaPorDiaControlador.regresarPantallaAutorizacion();
+      break;
+    case "UiTaskResumePage":
+      $.mobile.changePage("#menu_page", {
+        transition: "none",
+        reverse: true,
+        changeHash: true,
+        showLoadMsg: false
+      });
       break;
   }
 }
+
+function UsuarioSeleccionoBotonSi(indiceBoton) {
+  return indiceBoton === BotonSeleccionado.Si;
+}
+
+function UsuarioSeleccionoBotonAtras(indiceBoton) {
+  return indiceBoton === BotonSeleccionado.Atras;
+}
+
+function UsuarioSeleccionoBotonNo(indiceBoton) {
+  return indiceBoton === BotonSeleccionado.No;
+}
+
 function showmenu() {
   $("#popupMenu").popup("open", {
     positionTo: "#myMenuList",
@@ -549,8 +912,26 @@ function preview_picture(pID) {
     .popup("open", { transition: "none" });
 }
 function ShowInvoiceConfirmation() {
+  PagoConsignacionesControlador.EstaEnPagoDeConsignacion = false;
+  PagoConsignacionesControlador.EstaEnDetalle = false;
+  window.gcountPrints = 0;
+  mainInvoiceHasBeenPrinted = false;
+  invoiceCopyHasBeenPrinted = false;
+  if (window.vieneDeListadoDeDocumentosDeEntrega) {
+    window.vieneDeListadoDeDocumentosDeEntrega = false;
+    window.esFacturaDeEntrega = false;
+    window.demandaDeDespachoEnProcesoDeEntrega = new DemandaDeDespachoEncabezado();
+    if (listaDeDetalleDeDemandaDeDespachoParaProcesoDeEntrega)
+      listaDeDetalleDeDemandaDeDespachoParaProcesoDeEntrega.length = 0;
+    if (listaDeDemandasDeDespachoEnProcesoDeEntrega)
+      listaDeDemandasDeDespachoEnProcesoDeEntrega.length = 0;
+    esEntregaConsolidada = false;
+    esEntregaPorDocumento = false;
+  }
+
+  ClearUpInvoice();
+
   $("#lblNewInvoice").text(gInvoiceNUM);
-  //check if 75%
 
   $.mobile.changePage("#confirmation_page", {
     transition: "slide",
@@ -558,8 +939,49 @@ function ShowInvoiceConfirmation() {
     changeHash: true,
     showLoadMsg: false
   });
+
+  estaEnConfirmacionDeFacturacion = false;
 }
 
+function take_picture(pID) {
+  var pSQL = "";
+  try {
+    navigator.camera.getPicture(
+      function(imageURI) {
+        $("#btnTakePic" + pID).attr(
+          "srcpic",
+          "data:image/jpeg;base64," + imageURI
+        );
+
+        $("#btnTakePic" + pID).buttonMarkup({ icon: "check" });
+
+        switch (pID) {
+          case "1":
+            gImageURI_1 = "data:image/jpeg;base64," + imageURI;
+            break;
+          case "2":
+            gImageURI_2 = "data:image/jpeg;base64," + imageURI;
+            break;
+          case "3":
+            gImageURI_3 = "data:image/jpeg;base64," + imageURI;
+            break;
+        }
+      },
+      function(message) {},
+      {
+        quality: 90,
+        targetWidth: 350,
+        targetHeight: 350,
+        saveToPhotoAlbum: false,
+        sourceType: navigator.camera.PictureSourceType.CAMERA,
+        correctOrientation: true,
+        destinationType: Camera.DestinationType.DATA_URL
+      }
+    );
+  } catch (e) {
+    notify("take_picture: " + e.message);
+  }
+}
 function ToastThis(pMessage) {
   try {
     window.plugins.toast.show(
@@ -570,1444 +992,525 @@ function ToastThis(pMessage) {
       function(b) {}
     );
   } catch (e) {
-    notify(e.message);
+    alert(e.message + " " + pMessage);
   }
 }
-
 function ShowHideOptions() {
   try {
-    var pSQL = "";
+    var pPOSStatus = CheckPOS();
 
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        pSQL = "SELECT * FROM PRESALES_ROUTE WHERE TASK_STATUS = 'COMPLETED'";
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            if (results.rows.length >= 1) {
-              $("#btnFinishCollecting")
-                .removeClass("ui-disabled")
-                .addClass("ui-enabled");
-            } else {
-              $("#btnFinishCollecting")
-                .removeClass("ui-enabled")
-                .addClass("ui-disabled");
-            }
-          },
-          function(tx, err) {
-            my_dialog("", "", "close");
-            notify("ShowHideOptions: " + err.message);
-          }
-        );
-      },
-      function(err) {
-        notify("ShowHideOptions.1.Error processing SQL: " + err.message);
+    if (pPOSStatus === "CLOSED") {
+      if (gPrintAddress !== 0) {
+        $("#btnStartPOS").show();
+      } else {
+        $("#btnStartPOS").hide();
       }
-    );
 
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        pSQL = "SELECT * FROM MANIFEST_DETAIL WHERE GUIDE_STATUS = 'COMPLETED'";
+      $("#btnFinishPOS").hide();
+      $("#btnShowDeposit").hide();
+      $("#btnViewInv").hide();
+      $("#btnDepositsList").hide();
+      $("#btnSkuReturn").hide();
 
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            if (results.rows.length >= 1) {
-              $("#btnFinishDelivery")
-                .removeClass("ui-disabled")
-                .addClass("ui-enabled");
-            } else {
-              $("#btnFinishDelivery")
-                .removeClass("ui-enabled")
-                .addClass("ui-disabled");
-            }
-          },
-          function(err) {
-            my_dialog("", "", "close");
-            notify("ShowHideOptions: " + err.message);
-          }
-        );
-      },
-      function(err) {
-        notify("ShowHideOptions.3.Error processing SQL: " + err.message);
+      $("#btnCreateNewInvoice").buttonMarkup({ icon: "forbidden" });
+      $("#btnCreateNewInvoice").attr("onclick", "");
+
+      $("#btnCreateNewDeposit").buttonMarkup({ icon: "forbidden" });
+      $("#btnCreateNewDeposit").attr("href", "#");
+
+      $("#lblPOSStartedTime").text("Cerrado");
+    } else {
+      $("#btnStartPOS").hide();
+      if (
+        localStorage.getItem("ID_ROUTE_RETURN") === undefined ||
+        localStorage.getItem("ID_ROUTE_RETURN") === null ||
+        localStorage.getItem("ID_ROUTE_RETURN") === "0"
+      ) {
+        $("#btnFinishPOS").show();
+      } else {
+        $("#btnFinishPOS").hide();
       }
-    );
+
+      $("#btnViewInv").show();
+      $("#btnShowDeposit").show();
+      $("#btnDepositsList").show();
+      $("#btnSkuReturn").show();
+
+      $("#btnCreateNewInvoice").buttonMarkup({ icon: "plus" });
+      $("#btnCreateNewInvoice").attr("onclick", "start_invoicing();");
+
+      $("#btnCreateNewDeposit").buttonMarkup({ icon: "plus" });
+      $("#btnCreateNewDeposit").attr("href", "#deposit_page");
+
+      $("#lblPOSStartedTime").text("Abierto");
+    }
   } catch (e) {
     notify("ShowHideOptions: " + e.message);
   }
 }
 
+function ActualizarCantidadDeNotificaciones() {
+  ObtenerListadoDeNotifiaciones(
+    function(listaNotificaciones) {
+      var notificacionesNuevas = 0;
+      for (var i = 0; i < listaNotificaciones.length; i++) {
+        var notificacion = listaNotificaciones[i];
+        if (notificacion.IS_NEW === 1) {
+          notificacionesNuevas++;
+        }
+      }
+      $("#UiBtnNotifications").text(
+        notificacionesNuevas === 0 ? "" : notificacionesNuevas
+      );
+    },
+    function(error) {
+      notify(error);
+    }
+  );
+}
+
 function notify(pMessage) {
   InteraccionConUsuarioServicio.desbloquearPantalla();
   navigator.notification.alert(
-    pMessage, // message
-    null, // callback to invoke with index of button pressed
-    "Sonda®  " + SondaVersion,
-    "OK" //button caption
-  );
-}
-function MakeACall(pPhoneNumber) {
-  phonedialer.dial(
-    pPhoneNumber,
-    function(err) {
-      if (err === "empty") notify("Unknown phone number");
-      else notify("Dialer Error:" + err);
-    },
-    function(success) {}
-  );
-}
-
-function gettask(taskid) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pSQL = "SELECT * FROM PRESALES_ROUTE WHERE TASK_ID =" + taskid;
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            if (results.rows.length >= 1) {
-              //cambio
-              gVentaEsReimpresion = false;
-              gtaskid = taskid;
-              gTaskType = results.rows.item(0).TASK_TYPE;
-              if (gTaskType === "DRAFT") {
-                gTaskType = "PRESALE";
-              }
-              gtaskgps = results.rows.item(0).EXPECTED_GPS;
-              gClientName = results.rows.item(0).RELATED_CLIENT_NAME;
-              gClientID = results.rows.item(0).RELATED_CLIENT_CODE;
-
-              $("#lblClientName_pickup").text(
-                results.rows.item(0).RELATED_CLIENT_NAME
-              );
-              $("#lblAddress_pickup").text(results.rows.item(0).TASK_ADDRESS);
-              //$("#lblAddress_directions").val(results.rows.item(0).TASK_COMMENTS);
-
-              $("#btnMyPickupRoutePhone").text(
-                results.rows.item(0).RELATED_CLIENT_PHONE_1
-              );
-              $("#btnMyPickupRoutePhone").unbind("touchstart");
-              $("#btnMyPickupRoutePhone").bind("touchstart", function() {
-                MakeACall(results.rows.item(0).RELATED_CLIENT_PHONE_1);
-              });
-
-              if (gClientID === 999999) {
-                $("#btnBranchName").text("OFF-PLAN");
-                $("#txtPDE").val("OFF-PLAN");
-                $("#lblBranchAddress").text(results.rows.item(0).TASK_ADDRESS);
-                $("#txtAddressInputed").val(results.rows.item(0).TASK_ADDRESS);
-              } else {
-                $("#btnBranchName").text("");
-                $("#txtPDE").val("");
-                $("#lblBranchAddress").text("");
-                $("#txtAddressInputed").val("");
-              }
-
-              $("#btnTakeMeThere").unbind("touchstart");
-              $("#btnTakeMeThere").bind("touchstart", function() {
-                navigateto();
-              });
-
-              $("#btnTakeMeThere").unbind("touchstart");
-              $("#btnTakeMeThere").bind("touchstart", function() {
-                navigateto();
-              });
-
-              $("#btnNewOrder").removeClass("ui-disabled");
-              $("#btnSignatureGuide").removeClass("ui-disabled");
-              $("#btnFinishPickup").removeClass("ui-disabled");
-
-              $("#btnNewOrder").removeClass("ui-enabled");
-              $("#btnSignatureGuide").removeClass("ui-enabled");
-              $("#btnFinishPickup").removeClass("ui-enabled");
-
-              BorrarDetallesTemporales();
-
-              gSignated = false;
-              switch (results.rows.item(0).TASK_STATUS) {
-                case TareaEstado.Aceptada:
-                  window.gTaskIsFrom = TareaEstado.Aceptada;
-                  $("#lblRemitenteName").text(gClientName);
-
-                  $("#btnNewGuide").addClass("ui-enabled");
-                  $("#btnSignatureGuide").addClass("ui-enabled");
-                  $("#btnFinishPickup").addClass("ui-enabled");
-
-                  switch (gTaskType) {
-                    case TareaTipo.Entrega:
-                      gotomyDelivery();
-                      break;
-                    case TareaTipo.Preventa:
-                      tareaDetalleControlador.usuarioDeseaCargarTarea();
-                      break;
-                    case TareaTipo.Venta:
-                      EjecutarTareaDeVenta(gClientID);
-                      break;
-                    case TareaTipo.Obsoleto:
-                      EjecutarTareaDeVenta(gClientID);
-                      break;
-                    case TareaTipo.TomaDeInventario:
-                      tareaDetalleControlador.usuarioDeseaCargarTarea();
-                      break;
-                  }
-                  break;
-
-                case TareaEstado.Asignada:
-                  window.gTaskIsFrom = TareaEstado.Asignada;
-                  $("#btnNewOrder").addClass("ui-enabled");
-                  $("#btnSignatureGuide").addClass("ui-enabled");
-                  $("#btnFinishPickup").addClass("ui-enabled");
-
-                  //cambio
-                  $.mobile.changePage("#taskdetail_page", "flow", true, true);
-                  break;
-                case TareaEstado.Completada:
-                  window.gTaskIsFrom = TareaEstado.Completada;
-                  switch (gTaskType) {
-                    case TareaTipo.Scouting:
-                      MostrarPaginaReporte(gClientID);
-                      break;
-                    case TareaTipo.Preventa:
-                      var tareaServicio = new TareaServcio();
-                      var tarea = new Tarea();
-                      tarea.taskId = gtaskid;
-                      tareaServicio.obtenerTarea(
-                        tarea,
-                        function(tareaN1) {
-                          if (tareaN1.completedSuccessfully) {
-                            gVentaEsReimpresion = true;
-                            $.mobile.changePage("#UiPageRepPreSale", {
-                              transition: "flow",
-                              reverse: true,
-                              showLoadMsg: false
-                            });
-                          } else {
-                            $.mobile.changePage(
-                              "#UiPageTaskCompletedWithReason",
-                              {
-                                transition: "flow",
-                                reverse: true,
-                                showLoadMsg: false
-                              }
-                            );
-                          }
-                        },
-                        function(resultado) {
-                          notify(resultado.mensaje);
-                        }
-                      );
-                      break;
-                    case TareaTipo.TomaDeInventario:
-                      usuarioDeseaVerResumenInventario();
-                      break;
-                    default:
-                      $("#lblRemitenteName").text(gClientName);
-                      $("#btnNewOrder").addClass("ui-disabled");
-                      $("#btnSignatureGuide").addClass("ui-disabled");
-                      $("#btnFinishPickup").addClass("ui-disabled");
-
-                      $.mobile.changePage("#taskpickup_page", {
-                        transition: "flow",
-                        reverse: true,
-
-                        showLoadMsg: false
-                      });
-                      break;
-                  }
-                  break;
-              }
-            }
-          },
-          function(err) {
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(gettask.0)Error processing SQL: " + err.code);
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(gettask.1)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    console.log(e.message);
-  }
-}
-
-function usuarioDeseaVerResumenInventario() {
-  $.mobile.changePage("#UiPageSummaryTakeInventory", {
-    transition: "flow",
-    reverse: true,
-    showLoadMsg: false
-  });
-}
-
-function irAOrdenDeVentaValidandoSaldoDeCliente() {
-  ValidarSaldoCliente(
-    gClientID,
-    0,
-    "",
-    0,
-    OpcionValidarSaldoCliente.EjecutarTarea,
-    gSalesOrderType,
+    pMessage,
     function() {
-      SeguirTareaPreventa();
+      navigator.notification.activityStop();
     },
-    function(err) {
-      notify(err.message);
-    }
+    "Sonda® SD " + SondaVersion,
+    "OK"
   );
 }
+function preparedb() {
+  SONDA_DB_Session = window.openDatabase(
+    "SONDA_POS_DB",
+    "1.0",
+    "SONDA_POS_DB",
+    20000000
+  ); //20mg
 
-function gotomydeliveryplan() {
-  try {
-    if (gManifestPresent === 1) {
-      $.mobile.changePage("#manifest_guides_page", {
-        transition: "flow",
-        reverse: true,
-
-        showLoadMsg: false
-      });
-
-      showmanifestlist("PENDING");
-    } else {
-      $.mobile.changePage("#scanmanifest_page", "flow", true, true);
-    }
-  } catch (e) {
-    my_dialog("", "", "close");
-    console.log(e.message);
-  }
-}
-
-function gotomypickupplan() {
-  $.mobile.changePage("#pickupplan_page", "flow", true, true);
-}
-
-function RefreshMyRoutePlan() {
-  try {
-    my_dialog("SondaÂ® " + SondaVersion, "Cargando Tareas...", "open");
-
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-
-        tx.executeSql(
-          "SELECT * FROM PRESALES_ROUTE",
-          [],
-          function(tx, results) {
-            var pDomElement = $("#pickup_listview");
-            pDomElement.children().remove("li");
-
-            for (i = 0; i <= results.rows.length - 1; i++) {
-              var pClick = "gettask(" + results.rows.item(i).TASK_ID + ");";
-
-              vLI = "";
-              vLI =
-                '<li style="opacity: 1" class="ui-alt-icon ui-nodisc-icon"> <a href="#" onclick=' +
-                pClick +
-                ">";
-
-              var pDocNum = "";
-              if (
-                results.rows.item(i).DOC_NUM === null ||
-                results.rows.item(i).DOC_NUM === 0
-              ) {
-                if (results.rows.item(i).TASK_TYPE === "DELIVERY") {
-                  pDocNum = "Fuera de ruta";
-                } else if (
-                  results.rows.item(i).TASK_TYPE === "TAKE_INVENTORY"
-                ) {
-                  pDocNum = "Toma de Inventario";
-                } else {
-                  pDocNum = "Preventa";
-                }
-              } else {
-                pDocNum = results.rows.item(i).DOC_NUM.toString();
-              }
-
-              switch (results.rows.item(i).TASK_TYPE) {
-                case TareaTipo.Entrega:
-                  break;
-                default:
-                  vLI +=
-                    '<span lass="ui-li small-roboto">' +
-                    pDocNum +
-                    "</span></p>";
-                  break;
-              }
-
-              vLI +=
-                '<p><span class="small-roboto">' +
-                gtaskid +
-                ") " +
-                results.rows.item(i).RELATED_CLIENT_CODE +
-                " " +
-                results.rows.item(i).RELATED_CLIENT_NAME +
-                "</span></p>";
-              vLI +=
-                '<p><span class="small-roboto">' +
-                results.rows.item(i).TASK_ADDRESS +
-                "</span></p>";
-
-              switch (results.rows.item(i).TASK_STATUS) {
-                case TareaEstado.Asignada:
-                  vLI +=
-                    '<span class="ui-li-count small-roboto" style="background-color:yellow"><img src="css/styles/images/icons-png/notify-black.png"></span>';
-                  break;
-                case TareaEstado.Aceptada:
-                  vLI +=
-                    '<span class="ui-li-count small-roboto" style="background-color:lime"><img src="css/styles/images/icons-png/check-black.png"></span>';
-                  break;
-                case TareaEstado.Completada:
-                  vLI +=
-                    '<span class="ui-li-count small-roboto" style="background-color:lightsteelblue"><img src="css/styles/images/icons-png/tag-black.png"></span>';
-                  break;
-                default:
-                  vLI +=
-                    '<span class="ui-li-count ui-btn small-roboto" style="background-color:silver">Sin Status</span>';
-                  break;
-              }
-
-              switch (results.rows.item(i).NO_PICKEDUP) {
-                case 1:
-                  vLI +=
-                    '<p><span class="small-roboto" style="text-shadow: none; color:#ffffff; background-color:orangered">No Recolectado. ' +
-                    results.rows.item(i).NO_VISIT_REASON +
-                    "</span></p>";
-                  break;
-                case 0:
-                  vLI +=
-                    '<p><span class="small-roboto" style="background-color:silver"></span></p>';
-                  break;
-                default:
-                  vLI +=
-                    '<p><span class="small-roboto" style="background-color:silver"></span></p>';
-                  break;
-              }
-
-              vLI += "</a></li>";
-
-              pDomElement.append(vLI);
-              pDomElement.listview("refresh");
-            }
-            pDomElement = null;
-            my_dialog("", "", "close");
-          },
-          function(err) {
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(7)Error processing SQL: " + err.code);
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(100)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    my_dialog("", "", "close");
-    console.log(e.message);
-  }
-}
-
-function saveGuide() {
-  var xdate = new Date();
-  var pGuideID = new Number();
-  var pskus_count = $("#listview_packs_detail li").size();
-
-  try {
-    if (pskus_count >= 1) {
-      xdate = getDateTime();
-      var pBranchCode = $("#btnBranchID").text();
-      var pClientPickup = $("#lblClientName_pickup").text();
-
-      var pDeliveryBranchName = $("#btnBranchName").text();
-
-      var pDeliveryBranchAddress = $("#lblBranchAddress").text();
-
-      if (pDeliveryBranchAddress.length === 0) {
-        pDeliveryBranchAddress = $("#txtAddressInputed").val();
-        pDeliveryBranchName = "(sin agencia)";
-      }
-
-      var pDeliveryRoute = $("#btnGEORoute").text();
-      var pDeliveryBranchPDE = $("#txtPDE").val();
-
-      if (isNaN(pGuideID)) {
-        pGuideID = 1;
-      } else {
-        try {
-          pGuideID = parseInt(localStorage.getItem("pGuideID")) + parseInt(1);
-          if (isNaN(pGuideID)) {
-            pGuideID = 1;
-            localStorage.setItem("pGuideID", 1);
-          }
-        } catch (e) {
-          pGuideID = 1;
-          localStorage.setItem("pGuideID", 1);
-        }
-      }
-
-      pNewGuideID = device.uuid.toString() + gtaskid + "" + pGuideID;
-
-      var pTotalAmount = parseFloat($("#lblTotalOrder").text());
-
-      SONDA_DB_Session.transaction(
-        function(tx) {
-          pSQL =
-            "INSERT INTO ORDERS(ORDER_ID, CREATED_DATESTAMP, DELIVERY_ADDRESS, DELIVERY_BRANCH_PDE, DELIVERY_BRANCH_NAME, ";
-          pSQL +=
-            " DELIVERY_BRANCH_ADDRESS, STATUS, SOURCE_TASK, IS_OFFLINE, TOTAL_AMOUNT, CLIENT_CODE, CLIENT_NAME)";
-          pSQL +=
-            " VALUES('" +
-            pNewGuideID +
-            "'," +
-            "'" +
-            xdate +
-            "','" +
-            pClientPickup +
-            "','" +
-            pDeliveryBranchPDE +
-            "','" +
-            pDeliveryBranchName +
-            "','" +
-            pDeliveryBranchAddress +
-            "',";
-          pSQL +=
-            " 'CREATED'," +
-            gtaskid +
-            ", 1, " +
-            pTotalAmount +
-            ",'" +
-            gClientID +
-            "', '" +
-            pClientPickup +
-            " ')";
-
-          gpackages += parseFloat(pTotalAmount);
-          console.log(pSQL);
-
-          tx.executeSql(pSQL);
-
-          pSQL =
-            "UPDATE SKUS_X_ORDER SET ORDER_ID = '" +
-            pNewGuideID +
-            "' WHERE ORDER_ID = '-9999'";
-          console.log(pSQL);
-          tx.executeSql(pSQL);
-
-          localStorage.setItem("pGuideID", pGuideID);
-          cleanupuide();
-        },
-        function(err) {
-          notify("saveGuide.catch:" + err.message);
-          my_dialog("", "", "close");
-        },
-        function() {}
-      );
-    } else {
-      notify("ERROR, No se puede completar un pedido vacio");
-      my_dialog("", "", "close");
-    }
-  } catch (e) {
-    notify("SaveGuide.Cath.01:" + e.message);
-  }
-}
-
-function clearup_manifiesto() {
-  try {
-    $("#lblScannedManifest").text("");
-    $("#lblGuiasManifest").text("");
-    $("#lblAssignedCourier").text("");
-    $("#lblPacksManifest").text("");
-
-    $("#btnAcceptManifest").css("visibility", "hidden");
-  } catch (e) {
-    notify(e.message);
-  }
-}
-
-function setpackage(um_code, um_desc, list_price) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var xdate = getDateTime();
-        pSQL =
-          "INSERT INTO SKUS_X_ORDER(ORDER_ID, SKU_ID, SKU_DESCRIPTION, QTY, UNIT_PRICE, TOTAL_PRICE, SOURCE_TASK, IS_OFFLINE)";
-        pSQL +=
-          " VALUES('-9999','" +
-          um_code +
-          "','" +
-          um_desc +
-          "', 1, " +
-          list_price +
-          ", " +
-          list_price +
-          "," +
-          gtaskid +
-          ", 1)";
-        tx.executeSql(pSQL);
-
-        console.log(pSQL);
-      },
-      function(tx, err) {
-        my_dialog("", "", "close");
-      },
-      function() {
-        RefreshSkusXOrder();
-
-        $.mobile.changePage("#taskpickupguide_page", {
-          transition: "flow",
-          reverse: true,
-
-          showLoadMsg: false
-        });
-      }
-    );
-  } catch (e) {
-    notify("setpackage.catch:" + e.message);
-  }
-}
-
-function ProcessGuide() {}
-
-function RefreshMyGuidesOnTask() {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-        var pLocalTotal = new Number(0);
-
-        var pSQL =
-          "SELECT ORDER_ID, DELIVERY_BRANCH_ADDRESS, DELIVERY_BRANCH_NAME, TOTAL_AMOUNT FROM ORDERS WHERE SOURCE_TASK=" +
-          gtaskid;
-        console.log("RefreshMyGuidesOnTask: " + pSQL);
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            $("#guides_listing")
-              .children()
-              .remove("li");
-            var xpackages = new Number();
-
-            for (i = 0; i <= results.rows.length - 1; i++) {
-              pLocalTotal += parseFloat(results.rows.item(i).TOTAL_AMOUNT);
-              var xguide_ = results.rows.item(i).ORDER_ID;
-
-              var xclick =
-                "get_guide_options('" + results.rows.item(i).ORDER_ID + "')";
-
-              vLI = "";
-              vLI =
-                '<li class="ui-nodisc-icon ui-noboxshadow ui-icon-alt" onclick="' +
-                xclick +
-                '">';
-              vLI +=
-                '<p><span class="small-roboto"><strong>' +
-                results.rows.item(i).ORDER_ID +
-                "</strong>";
-              vLI +=
-                '<p><span class="small-roboto">' +
-                results.rows.item(i).DELIVERY_BRANCH_NAME +
-                "</span></p>";
-              vLI +=
-                '<p><span class="small-roboto">' +
-                results.rows.item(i).DELIVERY_BRANCH_ADDRESS +
-                "</span></p>";
-              vLI +=
-                '<p><span class="ui-li-count small-roboto">Q ' +
-                format_number(results.rows.item(i).TOTAL_AMOUNT, 2) +
-                "</span></p>";
-
-              vLI += "</li>";
-              console.log(vLI);
-              $("#guides_listing").append(vLI);
-              $("#guides_listing").listview("refresh");
-            }
-
-            $("#btnOrderSumm").text(
-              "Q " + format_number(parseFloat(pLocalTotal), 2)
-            );
-
-            my_dialog("", "", "close");
-          },
-          function(tx, err) {
-            my_dialog("", "", "close");
-            notify("(21)Error processing SQL: " + err.message);
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(22)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    notify("RefreshMyGuidesOnTask:" + e.message);
-  }
-}
-
-function printguide(pGuide) {
-  try {
-    var xdate;
-    xdate = getDateTime();
-
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-        var pSQL =
-          "SELECT A.*, B.RELATED_CLIENT_CODE, B.RELATED_CLIENT_NAME FROM ORDERS A, PRESALES_ROUTE B WHERE A.ORDER_ID = '" +
-          pGuide +
-          "' AND B.TASK_ID = A.SOURCE_TASK";
-        console.log(pSQL);
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            var lheader = "";
-            var i = 0;
-
-            if (results.rows.length >= 1) {
-              while (i <= results.rows.item(0).LABELS - 1) {
-                try {
-                  lheader = "! 0 50 50 620 1\r\n";
-                  lheader +=
-                    "! U1 LMARGIN 10\r\n! U\r\n! U1 PAGE-WIDTH 1400\r\nON-FEED IGNORE\r\n";
-                  lheader += "CENTER 570 T 0 3 0 10 MOBILITY SCM\r\n";
-                  lheader += "B QR 380 60 M 2 U 8 \r\n";
-                  lheader +=
-                    "M0A," +
-                    pGuide +
-                    "-" +
-                    (i + 1) +
-                    "/" +
-                    results.rows.item(0).PACKAGES +
-                    "\r\n";
-                  lheader += "ENDQR \r\n";
-                  lheader +=
-                    "LEFT 5 T 4 4 0 70 " +
-                    (i + 1) +
-                    "/" +
-                    results.rows.item(0).PACKAGES +
-                    "\r\n";
-                  lheader += "L 5 240 570 240 1\r\n";
-                  lheader += "CENTER 570 T 0 3 0 270 GUIA: " + pGuide + "\r\n";
-                  lheader +=
-                    "LEFT 5 T 0 2 0 300 REMITENTE    : " +
-                    results.rows.item(0).RELATED_CLIENT_CODE +
-                    " " +
-                    results.rows.item(0).RELATED_CLIENT_NAME +
-                    "\r\n";
-                  lheader +=
-                    "LEFT 5 T 0 2 0 330 DESTINATARIO : " +
-                    results.rows.item(0).DESTINATION_CLIENTNAME +
-                    "\r\n";
-                  lheader +=
-                    "LEFT 5 T 0 2 0 360 " +
-                    results.rows.item(0).DELIVERY_BRANCH_NAME +
-                    " " +
-                    results.rows.item(0).DELIVERY_BRANCH_ADDRESS +
-                    "\r\n";
-                  lheader +=
-                    "LEFT 5 T 0 2 0 390 COURIER      : " +
-                    gUserCode +
-                    " " +
-                    gLoggedUser +
-                    "\r\n";
-                  lheader +=
-                    "LEFT 5 T 0 2 0 420 FECHA Y HORA : " + xdate + "\r\n";
-                  lheader += "L 5 470 570 470 1\r\n";
-                  lheader += "CENTER 570 T 0 1 1 500 www.mobilityscm.com\r\n";
-
-                  lheader += "\r\nPRINT\r\n";
-                } catch (e) {
-                  notify("error en header:" + e.message);
-                }
-
-                bluetoothSerial.write(
-                  lheader,
-                  function() {},
-                  function() {
-                    notify("unable to write to printer");
-                  }
-                );
-
-                i++;
-              }
-            }
-
-            my_dialog("", "", "close");
-          },
-          function(txt, err) {
-            my_dialog("", "", "close");
-            notify("(2)Error processing SQL: " + err.message);
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(3)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    notify("printguide.catch:" + e.message);
-  }
-}
-function GuideCompleted() {
-  try {
-    navigator.notification.confirm(
-      "Pedido completo?", // message
-      function(buttonIndex) {
-        if (buttonIndex === 2) {
-          var pskus_count = $("#listview_packs_detail li").size();
-
-          if (pskus_count >= 1) {
-            my_dialog("Enviando Pedido", "Procesando...", "close");
-            saveGuide();
-            printguide(pNewGuideID);
-            my_dialog("", "", "close");
-
-            $.mobile.changePage("#taskpickup_page", {
-              transition: "flow",
-              reverse: true,
-
-              showLoadMsg: false
-            });
-          } else {
-            notify("ERROR, el pedido aun esta vacio, no puede ser completada.");
-          }
-        }
-      }, // callback to invoke with index of button pressed
-      "Sonda® Ruta " + SondaVersion, // title
-      "No,Si" // buttonLabels
-    );
-  } catch (e) {
-    notify("GuideCompleted:" + e.message);
-  }
-}
-
-function updatepackage(um_code) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var xdate = getDateTime();
-        var pqty = $("#pack_qty_" + um_code.replace(" ", "")).val();
-
-        pSQL =
-          "UPDATE SKUS_X_ORDER SET QTY = " +
-          pqty +
-          " WHERE ORDER_ID = '-9999' AND SKU_ID = '" +
-          um_code +
-          "'";
-        console.log(pSQL);
-
-        tx.executeSql(pSQL);
-      },
-      function(tx, err) {
-        my_dialog("", "", "close");
-        notify("um.add.row:" + err);
-      },
-      function() {
-        RefreshSkusXOrder();
-      }
-    );
-  } catch (e) {
-    notify("updatepackage:" + e.message);
-  }
-}
-
-function removepackage(um_code) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var xdate = getDateTime();
-
-        pSQL =
-          "DELETE FROM SKUS_X_ORDER WHERE ORDER_ID = '-9999' AND SKU_ID = '" +
-          um_code +
-          "'";
-        console.log(pSQL);
-
-        tx.executeSql(pSQL);
-      },
-      function(tx, err) {
-        my_dialog("", "", "close");
-        notify("um.add.row:" + err);
-      },
-      function() {
-        RefreshSkusXOrder();
-      }
-    );
-  } catch (e) {
-    notify("removepackage:" + e.message);
-  }
-}
-
-function qtykeyup(pUM) {
-  try {
-    updatepackage(pUM);
-  } catch (e) {
-    notify("keyup:" + e.message);
-  }
-}
-function RefreshSkusXOrder() {
-  try {
-    my_dialog("Paquetes", "cargando datos...", "open");
-
-    var vLI = "";
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-        var pRunningTotal = new Number(0);
-        $("#divSKUsOrder").collapsible("expand");
-        tx.executeSql(
-          "SELECT * FROM SKUS_X_ORDER WHERE ORDER_ID = '-9999'",
-          [],
-          function(tx, results) {
-            $("#listview_packs_detail")
-              .children()
-              .remove("li");
-            $("#lblTotalOrder").text("0.00");
-
-            for (i = 0; i <= results.rows.length - 1; i++) {
-              var pClickRemove =
-                "removepackage('" + results.rows.item(i).SKU_ID + "');";
-              var pClickUpdate =
-                "updatepackage('" + results.rows.item(i).SKU_ID + "');";
-
-              var pKeyUp = "qtykeyup('" + results.rows.item(i).SKU_ID + "');";
-
-              vLI = "";
-              vLI =
-                '<li data-corners="false" data-mini="true" class="ui-alt-icon ui-nodisc-icon ui-btn ui-shadow ui-btn-icon-tag "><a href="#">';
-
-              vLI +=
-                '<p><span class="small-roboto">' +
-                results.rows.item(i).SKU_DESCRIPTION +
-                "</span></p>";
-
-              vLI += '<p><div data-role="controlgroup" data-type="horizontal">';
-              vLI +=
-                '<input style="width:35%" class="ui-btn-a ui-corner-all small-roboto allownumericwithoutdecimal" data-corners="true" onblur="' +
-                pKeyUp +
-                '" type="text" id="pack_qty_' +
-                results.rows.item(i).SKU_ID.replace(" ", "") +
-                '" value="' +
-                results.rows.item(i).QTY +
-                '">';
-
-              vLI +=
-                '<span class="small-roboto"> P/U Q ' +
-                format_number(results.rows.item(i).UNIT_PRICE, 2) +
-                "</span></p>";
-              vLI +=
-                '<span class="small-roboto ui-li-count">Q' +
-                format_number(
-                  parseFloat(results.rows.item(i).UNIT_PRICE) *
-                    parseFloat(results.rows.item(i).QTY),
-                  2
-                ) +
-                "</span>";
-              vLI += "</div></a>";
-
-              vLI += '<a href="#"  onclick="' + pClickRemove + '"></a></li>';
-
-              $("#listview_packs_detail").append(vLI);
-              $("#listview_packs_detail").listview("refresh");
-
-              pRunningTotal =
-                parseFloat(pRunningTotal) +
-                parseFloat(results.rows.item(i).UNIT_PRICE) *
-                  parseFloat(results.rows.item(i).QTY);
-
-              $("#lblTotalOrder").text(format_number(pRunningTotal, 2));
-            }
-
-            my_dialog("", "", "close");
-          },
-          function(err) {
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(4)Error processing SQL: " + err.code);
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(1)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    my_dialog("", "", "close");
-    console.log(e.message);
-  }
-}
-
-function refresh_guidetodeliver_stats() {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-        $("#manifest_guides_listview")
-          .children()
-          .remove("li");
-
-        var pSQL =
-          "SELECT * FROM MANIFEST_DETAIL WHERE INVOICE_ID = '" +
-          gGuideToDeliver +
-          "'";
-        console.log(pSQL);
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            $("#lblGuideToDeliver").text("Guia:" + gGuideToDeliver);
-
-            gGuideScannedPacks = results.rows.item(0).SCANNED_PACKS;
-            $("#lblScannedPacks").text(gGuideScannedPacks);
-
-            var pPacks = results.rows.item(0).PACKAGES;
-            $("#lblGuidePacks").text(pPacks);
-
-            var pLabels = results.rows.item(0).LABELS;
-            $("#lblGuideLabels").text(pLabels);
-
-            var pPacksPending = parseInt(pPacks) - parseInt(gGuideScannedPacks);
-            $("#lblPendingPacks").text(pPacksPending);
-
-            if (parseInt(gGuideScannedPacks) >= parseInt(pLabels)) {
-              $("#btnDeliveryPhotoSignature").removeClass("ui-disabled");
-            }
-
-            gPACKAGES_ToDeliver = results.rows.item(0).PACKAGES;
-            gRELATED_CLIENT_NAME_ToDeliver = results.rows.item(0).CLIENT_NAME;
-            gDESTINATION_CLIENTNAME_ToDeliver =
-              results.rows.item(0).DESTINATION_CLIENTNAME +
-              ". " +
-              results.rows.item(0).DESTINATION_ADDRESS;
-
-            my_dialog("", "", "close");
-          },
-          function(err) {
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(6)Error processing SQL: " + err.code);
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(6)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    notify("refresh_guidetodeliver_stats:" + e.message);
-  }
-}
-function getguide(pguide) {
-  try {
-    gGuideToDeliver = pguide;
-
-    my_dialog("Entregar Guia", "cargando datos...", "open");
-
-    $.mobile.changePage("#deliver_guides_page", {
-      transition: "flow",
-      reverse: true,
-      showLoadMsg: false
-    });
-
-    refresh_guidetodeliver_stats();
-
-    my_dialog("", "", "close");
-  } catch (e) {
-    my_dialog("", "", "close");
-
-    notify("get_guide:" + e.message);
-  }
-}
-function showmanifestlist(pstatus) {
   SONDA_DB_Session.transaction(
     function(tx) {
-      var pDoc = "";
-      var pImg = "";
-      $("#manifest_guides_listview")
-        .children()
-        .remove("li");
+      try {
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SKU_SERIES(SKU, IMEI, SERIE, PHONE, ICC, STATUS, LOADED_LAST_UPDATED)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SKUS(SKU, SKU_NAME, SKU_PRICE, SKU_LINK, REQUERIES_SERIE, IS_KIT, ON_HAND, ROUTE_ID, IS_PARENT, PARENT_SKU, EXPOSURE, PRIORITY, QTY_RELATED, LOADED_LAST_UPDATED, TAX_CODE, CODE_PACK_UNIT_STOCK, SALES_PACK_UNIT)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS INVOICE_HEADER(INVOICE_NUM, TERMS, POSTED_DATETIME, CLIENT_ID, CLIENT_NAME, POS_TERMINAL, GPS, TOTAL_AMOUNT, ERP_INVOICE_ID, IS_POSTED, STATUS, IS_CREDIT_NOTE, VOID_REASON, VOID_NOTES, VOID_INVOICE_ID, PRINT_REQUEST, PRINTED_COUNT, AUTH_ID, SAT_SERIE, CHANGE, IMG1, IMG2, IMG3, CONSIGNMENT_ID, IS_PAID_CONSIGNMENT, INITIAL_TASK_IMAGE, IN_ROUTE_PLAN, ID_BO, IS_POSTED_VALIDATED, DETAIL_QTY,HANDLE_TAX, TAX_PERCENT, TELEPHONE_NUMBER, IS_FROM_DELIVERY_NOTE, DISCOUNT, COMMENT, DUE_DATE, CREDIT_AMOUNT, CASH_AMOUNT, PAID_TO_DATE, TASK_ID, GOAL_HEADER_ID, ELECTRONIC_SIGNATURE, DOCUMENT_SERIES, DOCUMENT_NUMBER, DOCUMENT_URL, SHIPMENT, VALIDATION_RESULT, SHIPMENT_DATETIME, SHIPMENT_RESPONSE, IS_CONTINGENCY_DOCUMENT, CONTINGENCY_DOC_SERIE, CONTINGENCY_DOC_NUM, FEL_DOCUMENT_TYPE, FEL_STABLISHMENT_CODE)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS INVOICE_DETAIL(INVOICE_NUM, SKU, SKU_NAME, QTY, PRICE, DISCOUNT, TOTAL_LINE, SERIE, SERIE_2, REQUERIES_SERIE, LINE_SEQ, IS_ACTIVE, COMBO_REFERENCE, PARENT_SEQ, EXPOSURE, PHONE, TAX_CODE, ON_HAND, IS_BONUS, PACK_UNIT, CODE_PACK_UNIT_STOCK, CONVERSION_FACTOR)"
+        );
 
-      var pSQL =
-        "SELECT * FROM MANIFEST_DETAIL WHERE INVOICE_STATUS = '" +
-        pstatus +
-        "'";
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS DEPOSITS(TRANS_ID, TRANS_TYPE, TRANS_DATETIME, BANK_ID, ACCOUNT_NUM, AMOUNT, GPS_URL, IS_POSTED, IMG1, DOC_SERIE, DOC_NUM)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS BANK_ACCOUNTS(BANK, ACCOUNT_BASE, ACCOUNT_NAME, ACCOUNT_NUMBER)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS VOID_REASONS(REASON_ID, REASON_DESCRIPTION)"
+        );
 
-      tx.executeSql(
-        pSQL,
-        [],
-        function(tx, results) {
-          var i;
-          for (i = 0; i <= results.rows.length - 1; i++) {
-            var pClick = "";
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS POS_FACTS(CASH_AMOUNT, CREDIT_AMOUNT, SKUS_QTY, INVOICES_QTY)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS FAVS_FACTS(SKU, SKU_NAME, QTY)"
+        );
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS TASK(TASK_ID,TASK_TYPE,TASK_DATE,SCHEDULE_FOR,CREATED_STAMP,ASSIGEND_TO,ASSIGNED_BY,ACCEPTED_STAMP,COMPLETED_STAMP,EXPECTED_GPS,POSTED_GPS,TASK_COMMENTS,TASK_SEQ,TASK_ADDRESS,RELATED_CLIENT_CODE,RELATED_CLIENT_NAME,TASK_STATUS, IS_POSTED, TASK_BO_ID, COMPLETED_SUCCESSFULLY, REASON, RGA_CODE, NIT, PHONE_CUSTOMER, CODE_PRICE_LIST, IN_PLAN_ROUTE, MUNICIPALITY, DEPARTMENT)"
+        );
 
-            vLI = "";
-            var vLIStat = "";
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CONSIGNMENT_HEADER(CONSIGNMENT_ID, CUSTOMER_ID, DATE_CREATE, DATE_UPDATE, STATUS, POSTED_BY, IS_POSTED, POS_TERMINAL, GPS_URL, DOC_DATE, CLOSED_ROUTE_DATETIME, IS_ACTIVE_ROUTE, DUE_DATE, CONSIGNMENT_BO_NUM, TOTAL_AMOUNT, DOC_SERIE, DOC_NUM, IMG, IS_CLOSED, IS_RECONSIGN, REASON, IN_ROUTE, CONSIGNMENT_TYPE, INVOICE_SERIE, INVOICE_NUM)"
+        );
 
-            switch (results.rows.item(i).GUIDE_STATUS) {
-              case "PENDING":
-                pClick = "getguide(" + results.rows.item(i).GUIDE_ID + ");";
-                vLIStat +=
-                  '<span class="small-roboto" style="background-color:yellow"><img src="css/styles/images/icons-png/notify-black.png"></span>';
-                break;
-              case "ACCEPTED":
-                //pClick = "getguide(" + results.rows.item(i).GUIDE_ID + ");";
-                pClick =
-                  "EjecutarTareaDeVenta(" +
-                  results.rows.item(i).RELATED_CLIENT_CODE +
-                  ")";
-                vLIStat +=
-                  '<span class="small-roboto" style="background-color:lime"><img src="css/styles/images/icons-png/check-black.png"></span>';
-                break;
-              case "DELIVERED":
-                pClick = 'notify("Pedido ya fue entregado");';
-                vLIStat +=
-                  '<span class="small-roboto" style="background-color:lightsteelblue"><img src="css/styles/images/icons-png/tag-black.png"></span>';
-                break;
-              default:
-                vLIStat +=
-                  '<span class="small-roboto" style="background-color:silver">' +
-                  results.rows.item(i).GUIDE_STATUS +
-                  "</span>";
-                break;
-            }
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CONSIGNMENT_DETAIL(CONSIGNMENT_ID, SKU, LINE_NUM, QTY, PRICE, DISCOUNT, TOTAL_LINE, POSTED_DATETIME, PAYMENT_ID, HANDLE_SERIAL,SERIAL_NUMBER)"
+        );
 
-            vLI =
-              '<li class="ui-alt-icon ui-nodisc-icon ui-btn ui-shadow ui-btn-icon-tag"> <a href="#" onclick=' +
-              pClick +
-              ">";
-            vLI +=
-              '<p><span class="small-roboto">' +
-              vLIStat +
-              results.rows.item(i).GUIDE_SEQ +
-              ") " +
-              results.rows.item(i).GUIDE_ID +
-              " " +
-              results.rows.item(i).DESTINATION_CLIENTNAME +
-              "</span></p>";
-            vLI +=
-              '<p><textarea cols="25" rows="2" class="small-roboto">' +
-              results.rows.item(i).DESTINATION_ADDRESS +
-              "</textarea></p>";
-            vLI +=
-              '<p><span class="ui-li-count">' +
-              results.rows.item(i).PACKAGES +
-              "</span></p>";
-            vLI += "</a></li>";
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS DOCUMENT_SEQUENCE(DOC_TYPE, DOC_FROM, DOC_TO, SERIE, CURRENT_DOC, BRANCH_NAME, BRANCH_ADDRESS)"
+        );
 
-            $("#manifest_guides_listview").append(vLI);
-            $("#manifest_guides_listview").listview("refresh");
-          }
-          my_dialog("", "", "close");
-        },
-        function(tx, err) {
-          my_dialog("", "", "close");
-          if (err.code !== 0) {
-            notify("(5)Error processing SQL: " + err.message);
-          }
-        }
-      );
-    },
-    function(err) {
-      if (err.code !== 0) {
-        notify("(1)Error processing SQL: " + err.code);
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS RULE(EVENT_ID,NAME_EVENT,TYPE,FILTERS,ACTION,NAME_ACTION,TYPE_ACTION,ENABLED,CODE,EVENT_ORDER)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SKU_COLLECTED_HEADER(SKU_COLLECTED_ID, CUSTOMER_ID, DOC_SERIE, DOC_NUM, CODE_ROUTE, GPS_URL, POSTED_DATETIME, POSTED_BY, LAST_UPDATE, LAST_UPDATE_BY, TOTAL_AMOUNT, IS_POSTED, IMG_1, IMG_2, IMG_3, SKU_COLLECTED_BO_ID)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SKU_COLLECTED_DETAIL(SKU_COLLECTED_ID, CODE_SKU, QTY_SKU, IS_GOOD_STATE, LAST_UPDATE, LAST_UPDATE_BY, SOURCE_DOC_TYPE, SOURCE_DOC_NUM, TOTAL_AMOUNT, SKU_PRICE, HANDLE_SERIAL, SERIAL_NUMBER)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PARAMETERS(IDENTITY,GROUP_ID,PARAMETER_ID,VALUE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CONSIGNMENT_HEADER_TEMP(CONSIGNMENT_ID, CUSTOMER_ID, DATE_CREATE, DATE_UPDATE, STATUS, POSTED_BY, IS_POSTED, POS_TERMINAL, GPS_URL, DOC_DATE, CLOSED_ROUTE_DATETIME, IS_ACTIVE_ROUTE, DUE_DATE, CONSIGNMENT_BO_NUM, TOTAL_AMOUNT)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CONSIGNMENT_DETAIL_TEMP(CONSIGNMENT_ID, SKU, LINE_NUM, QTY, PRICE, DISCOUNT, TOTAL_LINE, POSTED_DATETIME, PAYMENT_ID, QTY_PAID, QTY_RECONSIGNED, QTY_RECOLLECTED, LAST_PAYMENT_OPTION, PRICE_SKU_FOR_RECONSIGN, DUE_DATE_CONSIGNMENT,HANDLE_SERIAL,SERIAL_NUMBER)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS REASONS(REASON_TYPE, REASON_PRIORITY, REASON_VALUE, REASON_PROMPT)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS HISTORICAL_TRACEABILITY_CONSIGNMENT(CONSIGNMENT_ID, DOC_SERIE_SOURCE, DOC_NUM_SOURCE, SKU, QTY, ACTION, DOC_SERIE_TARGET, DOC_NUM_TARGET, DATE_TRANSACTION, IS_POSTED, HANDLE_SERIAL, SERIAL_NUMBER)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SKU_HISTORY(SKU, SKU_NAME, SKU_PRICE, SKU_LINK, REQUERIES_SERIE, IS_KIT, ON_HAND, ROUTE_ID, IS_PARENT, PARENT_SKU, EXPOSURE, PRIORITY, QTY_RELATED, LOADED_LAST_UPDATED, QTY_SOLD, QTY_CONSIGNED, QTY_COLLECTED, QTY_TRANSFERED)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS BUSINESS_RIVAL_POLL(INVOICE_RESOLUTION,INVOICE_SERIE,INVOICE_NUM,CODE_CUSTOMER,BUSSINESS_RIVAL_NAME,BUSSINESS_RIVAL_TOTAL_AMOUNT,CUSTOMER_TOTAL_AMOUNT,COMMENT,CODE_ROUTE,POSTED_DATETIME,IS_POSTED)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CLASSIFICATION(GROUP_CLASSIFICATION,NAME_CLASSIFICATION,PRIORITY_CLASSIFICATION,VALUE_TEXT_CLASSIFICATION)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS NOTIFICATION(TYPE,ID,EXTRA_INFO,DATE,IS_NEW)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS TRANSFER_HEADER(TRANSFER_ID,CODE_WAREHOUSE_SOURCE,STATUS,DATE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS TRANSFER_DETAIL(TRANSFER_ID,SKU_CODE,DESCRIPTION_SKU,SERIE,QTY,STATUS, SALES_PACK_UNIT, CODE_PACK_UNIT_STOCK, VAT_CODE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CLIENT(CLIENT_ID,CLIENT_NAME,CLIENT_TAX_ID,ADDRESS,PHONE,CLIENT_HH_ID_OLD,CONTACT_CUSTOMER, CONTACT_CUSTOMER_PHONE, PHOTO,PHOTO_2,PHOTO_3,STATUS,NEW,GPS,CREATED_FROM, INVOICE_NAME, INVOICE_ADDRESS,SYNC_ID, IS_POSTED, DOC_SERIE, DOC_NUM, POSTED_DATETIME, TAGS_QTY,IS_POSTED_VALIDATED)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS TAG(TAG_COLOR,TAG_VALUE_TEXT,TAG_PRIORITY,TAG_COMMENTS)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS TAG_X_CUSTOMER(TAG_COLOR,CLIENT_ID, DOC_SERIE_CLIENT, DOC_NUM_CLIENT)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SWIFT_SEQUENCES(SEQUENCE_NAME,CURRENT_NUMBER)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SWIFT_TAX(TAX_CODE, TAX_NAME, TAX_VALUE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS MANIFEST_HEADER(MANIFEST_HEADER_ID,DRIVER,VEHICLE,DISTRIBUTION_CENTER,CREATED_DATE,STATUS,LAST_UPDATE,LAST_UPDATE_BY,MANIFEST_TYPE,TRANSFER_REQUEST_ID, IS_POSTED)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS MANIFEST_DETAIL(MANIFEST_DETAIL_ID,MANIFEST_HEADER_ID,CODE_ROUTE,CLIENT_CODE,WAVE_PICKING_ID,MATERIAL_ID,QTY,STATUS,LAST_UPDATE,LAST_UPDATE_BY,ADDRESS_CUSTOMER,CLIENT_NAME,LINE_NUM,PICKING_DEMAND_HEADER_ID,STATE_CODE,CERTIFICATION_TYPE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SONDA_DELIVERY_NOTE_BY_INVOICE(DELIVERY_NOTE_DOC_NUM,DELIVERY_NOTE_SERIE,INVOICE_ID,LAST_UPDATE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SONDA_DELIVERY_NOTE_DETAIL(DELIVERY_NOTE_DETAIL_ID, DELIVERY_NOTE_ID, CODE_SKU, QTY, PRICE, TOTAL_LINE, IS_BONUS, APPLIED_DISCOUNT, CREATED_DATETIME, POSTED_DATETIME, PICKING_DEMAND_HEADER_ID)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SONDA_DELIVERY_NOTE_HEADER(DELIVERY_NOTE_ID, DOC_SERIE, DOC_NUM, CODE_CUSTOMER, DELIVERY_NOTE_ID_HH, TOTAL_AMOUNT, IS_POSTED, CREATED_DATETIME, POSTED_DATETIME, TASK_ID, INVOICE_ID, CONSIGNMENT_ID, DEVOLUTION_ID, DELIVERY_IMAGE, BILLED_FROM_SONDA,IS_CANCELED, REASON_CANCEL, DISCOUNT, DELIVERY_IMAGE_2, DELIVERY_IMAGE_3, DELIVERY_IMAGE_4, DELIVERY_SIGNATURE)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS NEXT_PICKING_DEMAND_HEADER(PICKING_DEMAND_HEADER_ID,DOC_NUM,CLIENT_CODE,CODE_ROUTE,CODE_SELLER,TOTAL_AMOUNT,SERIAL_NUMBER,DOC_NUM_SEQUENCE,EXTERNAL_SOURCE_ID,IS_FROM_ERP,IS_FROM_SONDA,LAST_UPDATE,LAST_UPDATE_BY,IS_COMPLETED,WAVE_PICKING_ID,CODE_WAREHOUSE,IS_AUTHORIZED,ATTEMPTED_WITH_ERROR,IS_POSTED_ERP,POSTED_ERP,POSTED_RESPONSE,ERP_REFERENCE,CLIENT_NAME,CREATED_DATE,ERP_REFERENCE_DOC_NUM,DOC_ENTRY,IS_CONSOLIDATED,PRIORITY,HAS_MASTERPACK,POSTED_STATUS,OWNER,CLIENT_OWNER,MASTER_ID_SELLER,SELLER_OWNER,SOURCE_TYPE,INNER_SALE_STATUS,INNER_SALE_RESPONSE,DEMAND_TYPE,TRANSFER_REQUEST_ID,ADDRESS_CUSTOMER,STATE_CODE, MANIFEST_HEADER_ID, PROCESS_STATUS, DISCOUNT )"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS NEXT_PICKING_DEMAND_DETAIL(PICKING_DEMAND_DETAIL_ID,PICKING_DEMAND_HEADER_ID,MATERIAL_ID, MATERIAL_DESCRIPTION, REQUERIES_SEERIE, QTY,LINE_NUM,ERP_OBJECT_TYPE,PRICE,WAS_IMPLODED,QTY_IMPLODED,MASTER_ID_MATERIAL,MATERIAL_OWNER,ATTEMPTED_WITH_ERROR,IS_POSTED_ERP,POSTED_ERP,ERP_REFERENCE,POSTED_STATUS,POSTED_RESPONSE,INNER_SALE_STATUS,INNER_SALE_RESPONSE,TONE,CALIBER, IS_BONUS, DISCOUNT, CODE_PACK_UNIT_STOCK, SALES_PACK_UNIT, CONVERSION_FACTOR)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS NEXT_PICKING_DEMAND_DETAIL_BY_SERIAL_NUMBER(MANIFEST_HEADER_ID, MATERIAL_ID, SERIAL_NUMBER)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS DELIVERY_CANCELED(DELIVERY_CANCELED_ID, PICKING_DEMAND_HEADER_ID, DOC_NUM_DELIVERY, DOC_ENTRY, DOC_NUM, DOC_SERIE, IS_POSTED, POSTED_DATETIME, REASON_CANCEL)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS BASKET_BY_MANIFEST(MANIFEST_HEADER_ID, PICKING_DEMAND_HEADER_ID, BARCODE, DOC_NUM, ERP_REFERENCE_DOC_NUM)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PICKING_DEMAND_BY_TASK(PICKING_DEMAND_HEADER_ID, TASK_ID, IS_POSTED, PICKING_DEMAND_STATUS)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_BY_CUSTOMER(ID,INVOICE_ID,DOC_ENTRY,CODE_CUSTOMER,CREATED_DATE,DUE_DATE,TOTAL_AMOUNT,PENDING_TO_PAID, IS_EXPIRED )"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS CUSTOMER_ACCOUNTING_INFORMATION(ID,CODE_CUSTOMER,GROUP_NUM,CREDIT_LIMIT,OUTSTANDING_BALANCE,EXTRA_DAYS)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_PAYMENT_HEADER(ID,CODE_CUSTOMER,DOC_SERIE,DOC_NUM,CREATED_DATE,POSTED_DATE,CODE_ROUTE,LOGIN_ID,PAYMENT_AMOUNT,IS_POSTED, COMMENT, PAYMENT_APPLIED_TO)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_PAYMENT_DETAIL(ID,PAYMENT_HEADER_ID,INVOICE_ID,DOC_ENTRY,DOC_SERIE,DOC_NUM,PAYED_AMOUNT)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PRICE_LIST_BY_SKU_PACK_SCALE([CODE_PRICE_LIST],[CODE_SKU],[CODE_PACK_UNIT],[PRIORITY],[LOW_LIMIT],[HIGH_LIMIT],[PRICE])"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PACK_UNIT_BY_SKU(PACK_UNIT, CODE_PACK_UNIT, DESCRIPTION_CODE_PACK_UNIT, UM_ENTRY)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PACK_CONVERSION(PACK_CONVERSION,CODE_SKU,CODE_PACK_UNIT_FROM,CODE_PACK_UNIT_TO, CONVERSION_FACTOR, [ORDER])"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PRESALE_STATISTICS(GOAL_HEADER_ID, TEAM_NAME, GOAL_NAME, RANKING, GOAL_AMOUNT, ACCUMULATED_AMOUNT, GOAL_PERCENTAGE_COVERED, REMAINING_DAYS, GOAL_AMOUNT_OF_DAY)"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_PAYMENT_TYPE_DETAIL([PAYMENT_TYPE_ID],[PAYMENT_HEADER_ID],[PAYMENT_TYPE],[FRONT_IMAGE],[BACK_IMAGE],[DOCUMENT_NUMBER],[BANK_ACCOUNT],[BANK_NAME],[AMOUNT],[DOC_SERIE],[DOC_NUM])"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS STATISTIC_SALES_BY_CUSTOMER([ID],[CLIENT_ID],[CODE_SKU],[SKU_NAME],[QTY],[SALE_PACK_UNIT])"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS SEQUENCE_CONTROL([SEQUENCE_TYPE], [LAST_USED], [CREATED_DATE], [LAST_UPDATE])"
+        );
+
+        tx.executeSql(
+          "CREATE TABLE IF NOT EXISTS PHRASE_AND_SCENARIO([ID], [FEL_DOCUMENT_TYPE], [PHRASE_CODE], [SCENARIO_CODE], [DESCRIPTION], [TEXT_TO_SHOW])"
+        );
+      } catch (e) {
+        notify("preparedb: " + e.message);
       }
+    },
+    function(
+      tx,
+      error //Fail
+    ) {},
+    function() //Success
+    {
+      my_dialog("", "", "close");
     }
   );
 }
 
-function welcome_back() {
-  try {
-    my_dialog("", "", "close");
-
-    cordova.plugins.notification.badge.configure({ autoClear: true });
-    cordova.plugins.notification.badge.configure({ smallIcon: "icon" });
-    cordova.plugins.notification.badge.configure({
-      title: "%d Nueva(s) tareas"
-    });
-
-    gCurrentRoute = "";
-
-    ximg = localStorage.getItem("LOGIN_IMAGE");
-
-    xlast_username = localStorage.getItem("LAST_LOGIN_NAME");
-
-    gCurrentRoute = localStorage.getItem("LAST_LOGIN_ROUTE");
-
-    $("#loginimg").attr("src", ximg);
-    $("#lblnameuser").text(xlast_username);
-    $("#lblnameuser1").text(xlast_username);
-
-    gdbuser = localStorage.getItem("dbuser");
-    gdbuserpass = localStorage.getItem("dbuserpass");
-
-    clearTimeout(gTimeout);
-    if (localStorage.getItem("isPrinterZebra") !== "1") {
-      ConectarImpresora(localStorage.getItem("PRINTER_ADDRESS"), function() {});
-    }
-
-    gManifestPresent = localStorage.getItem("MANIFEST_PRESENT");
-    gManifestID = localStorage.getItem("MANIFEST_SCANNED");
-
-    var estadoDeLaRuta = localStorage.getItem("POS_STATUS");
-
-    if (estadoDeLaRuta !== "OPEN") {
-      MostrarPaginaDeInicioDeRuta();
-    } else {
-      var intervalRoutePlan = setInterval(function() {
-        if (socket) {
-          socket.emit("getmyrouteplan", {
-            loginid: gLastLogin,
-            dbuser: gdbuser,
-            dbuserpass: gdbuserpass
-          });
-          clearInterval(intervalRoutePlan);
-        }
-      }, 1000);
-
-      $.mobile.changePage("#menu_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-    }
-  } catch (e) {
-    notify("ERROR.welcome_back.catch: " + e.message);
-  }
+function GetAlertLimit(data) {
+  SocketControlador.socketIo.emit("getalertlimit", data);
 }
-function finishdeliveryroute() {
-  navigator.notification.confirm(
-    "Confirma finalizacion de ruta de entrega?", // message
-    function(buttonIndex) {
-      if (buttonIndex === 2) {
-        localStorage.removeItem("MANIFEST_PRESENT");
+
+function OnConfirmFinishPOS(buttonIndex) {
+  try {
+    if (buttonIndex === 2) {
+      my_dialog("Procesando", "Finalizando Ruta", "open");
+
+      if (gIsOnline == EstaEnLinea.Si) {
+        //check if some invoice is offline
+        CheckforOffline();
 
         SONDA_DB_Session.transaction(
           function(tx) {
-            pSQL = "DELETE FROM MANIFEST_DETAIL";
-            console.log(pSQL);
+            var pDoc = "";
+            var pImg = "";
 
-            tx.executeSql(pSQL);
-          },
-          function(tx, err) {
-            my_dialog("", "", "close");
-            notify("finishdeliveryroute.CATCH:" + err);
-          },
-          function() {
-            navigator.app.exitApp();
-          }
-        );
-      }
-    }, // callback to invoke with index of button pressed
-    "SondaÂ® Ruta " + SondaVersion, // title
-    "No,Si" // buttonLabels
-  );
-}
-function getzpl() {
-  socket.emit("getzpl", { labelid: "STANDARD_GUIDE" });
-}
-function filtermydispatchplan(pstatus) {
-  try {
-    my_dialog("Ruta de despacho", "cargando datos...", "open");
-
-    showmanifestlist(pstatus);
-  } catch (e) {
-    my_dialog("", "", "close");
-    notify("filtermy.catch:" + e.message);
-    console.log(e.message);
-  }
-}
-function filtermyplan(pstatus) {
-  try {
-    var pdomElement;
-
-    my_dialog("SondaÂ® " + SondaVersion, "Cargando Tareas...", "open");
-
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-
-        tx.executeSql(
-          "SELECT * FROM PRESALES_ROUTE WHERE TASK_STATUS = '" +
-            pstatus +
-            "' ORDER BY TASK_SEQ",
-          [],
-          function(tx, results) {
-            pdomElement = $("#pickup_listview");
-            pdomElement.children().remove("li");
-
-            for (i = 0; i <= results.rows.length - 1; i++) {
-              var pClick = "gettask(" + results.rows.item(i).TASK_ID + ");";
-              //pClick = "EjecutarTareaDeVenta(" + results.rows.item(i).RELATED_CLIENT_CODE + ")";
-
-              vLI = "";
-
-              vLI =
-                '<li style="opacity: 1" class="ui-alt-icon ui-nodisc-icon"> <a href="#" onclick=' +
-                pClick +
-                ">";
-              /*
-                            switch (results.rows.item(i).TASK_TYPE) {
-                                case TareaTipo.Entrega:
-                                    //vLI += '<img src="img/E.png" style="top:5px; margin-left:5px">';
-                                    break;
-                                case TareaTipo.Preventa:
-                                    vLI += '<img src="img/P.png" style="top:5px; margin-left:5px">';
-                                    break;
-                                case TareaTipo.Venta:
-                                    vLI += '<img src="img/S.png" style="top:5px; margin-left:5px">';
-                                    break;
-                                case TareaTipo.Obsoleto:
-                                    vLI += '<img src="img/S.png" style="top:5px; margin-left:5px">';
-                                    break;
-                                case TareaTipo.Scouting:
-                                    vLI += '<img src="img/SC.png" style="top:5px; margin-left:5px">';
-                                    break;
-                            }*/
-
-              var pDocNum = "";
-              if (
-                results.rows.item(i).DOC_NUM === null ||
-                results.rows.item(i).DOC_NUM === 0
-              ) {
-                switch (results.rows.item(i).TASK_TYPE) {
-                  case TareaTipo.Entrega:
-                    pDocNum = "Entrega";
-                    break;
-                  case TareaTipo.Preventa:
-                    pDocNum = "Preventa";
-                    break;
-                  case TareaTipo.Venta:
-                    pDocNum = "Venta";
-                    break;
-                  case TareaTipo.Obsoleto:
-                    pDocNum = "Venta";
-                    break;
-                  case TareaTipo.Scouting:
-                    pDocNum = "Scouting";
-                    break;
-                  default:
-                    pDocNum = "Fuera de ruta";
-                    break;
+            tx.executeSql(
+              "SELECT * FROM INVOICE_HEADER",
+              [],
+              function(tx, results) {
+                SocketControlador.socketIo.emit("debug_on_server", {
+                  data: results.rows,
+                  msg: "fin de ruta:" + gLastLogin + " " + gInvoiceNUM,
+                  dir_data: true,
+                  save_to_file: true,
+                  file_name: "froute_" + gLastLogin
+                });
+              },
+              function(err) {
+                my_dialog("", "", "close");
+                if (err.code !== 0) {
+                  notify("Error processing SQL: " + err.code);
                 }
-              } else {
-                pDocNum = results.rows.item(i).DOC_NUM.toString();
               }
-              if (results.rows.item(i).DOC_NUM !== TareaTipo.Entrega) {
-                vLI +=
-                  '<span lass="ui-li small-roboto">' + pDocNum + "</span></p>";
-              }
-              //vLI = '<li class="ui-alt-icon ui-nodisc-icon ui-btn ui-shadow ui-btn-icon-tag"> <a href="#" onclick='+ pClick +'>';
-              vLI +=
-                '<p><span class="small-roboto">' +
-                (i + 1) +
-                ") " +
-                results.rows.item(i).RELATED_CLIENT_CODE +
-                " " +
-                results.rows.item(i).RELATED_CLIENT_NAME +
-                "</span></p>";
-              vLI +=
-                '<p><span class="small-roboto">' +
-                results.rows.item(i).TASK_ADDRESS +
-                "</span></p>";
-
-              switch (results.rows.item(i).TASK_STATUS) {
-                case TareaEstado.Asignada:
-                  vLI +=
-                    '<span class="ui-li-count small-roboto" style="background-color:yellow"><img src="css/styles/images/icons-png/notify-black.png"></span>';
-                  break;
-                case TareaEstado.Aceptada:
-                  vLI +=
-                    '<span class="ui-li-count small-roboto" style="background-color:lime"><img src="css/styles/images/icons-png/check-black.png"></span>';
-                  break;
-                case TareaEstado.Completada:
-                  vLI +=
-                    '<span class="ui-li-count small-roboto" style="background-color:lightsteelblue"><img src="css/styles/images/icons-png/tag-black.png"></span>';
-                  break;
-                default:
-                  vLI +=
-                    '<span class="ui-li-count ui-btn small-roboto" style="background-color:silver">Sin Status ' +
-                    results.rows.item(i).TASK_STATUS +
-                    "</span>";
-                  break;
-              }
-
-              switch (results.rows.item(i).NO_PICKEDUP) {
-                case 1:
-                  vLI +=
-                    '<p><span class="small-roboto" style="text-shadow: none; color:#ffffff; background-color:orangered">No Recolectado. ' +
-                    results.rows.item(i).NO_VISIT_REASON +
-                    "</span></p>";
-                  break;
-                case 0:
-                  vLI +=
-                    '<p><span class="small-roboto" style="background-color:silver"></span></p>';
-                  break;
-                default:
-                  vLI +=
-                    '<p><span class="small-roboto" style="background-color:silver"></span></p>';
-                  break;
-              }
-
-              vLI += "</a></li>";
-
-              pdomElement.append(vLI);
-              pdomElement.listview("refresh");
-            }
-            pdomElement = null;
-            my_dialog("", "", "close");
+            );
           },
           function(err) {
-            my_dialog("", "", "close");
             if (err.code !== 0) {
-              notify("(6)Error processing SQL: " + err.code);
+              alert("Error processing SQL: " + err.code);
             }
           }
         );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(1)Error processing SQL: " + err.code);
-        }
+
+        var data = {
+          routeid: gCurrentRoute,
+          loginid: gLastLogin,
+          lastinvoice:
+            parseInt(localStorage.getItem("POS_CURRENT_INVOICE_ID")) + 1,
+          dbuser: gdbuser,
+          dbuserpass: gdbuserpass
+        };
+        SocketControlador.socketIo.emit("finish_route", data);
+      } else {
+        InteraccionConUsuarioServicio.bloquearPantalla();
+        notify(
+          "ERROR, Debe estar conectado al server para poder finalizar la ruta."
+        );
+        my_dialog("", "", "close");
       }
+      my_dialog("", "", "close");
+    }
+  } catch (e) {
+    InteraccionConUsuarioServicio.desbloquearPantalla();
+    notify("OnConfirmFinishPOS:" + e.message);
+  }
+}
+function startpos_action() {
+  try {
+    navigator.notification.confirm(
+      "¿Confirma Iniciar Ruta?", // message
+      function(buttonIndex) {
+        if (buttonIndex === 2) {
+          var data = {
+            routeid: gCurrentRoute,
+            default_warehouse: gDefaultWhs,
+            dbuser: gdbuser,
+            dbuserpass: gdbuserpass
+          };
+          my_dialog("Espere...", "Procesando caja", "open");
+          InteraccionConUsuarioServicio.bloquearPantalla();
+
+          /* save sat auth. info to global variable */
+          pCurrentSAT_Resolution = $("#lblCurrent_AuthID").text();
+          pCurrentSAT_Res_Serie = $("#lblCurrent_Serie").text();
+
+          /* show result on the page (invoices) */
+          pCurrentSAT_Res_Date = $("#lblCurrent_DateAuth").text();
+          pCurrentSAT_Res_DocStart = $("#lblCurrent_From").text();
+          pCurrentSAT_Res_DocFinish = $("#lblCurrent_To").text();
+          pCurrentInvoiceID = $("#lblCurrent_CurrentInvoice").text();
+
+          gBranchAddress = $("#lblBranchAddress").text();
+          gBranchName = $("#lblBranchName").text();
+          gCompanyName = $("#lblCompanyName").text();
+
+          /* show result on the page (notes) */
+          pCurrentSAT_Resolution_notes = $("#lblCurrent_AuthID_notes").text();
+          pCurrentSAT_Res_Serie_notes = $("#lblCurrent_Serie_notes").text();
+
+          pCurrentSAT_Res_Date_notes = $("#lblCurrent_DateAuth_notes").text();
+          pCurrentSAT_Res_DocStart_notes = $("#lblCurrent_From_notes").text();
+          pCurrentSAT_Res_DocFinish_notes = $("#lblCurrent_To_notes").text();
+          pCurrentNoteID = $("#lblCurrent_From_notes").text();
+
+          /* show result on the page (invoices)*/
+          $("#lblSumm_Autho").text(pCurrentSAT_Resolution);
+          $("#lblSumm_Serie").text(pCurrentSAT_Res_Serie);
+          $("#lblSumm_AuthDate").text(pCurrentSAT_Res_Date);
+          $("#lblSumm_DocFrom").text(pCurrentSAT_Res_DocStart);
+          $("#lblSumm_DocTo").text(pCurrentSAT_Res_DocFinish);
+          $("#lblSumm_CurrentDoc").text(
+            pCurrentInvoiceID == 0 ? 0 : pCurrentInvoiceID - 1
+          );
+
+          /* show result on the page (notes) */
+          $("#lblSumm_Autho_notes").text(pCurrentSAT_Resolution_notes);
+          $("#lblSumm_Serie_notes").text(pCurrentSAT_Res_Serie_notes);
+          $("#lblSumm_AuthDate_notes").text(pCurrentSAT_Res_Date_notes);
+          $("#lblSumm_DocFrom_notes").text(pCurrentSAT_Res_DocStart_notes);
+          $("#lblSumm_DocTo_notes").text(pCurrentSAT_Res_DocFinish_notes);
+          $("#lblSumm_CurrentDoc_notes").text(pCurrentNoteID);
+
+          /* save results on device (invoices)*/
+          localStorage.setItem("POS_SAT_RESOLUTION", pCurrentSAT_Resolution);
+          localStorage.setItem("POS_SAT_RES_SERIE", pCurrentSAT_Res_Serie);
+          localStorage.setItem(
+            "POS_SAT_RES_DOC_START",
+            pCurrentSAT_Res_DocStart
+          );
+          localStorage.setItem(
+            "POS_SAT_RES_DOC_FINISH",
+            pCurrentSAT_Res_DocFinish
+          );
+          localStorage.setItem("POS_SAT_RES_DATE", pCurrentSAT_Res_Date);
+          localStorage.setItem(
+            "POS_CURRENT_INVOICE_ID",
+            pCurrentInvoiceID == 0 ? 0 : pCurrentInvoiceID - 1
+          );
+
+          /* save results on device (notes)*/
+          localStorage.setItem(
+            "POS_SAT_RESOLUTION_NOTES",
+            pCurrentSAT_Resolution_notes
+          );
+          localStorage.setItem(
+            "POS_SAT_RES_SERIE_NOTES",
+            pCurrentSAT_Res_Serie_notes
+          );
+          localStorage.setItem(
+            "POS_SAT_RES_DOC_START_NOTES",
+            pCurrentSAT_Res_DocStart_notes
+          );
+          localStorage.setItem(
+            "POS_SAT_RES_DOC_FINISH_NOTES",
+            pCurrentSAT_Res_DocFinish_notes
+          );
+          localStorage.setItem(
+            "POS_SAT_RES_DATE_NOTES",
+            pCurrentSAT_Res_Date_notes
+          );
+          localStorage.setItem(
+            "POS_CURRENT_CREDIT_NOTE",
+            pCurrentSAT_Res_DocStart_notes
+          );
+
+          localStorage.setItem("POS_SAT_BRANCH_NAME", gBranchName);
+          localStorage.setItem("POS_SAT_BRANCH_ADDRESS", gBranchAddress);
+          localStorage.setItem("POS_COMPANY_NAME", gCompanyName);
+
+          localStorage.setItem("ROUTE_RETURN_WAREHOUSE", gRouteReturnWarehouse);
+
+          SocketControlador.socketIo.emit("get_sales_inventory", data);
+        }
+      }, // callback to invoke with index of button pressed
+      "Sonda® SD " + SondaVersion, // title
+      "No,Si" // buttonLabels
     );
   } catch (e) {
-    my_dialog("", "", "close");
-    notify("filterplan:" + e.message);
-    console.log(e.message);
+    notify("startpos_action: " + e.message);
   }
+}
+
+function checkperc(pFinalNum, pCurrentNum, pPercToEval) {
+  try {
+  } catch (e) {
+    notify("ERROR, checkperc: " + e.message);
+  }
+}
+
+function cust_list() {
+  $.mobile.changePage("#dialog_cust_list", "pop", true, true);
 }
 
 function trunc_number(pnumber, decimals) {
@@ -2030,34 +1533,54 @@ function format_number(cantidad, decimals) {
   return result;
 }
 
-function getDateTime() {
-  var dateTime = ObtenerFecha() + " " + ObtenerHora();
-  return dateTime;
+function ClearUpInvoice() {
+  //clear up client
+  $("#txtNIT").val("");
+  $("#txtNombre").val("");
+  //clear up amounts
+  $("#txtCash_summ").val("");
+  $("#UiLblCurrencyVueltoSumm").text(currencySymbol + ". ");
+  $("#txtVuelto_summ").text("0.00");
+  //clear up images
+  gImageURI_1 = "";
+  gImageURI_2 = "";
+  gImageURI_3 = "";
+  $("#btnTakePic1").buttonMarkup({ icon: "user" });
+  $("#btnTakePic2").buttonMarkup({ icon: "user" });
+  $("#btnTakePic3").buttonMarkup({ icon: "comment" });
+
+  gPagado = 0;
+  //gTaskId = null;
+  //gTaskType = "";
+  //reload sku list
+  PopulateInvoiceSKUsList();
 }
 
-function ObtenerFecha() {
+function SetSpecifiSKUQty(qty, unitMeasure) {
+  var codeSku = $("#lblSKU_IDCant").attr("SKU");
+
+  AddSKU(codeSku, qty, false, unitMeasure);
+  codeSku = null;
+}
+function SelectClient(xid, xcust_name, xnit) {
+  $("#txtNIT").val(xnit);
+  $("#txtNombre").val(xcust_name);
+  $("#client_list_panel").panel("toggle");
+}
+function getDateTime() {
   var now = new Date();
   var year = now.getFullYear();
   var month = now.getMonth() + 1;
   var day = now.getDate();
-
+  var hour = now.getHours();
+  var minute = now.getMinutes();
+  var second = now.getSeconds();
   if (month.toString().length === 1) {
     month = "0" + month;
   }
   if (day.toString().length === 1) {
     day = "0" + day;
   }
-
-  var dateTime = year + "/" + month + "/" + day;
-  return dateTime;
-}
-
-function ObtenerHora() {
-  var now = new Date();
-  var hour = now.getHours();
-  var minute = now.getMinutes();
-  var second = now.getSeconds();
-
   if (hour.toString().length === 1) {
     hour = "0" + hour;
   }
@@ -2067,702 +1590,5002 @@ function ObtenerHora() {
   if (second.toString().length === 1) {
     second = "0" + second;
   }
-  var dateTime = hour + ":" + minute + ":" + second;
+  var dateTime =
+    year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + second;
   return dateTime;
 }
 
-function ObtenerFechaFutura(diasAdicionales) {
-  var fecha = new Date(Date.parse(ObtenerFecha()));
-  var dia = fecha.getDate();
-  fecha.setDate(dia + diasAdicionales);
-  return (
-    fecha.getFullYear() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getDate()
+function RefreshSkusList() {
+  gTotalInvoiced = 0;
+  gTotalInvoicesProc = 0;
+  gTotalDeposited = 0;
+
+  localStorage.setItem("POS_TOTAL_INVOICED", 0);
+  localStorage.setItem("POS_TOTAL_INVOICES_PROC", 0);
+  localStorage.setItem("POS_TOTAL_DEPOSITED", 0);
+  localStorage.setItem("POS_TOTAL_DEPOSITS_PROC", Number(0));
+
+  $("#lblTotalDeposited").text(currencySymbol + " " + "0.00");
+  $("#lblTotalDeposits").text("0");
+
+  $("#lblTotalInvoices").text("0");
+  $("#lblSold").text(currencySymbol + " 0.00");
+
+  $.mobile.changePage("#menu_page", {
+    transition: "none",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
+}
+
+function OnDemandRefreshSkusList() {
+  //confirm
+  navigator.notification.confirm(
+    "Confirma Actualizacion de Inventario?", // message
+    function(buttonIndex) {
+      if (buttonIndex === 2) {
+        my_dialog("Espere", "Actualizando inventario", "open");
+        LoadRemoteSKUs();
+        my_dialog("", "", "close");
+        hiddeskupanel();
+
+        $.mobile.changePage("#menu_page", {
+          transition: "none",
+          reverse: true,
+          changeHash: true,
+          showLoadMsg: false
+        });
+      }
+    }, // callback to invoke with index of button pressed
+    "Sonda® SD " + SondaVersion, // title
+    "No,Si" // buttonLabels
   );
+}
+
+function LoadRemoteSeries() {
+  if (gDefaultWhs === "") {
+    notify(
+      "ERROR, No hay ruta actual definida, contacte a su administrador de Sonda."
+    );
+    return -1;
+  }
+  var data = {
+    default_warehouse: gDefaultWhs,
+    dbuser: gdbuser,
+    dbuserpass: gdbuserpass
+  };
+
+  SocketControlador.socketIo.emit("getskuseries", data);
+
+  my_dialog("", "", "close");
+}
+function hiddeskupanel() {
+  var myPanel = $.mobile.activePage.children('[data-role="panel"]');
+  myPanel.panel("close");
+}
+
+function PopulateSKUGrid() {
+  var clientId = gClientCode;
+  var skuList = $("#skus_listview_panel");
+
+  skuList.children().remove("li");
+
+  ObtenerListaDePreciosDeCliente(
+    clientId,
+    function(priceListId) {
+      ObtenerSkusPorListaDePrecios(
+        priceListId,
+        function(productos, configuracionDecimales) {
+          var vLi = "";
+          var uClick;
+          if (productos.length > 0) {
+            for (var i = 0; i < productos.length; i++) {
+              var producto = productos[i];
+              var unidadDeMedidaAVender = obtenerUnidadDeMedidaDeProductoAVender(
+                producto
+              );
+              var cantidadDeProductoEnPrimerIngreso =
+                parseFloat(
+                  format_number(
+                    producto.ON_HAND,
+                    configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                  )
+                ) > 1
+                  ? 1
+                  : parseFloat(
+                      format_number(
+                        producto.ON_HAND,
+                        configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                      )
+                    );
+              if (
+                unidadDeMedidaAVender &&
+                cantidadDisponibleDeProductoEsSuficienteParaVender(
+                  producto,
+                  unidadDeMedidaAVender
+                )
+              )
+                try {
+                  if (
+                    producto.REQUERIES_SERIE === 1 ||
+                    producto.REQUERIES_SERIE === "1"
+                  ) {
+                    uClick =
+                      "AddSeriesForSku('" +
+                      producto.SKU +
+                      "','" +
+                      producto.SKU_NAME +
+                      "'," +
+                      unidadDeMedidaAVender.PRICE +
+                      ")";
+                  } else {
+                    uClick =
+                      "InsertInvoiceDetail('" +
+                      producto.SKU +
+                      "'," +
+                      unidadDeMedidaAVender.PRICE +
+                      "," +
+                      cantidadDeProductoEnPrimerIngreso +
+                      ",ReturnSkus, '" +
+                      unidadDeMedidaAVender.CODE_PACK_UNIT +
+                      "', '" +
+                      producto.CODE_PACK_UNIT_STOCK +
+                      "', " +
+                      unidadDeMedidaAVender.CONVERSION_FACTOR +
+                      ")";
+                  }
+                  vLi +=
+                    "<li data-icon='false' class='ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check'>";
+                  vLi += '<a href="#" onclick="' + uClick + '">';
+                  vLi += "<p>";
+                  vLi +=
+                    "<span style='background-color: #005599; color: #ffffff; padding: 3px; box-shadow: 1px 10px 10px 1px silver; text-shadow: none'>" +
+                    format_number(
+                      producto.ON_HAND,
+                      configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                    ) +
+                    "</span><br>";
+                  vLi +=
+                    "<br><span class='small-roboto' style='white-space : normal;'>" +
+                    producto.SKU +
+                    " " +
+                    producto.SKU_NAME +
+                    "</span><br>";
+                  vLi +=
+                    "<span class='ui-li-count'>" +
+                    currencySymbol +
+                    " " +
+                    format_number(
+                      unidadDeMedidaAVender.PRICE,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "</span><br>";
+                  vLi +=
+                    "<span>UM:" +
+                    unidadDeMedidaAVender.CODE_PACK_UNIT +
+                    "</span>";
+                  vLi += "</p></li>";
+                } catch (e) {
+                  notify(
+                    "Error al generar el listado de SKU's para la venta: " +
+                      e.message
+                  );
+                }
+            }
+            skuList.append(vLi);
+            skuList.listview("refresh");
+            skuList = null;
+          } else {
+            skuList = null;
+          }
+        },
+        function(err) {
+          notify(err.message);
+        }
+      );
+    },
+    function(err) {
+      notify(err.message);
+    }
+  );
+}
+
+function obtenerUnidadDeMedidaDeProductoAVender(producto) {
+  if (producto.MEASURE_UNITS.length > 0) {
+    var unidadDeMedidaDeVenta = producto.MEASURE_UNITS.find(function(
+      measureUnit
+    ) {
+      return (
+        measureUnit.CODE_PACK_UNIT.toUpperCase() ===
+          producto.SALES_PACK_UNIT.toUpperCase() &&
+        measureUnit.CONVERSION_FACTOR <= producto.ON_HAND
+      );
+    });
+
+    if (unidadDeMedidaDeVenta) {
+      return unidadDeMedidaDeVenta;
+    }
+
+    var unidadesDeMedidaOrdeneasEnBaseAOrdenDeAplicacion = producto.MEASURE_UNITS.sort(
+      function(actual, siguiente) {
+        return actual.ORDER.toString().localeCompare(
+          siguiente.ORDER.toString()
+        );
+      }
+    );
+
+    return unidadesDeMedidaOrdeneasEnBaseAOrdenDeAplicacion[0];
+  } else {
+    return null;
+  }
+}
+
+function cantidadDisponibleDeProductoEsSuficienteParaVender(
+  producto,
+  unidadDeMedidaAVender
+) {
+  var cantidadSuficiente = false;
+
+  if (
+    producto.SALES_PACK_UNIT.toUpperCase() !==
+    producto.CODE_PACK_UNIT_STOCK.toUpperCase()
+  ) {
+    cantidadSuficiente =
+      producto.ON_HAND >= unidadDeMedidaAVender.CONVERSION_FACTOR;
+  } else {
+    cantidadSuficiente = true;
+  }
+
+  return cantidadSuficiente;
+}
+
+function PopulateInvGrid() {
+  try {
+    SONDA_DB_Session.transaction(
+      function(tx) {
+        var pDoc = "";
+        var pImg = "";
+
+        var vLI = "";
+
+        tx.executeSql(
+          "SELECT * FROM SKUS",
+          [],
+          function(tx, results) {
+            $("#inv_listview")
+              .children()
+              .remove("li");
+
+            if (results.rows.length > 0) {
+              for (var i = 0; i <= results.rows.length - 1; i++) {
+                vLI +=
+                  '<li class="ui-alt-icon ui-nodisc-icon ui-btn ui-shadow ui-btn-icon-tag">';
+                vLI +=
+                  '<p><span class="medium small-roboto">' +
+                  results.rows.item(i).SKU_NAME +
+                  "</span></p>";
+
+                if (
+                  parseFloat(format_number(results.rows.item(i).ON_HAND, 2)) >=
+                  1
+                ) {
+                  vLI =
+                    vLI +
+                    '<span class="ui-li-count" style="color:white">' +
+                    format_number(results.rows.item(i).ON_HAND, 2) +
+                    "</span>";
+                } else {
+                  vLI =
+                    vLI +
+                    '<span class="ui-li-count" style="color:red">' +
+                    format_number(results.rows.item(i).ON_HAND, 2) +
+                    "</span>";
+                }
+
+                vLI = vLI + "</li>";
+              }
+
+              $("#inv_listview").append(vLI);
+              $("#inv_listview").listview("refresh");
+            } else {
+              my_dialog("", "", "close");
+            }
+            my_dialog("", "", "close");
+          },
+          function(err) {
+            my_dialog("", "", "close");
+            if (err.code !== 0) {
+              alert("Error processing SQL: " + err.code);
+            }
+          }
+        );
+      },
+      function(err) {
+        if (err.code !== 0) {
+          alert("Error processing SQL: " + err.code);
+        }
+      }
+    );
+  } catch (e) {
+    my_dialog("", "", "close");
+  }
+}
+function ReturnSkus() {
+  $.mobile.changePage("#pos_skus_page", {
+    transition: "none",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
+}
+function UpdateSKUSeries(pSKU, pLINE_SEQ, pSN, pIMEN, pPHONE) {
+  try {
+    SONDA_DB_Session.transaction(
+      function(tx) {
+        var pSQL1 =
+          'UPDATE INVOICE_DETAIL SET SERIE = "' +
+          pSN +
+          '", SERIE_2 = "' +
+          pIMEN +
+          '", PHONE = "' +
+          pPHONE +
+          '" WHERE INVOICE_NUM = -9999 AND LINE_SEQ = ' +
+          pLINE_SEQ;
+        tx.executeSql(pSQL1);
+
+        pSQL1 =
+          'UPDATE SKU_SERIES SET STATUS = 3 WHERE SKU = "' +
+          pSKU +
+          '" AND SERIE = "' +
+          pSN +
+          '"';
+        tx.executeSql(pSQL1);
+
+        $.mobile.changePage("#pos_skus_page", {
+          transition: "flow",
+          reverse: true,
+          changeHash: true,
+          showLoadMsg: false
+        });
+      },
+      function(err) {
+        if (err.code !== 0) {
+          alert("Error processing SQL: " + err);
+        }
+      }
+    );
+  } catch (e) {
+    notify("jv.catch.10.5.6: " + e.message);
+  }
 }
 
 function closeprinter() {
   bluetoothSerial.disconnect(
     function() {
-      notify("Printer is disconnected");
+      alert("Printer is disconnected");
     },
     function() {
-      notify("Printer is unable to get disconnected");
+      alert("Printer is unable to get disconnected");
     }
   );
 }
-function printinvoice_joininfo(pInvoiceID, pIsRePrinted) {
-  var lheader = "";
-  var ldetail = "";
-  var lfooter = "";
+
+function CenterText(text) {
+  if (text.length > 45) {
+    var line1 = text.substring(0, 45);
+    var line2 = text.substring(46, text.length - 1);
+    return line1 + "\r\n" + line2;
+  } else {
+    return text;
+  }
+}
+
+function printinvoice_joininfo(invoiceId, pIsRePrinted, callBack, escopia) {
+  var headerFormat = "";
+  var detailFormat = "";
+  var footerFormat = "";
+
+  var facturaManejaImpuesto = false;
+  var impuestoDeFactura = 0;
+  var rowPosition;
+  var pos = 0;
+
+  var etiquetaDeImpuesto = localStorage.getItem("TAX_ID");
+  var etiquetaDeResolucion = localStorage.getItem("TAX_RESOLUTION_ID");
+  var etiquetaPorcentajeDeImpuesto = localStorage.getItem("TAX_PERCENT");
 
   try {
-    pSQL =
-      "SELECT A.*, B.* FROM INVOICE_HEADER A, INVOICE_DETAIL B WHERE A.INVOICE_NUM = " +
-      pInvoiceID;
-    pSQL +=
-      " AND B.INVOICE_NUM = A.INVOICE_NUM AND A.IS_CREDIT_NOTE = 0 AND B.IS_ACTIVE = 1 AND B.EXPOSURE = 1";
+    var muestraPorcentaje = {};
+    var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
 
-    SONDA_DB_Session.transaction(function(tx) {
-      tx.executeSql(
-        pSQL,
-        [],
-        function(tx, results) {
-          var print_doc_len = new Number();
-          var pExpiresAuth = localStorage.getItem("SAT_RES_EXPIRE");
+    var procesarImpresionDeFactura = function procesarImpresionDeFactura(
+      rutaUsaFel,
+      frasesYEscenarios
+    ) {
+      ParametroServicio.ObtenerParametro(
+        "INVOICE",
+        "SHOW_PERCENTAGE_INVOICE",
+        function(parametro) {
+          muestraPorcentaje = parametro;
 
-          print_doc_len = 290; //header;
-          print_doc_len += parseInt(parseInt(results.rows.length) * 150); //detail
-          print_doc_len += parseInt(290); //footer
+          configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+            function(configuracionDecimales) {
+              var pSQL =
+                "SELECT IFNULL(A.DISCOUNT,0) AS DISCOUNT_HEADER, A.*, B.*, ";
+              pSQL +=
+                "IFNULL((SELECT TASK_ADDRESS FROM TASK T WHERE T.TASK_ID = A.TASK_ID), '__________') ";
+              pSQL +=
+                "AS TASK_ADDRESS FROM INVOICE_HEADER A, INVOICE_DETAIL B ";
+              pSQL += "WHERE A.INVOICE_NUM = " + invoiceId;
+              pSQL +=
+                " AND B.INVOICE_NUM = A.INVOICE_NUM AND A.IS_CREDIT_NOTE = 0";
 
-          var pRes = localStorage.getItem("POS_SAT_RESOLUTION");
+              SONDA_DB_Session.transaction(function(tx) {
+                tx.executeSql(
+                  pSQL,
+                  [],
+                  function(tx, results) {
+                    resultados = results;
+                    var expiresAuth = localStorage.getItem("SAT_RES_EXPIRE");
+                    var resolution = localStorage.getItem("POS_SAT_RESOLUTION");
+                    var discount = results.rows.item(0).DISCOUNT_HEADER;
+                    var discountAmount =
+                      discount > 0
+                        ? (discount / 100) * results.rows.item(0).TOTAL_AMOUNT
+                        : 0;
+                    var creditAmount = results.rows.item(0).CREDIT_AMOUNT;
+                    facturaManejaImpuesto =
+                      results.rows.item(0).HANDLE_TAX === 1 ||
+                      results.rows.item(0).HANDLE_TAX === "1";
 
-          lheader = "! 0 50 50 " + print_doc_len + " 1\r\n";
-          lheader +=
-            "! U1 LMARGIN 10\r\n! U\r\n! U1 PAGE-WIDTH 1400\r\nON-FEED IGNORE\r\n";
-          lheader += "CENTER 550 T 1 2 0 10 Ways, S.A / Ways, Zacapa\r\n";
-          lheader +=
-            "CENTER 550 T 0 2 0 60 Calzada La Paz, Ofibodega Centro 5, Bodega #13 18-40, Guatemala Ciudad\r\n";
-          lheader += "CENTER 550 T 0 2 0 90 SUJETO A PAGOS TRIMESTRALES\r\n";
-          lheader += "CENTER 550 T 0 2 0 120 NIT: 3517713-6\r\n";
-          lheader += "CENTER 550 T 0 2 0 150 ResoluciÃ³n #: " + pRes + " \r\n";
-          lheader +=
-            "CENTER 550 T 0 2 0 180 Fecha Auto. : " +
-            pCurrentSAT_Res_Date +
-            " \r\n";
-          lheader +=
-            "CENTER 550 T 0 2 0 210 Resol.Vence : " + pExpiresAuth + " \r\n";
-          lheader +=
-            "CENTER 550 T 0 2 0 240 Del: " +
-            pCurrentSAT_Res_DocStart +
-            " Al: " +
-            pCurrentSAT_Res_DocFinish +
-            "\r\n";
-          lheader +=
-            "CENTER 550 T 0 3 0 280 Factura Serie " +
-            results.rows.item(0).SAT_SERIE +
-            " # " +
-            pInvoiceID +
-            "\r\n";
-          lheader += "L 5 310 570 310 1\r\n";
-          lheader +=
-            "CENTER 550 T 0 2 0 340 A NOMBRE DE: NIT:" +
-            results.rows.item(0).CLIENT_ID +
-            "-" +
-            results.rows.item(0).CLIENT_NAME +
-            "\r\n";
-          lheader += "L 5 370 570 370 1\r\n";
+                    headerFormat = "! 0 50 50 _DOC_LEN_ 1\r\n";
+                    headerFormat +=
+                      "! U1 LMARGIN 10\r\n! U\r\n! U1 PAGE-WIDTH 1400\r\nON-FEED IGNORE\r\n";
 
-          var pRow = 410;
+                    pos = 10;
+                    headerFormat +=
+                      "CENTER 550 T 0 2 0 " +
+                      pos +
+                      " " +
+                      CenterText(gCompanyName) +
+                      "\r\n";
 
-          ldetail = "";
-          var pImei = 0;
-          var pImeiPrint = 0;
-          var i;
-          for (i = 0; i <= results.rows.length - 1; i++) {
-            ldetail =
-              ldetail +
-              "LEFT 5 T 0 2 0 " +
-              pRow +
-              " " +
-              results.rows.item(i).SKU +
-              "- " +
-              results.rows.item(i).SKU_NAME +
-              "\r\n";
-            pRow += parseInt(30);
+                    pos += 30;
+                    headerFormat +=
+                      "CENTER 550 T 0 2 0 " +
+                      pos +
+                      " " +
+                      CenterText(gBranchName) +
+                      "\r\n";
 
-            ldetail =
-              ldetail +
-              "LEFT 5 T 0 2 0 " +
-              pRow +
-              " CANTIDAD: " +
-              results.rows.item(i).QTY +
-              " / PREC.UNIT. : Q" +
-              format_number(results.rows.item(i).PRICE, 2) +
-              "\r\n";
-            pRow += parseInt(30);
+                    if (gBranchAddress.length > 30) {
+                      pos += 30;
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        pos +
+                        " " +
+                        gBranchAddress.substring(0, 30) +
+                        "\r\n";
 
-            pImei = results.rows.item(i).SERIE_2;
-            if (isNaN(pImei)) {
-              pImeiPrint = 0;
-            } else {
-              pImeiPrint = pImei;
-            }
+                      pos += 30;
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        pos +
+                        " " +
+                        gBranchAddress.substring(
+                          31,
+                          gBranchAddress.length - 1
+                        ) +
+                        "\r\n";
+                    } else {
+                      if (
+                        localStorage.getItem("direccionFacturacion01").length >
+                        0
+                      ) {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " " +
+                          localStorage.getItem("direccionFacturacion01") +
+                          "\r\n";
+                      }
 
-            ldetail =
-              ldetail +
-              "LEFT 5 T 0 2 0 " +
-              pRow +
-              " SERIE: " +
-              results.rows.item(i).SERIE +
-              "/ IMEI: " +
-              pImeiPrint +
-              "/ " +
-              results.rows.item(i).PHONE +
-              "\r\n";
-            pRow += parseInt(30);
+                      if (
+                        localStorage.getItem("direccionFacturacion02").length >
+                        0
+                      ) {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " " +
+                          localStorage.getItem("direccionFacturacion02") +
+                          "\r\n";
+                      }
 
-            ldetail =
-              ldetail +
-              "RIGHT 550 T 0 2 0 " +
-              (pRow - 90) +
-              " Q" +
-              format_number(results.rows.item(i).PRICE, 2) +
-              "\r\n";
+                      if (
+                        localStorage.getItem("direccionFacturacion03").length >
+                        0
+                      ) {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " " +
+                          localStorage.getItem("direccionFacturacion03") +
+                          "\r\n";
+                      }
 
-            ldetail = ldetail + "L 5 " + pRow + " 570 " + pRow + " 1\r\n";
-            pRow += parseInt(10);
-          }
+                      if (
+                        localStorage.getItem("direccionFacturacion04").length >
+                        0
+                      ) {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " " +
+                          localStorage.getItem("direccionFacturacion04") +
+                          "\r\n";
+                      }
+                    }
 
-          pRow += parseInt(30);
-          lfooter = "LEFT 5 T 0 2 0 " + pRow + " TOTAL: \r\n";
-          lfooter =
-            lfooter +
-            "RIGHT 550 T 0 2 0 " +
-            pRow +
-            " Q" +
-            format_number(results.rows.item(0).TOTAL_AMOUNT, 2) +
-            "\r\n";
+                    //Cambio de informacion en el encabezado del documento impreso cuando es FEL
+                    if (rutaUsaFel) {
+                      pos += 30;
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        pos +
+                        " " +
+                        etiquetaDeImpuesto +
+                        ":  " +
+                        localStorage.getItem("NitEnterprise") +
+                        " \r\n";
 
-          pRow += parseInt(30);
-          lfooter += "LEFT 5 T 0 2 0 " + pRow + " EFECTIVO: \r\n";
-          lfooter +=
-            "RIGHT 550 T 0 2 0 " +
-            pRow +
-            " Q" +
-            format_number(
-              Number(results.rows.item(0).TOTAL_AMOUNT) +
-                Number(results.rows.item(0).CHANGE),
-              2
-            ) +
-            "\r\n";
+                      pos += 30;
+                      headerFormat += "L 5 " + pos + " 570 " + pos + " 1\r\n";
 
-          pRow += parseInt(30);
-          lfooter += "LEFT 5 T 0 2 0 " + pRow + " CAMBIO: \r\n";
-          lfooter +=
-            "RIGHT 550 T 0 2 0 " +
-            pRow +
-            " Q" +
-            format_number(results.rows.item(0).CHANGE, 2) +
-            "\r\n";
+                      if (results.rows.item(0).IS_CONTINGENCY_DOCUMENT === 1) {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " DOCUMENTO EN CONTINGENCIA \r\n";
 
-          pRow += parseInt(30);
-          lfooter +=
-            "CENTER 550 T 0 2 0 " +
-            pRow +
-            " " +
-            getDateTime() +
-            " / RUTA " +
-            gCurrentRoute +
-            " \r\n";
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " SERIE: " +
+                          results.rows.item(0).CONTINGENCY_DOC_SERIE +
+                          " NUMERO: " +
+                          results.rows.item(0).CONTINGENCY_DOC_NUM +
+                          "\r\n";
+                      } else {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " DOCUMENTO TRIBUTARIO ELECTRONICO \r\n";
 
-          pRow += parseInt(30);
-          lfooter += lfooter + "L 5  " + pRow + " 570 " + pRow + " 1\r\n";
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " + pos + " FACTURA \r\n";
 
-          pRow += parseInt(30);
-          lfooter +=
-            "CENTER 550 T 0 2 0 " + pRow + " " + pIsRePrinted + "\r\nPRINT\r\n";
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " No. Autorizacion: \r\n";
 
-          //pIsRePrinted lfooter = lfooter + "";CENTER 550 T 0 2 0 " + pRow + " " + getDateTime() + " / RUTA " + gCurrentRoute + " \r\n
-          pCpCl = lheader + ldetail + lfooter;
-          var x = 0;
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " " +
+                          results.rows.item(0).ELECTRONIC_SIGNATURE +
+                          "\r\n";
 
-          for (
-            i = 0;
-            i <= 1;
-            i++ //print twice, one copy for the client, one for backoffice.
-          ) {
-            bluetoothSerial.write(
-              pCpCl,
-              function() {},
-              function() {
-                notify("unable to write to printer");
-              }
-            );
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " SERIE: " +
+                          results.rows.item(0).DOCUMENT_SERIES +
+                          " NUMERO: " +
+                          results.rows.item(0).DOCUMENT_NUMBER +
+                          "\r\n";
+                      }
 
-            if (i === 0) {
-              lfooter = "CENTER 550 T 0 2 0 50 *** ORIGINAL CLIENTE ***\r\n";
-            } else {
-              lfooter = "CENTER 550 T 0 2 0 50 *** COPIA CONTABILIDAD ***\r\n";
-            }
+                      pos += 30;
+                      headerFormat += "L 5 " + pos + " 570 " + pos + " 1\r\n";
 
-            lfooter = lfooter + "L 5  80 570 80 1\r\nPRINT\r\n";
-            print_doc_len = 150;
+                      pos += 30;
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        pos +
+                        " CLIENTE: " +
+                        results.rows.item(0).CLIENT_ID +
+                        "\r\n";
 
-            lheader = "! 0 50 50 " + print_doc_len + " 1\r\n";
-            lheader +=
-              "! U1 LMARGIN 10\r\n! U\r\n! U1 PAGE-WIDTH 1400\r\nON-FEED IGNORE\r\n";
-            bluetoothSerial.write(
-              lheader + lfooter,
-              function() {},
-              function() {
-                notify("unable to write to printer");
-              }
-            );
-          }
+                      pos += 30;
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        pos +
+                        " NOMBRE: " +
+                        results.rows.item(0).CLIENT_NAME +
+                        "\r\n";
 
-          bluetoothSerial.disconnect(
-            function() {},
-            function() {
-              notify("Printer is unable to get disconnected");
+                      pos += 30;
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        pos +
+                        " " +
+                        etiquetaDeImpuesto +
+                        ": " +
+                        results.rows.item(0).ERP_INVOICE_ID +
+                        "\r\n";
+
+                      if (results.rows.item(0).TASK_ADDRESS.length > 45) {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " DIRECCION: " +
+                          results.rows.item(0).TASK_ADDRESS.substring(0, 45) +
+                          "\r\n";
+
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " " +
+                          results.rows
+                            .item(0)
+                            .TASK_ADDRESS.substring(
+                              46,
+                              results.rows.item(0).TASK_ADDRESS.length - 1
+                            ) +
+                          "\r\n";
+                      } else {
+                        pos += 30;
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          pos +
+                          " DIRECCION: " +
+                          results.rows.item(0).TASK_ADDRESS +
+                          "\r\n";
+                      }
+
+                      pos += 30;
+                      headerFormat += "L 5 " + pos + " 570 " + pos + " 1\r\n";
+
+                      pos += 30;
+                      rowPosition = pos;
+                    } else {
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (190 + pos) +
+                        " SUJETO A PAGOS TRIMESTRALES\r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (215 + pos) +
+                        " " +
+                        etiquetaDeImpuesto +
+                        ":  " +
+                        localStorage.getItem("NitEnterprise") +
+                        " \r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (235 + pos) +
+                        " " +
+                        etiquetaDeResolucion +
+                        ": " +
+                        resolution +
+                        " \r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (265 + pos) +
+                        " Autorización: " +
+                        pCurrentSAT_Res_Date +
+                        " \r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (295 + pos) +
+                        " Vencimiento: " +
+                        expiresAuth +
+                        " \r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (335 + pos) +
+                        " Del: " +
+                        pCurrentSAT_Res_DocStart +
+                        " Al: " +
+                        pCurrentSAT_Res_DocFinish +
+                        "\r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 3 0 " +
+                        (385 + pos) +
+                        " Factura Serie " +
+                        results.rows.item(0).SAT_SERIE +
+                        " # " +
+                        invoiceId +
+                        "\r\n";
+                      headerFormat +=
+                        "L 5 " + (375 + pos) + " 570 " + (375 + pos) + " 1\r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (415 + pos) +
+                        " NOMBRE: " +
+                        results.rows.item(0).CLIENT_NAME +
+                        "\r\n";
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (450 + pos) +
+                        " " +
+                        etiquetaDeImpuesto +
+                        ": " +
+                        results.rows.item(0).ERP_INVOICE_ID +
+                        "\r\n";
+                      headerFormat +=
+                        "L 5 " + (495 + pos) + " 570 " + (495 + pos) + " 1\r\n";
+                      if (escopia === 1) {
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          (525 + pos) +
+                          " *** COPIA CONTABILIDAD ***\r\n";
+                      } else {
+                        headerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          (525 + pos) +
+                          " *** ORIGINAL CLIENTE ***\r\n";
+                      }
+
+                      headerFormat +=
+                        "CENTER 550 T 0 2 0 " +
+                        (545 + pos) +
+                        "  " +
+                        pIsRePrinted +
+                        " \r\n";
+
+                      rowPosition = 570 + pos;
+                    }
+
+                    detailFormat = "";
+                    var pImei = 0;
+                    var pImeiPrint = 0;
+
+                    for (var i = 0; i <= results.rows.length - 1; i++) {
+                      if (results.rows.item(i).SKU_NAME.length > 35) {
+                        detailFormat =
+                          detailFormat +
+                          "LEFT 5 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          results.rows.item(i).SKU +
+                          " - " +
+                          results.rows.item(i).SKU_NAME.substring(0, 35) +
+                          "..." +
+                          "\r\n";
+                      } else {
+                        detailFormat =
+                          detailFormat +
+                          "LEFT 5 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          results.rows.item(i).SKU +
+                          " - " +
+                          results.rows.item(i).SKU_NAME +
+                          "\r\n";
+                      }
+
+                      rowPosition += parseInt(30);
+
+                      detailFormat =
+                        detailFormat +
+                        "LEFT 5 T 0 2 0 " +
+                        rowPosition +
+                        " CANTIDAD: " +
+                        format_number(
+                          results.rows.item(i).QTY,
+                          configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                        ) +
+                        " / PREC.UNIT. : " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          results.rows.item(i).PRICE,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+                      rowPosition += parseInt(30);
+
+                      if (
+                        Object.keys(muestraPorcentaje).length !== 0 &&
+                        muestraPorcentaje.Value == 1
+                      ) {
+                        detailFormat =
+                          detailFormat +
+                          "LEFT 5 T 0 2 0 " +
+                          rowPosition +
+                          " DESC: " +
+                          format_number(
+                            results.rows.item(i).DISCOUNT,
+                            configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                          ) +
+                          "% --- " +
+                          currencySymbol +
+                          ". " +
+                          format_number(
+                            results.rows.item(i).PRICE *
+                              results.rows.item(i).QTY *
+                              (results.rows.item(i).DISCOUNT / 100),
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                        rowPosition += parseInt(30);
+                      }
+
+                      pImei = results.rows.item(i).SERIE_2;
+                      if (isNaN(pImei)) {
+                        pImeiPrint = 0;
+                      } else {
+                        pImeiPrint = pImei;
+                      }
+
+                      var phone =
+                        results.rows.item(i).PHONE === null ||
+                        results.rows.item(i).PHONE === "null"
+                          ? "..."
+                          : results.rows.item(i).PHONE;
+
+                      detailFormat =
+                        detailFormat +
+                        "LEFT 5 T 0 2 0 " +
+                        rowPosition +
+                        " SERIE: " +
+                        results.rows.item(i).SERIE +
+                        "/ IMEI: " +
+                        pImeiPrint +
+                        "/ " +
+                        phone +
+                        "\r\n";
+                      rowPosition += parseInt(30);
+
+                      detailFormat =
+                        detailFormat +
+                        "RIGHT 550 T 0 2 0 " +
+                        (rowPosition - 90) +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          trunc_number(
+                            results.rows.item(i).PRICE *
+                              results.rows.item(i).QTY *
+                              (1 - results.rows.item(i).DISCOUNT / 100),
+                            configuracionDecimales.defaultCalculationsDecimals
+                          ),
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      detailFormat =
+                        detailFormat +
+                        "L 5 " +
+                        rowPosition +
+                        " 570 " +
+                        rowPosition +
+                        " 1\r\n";
+                      rowPosition += parseInt(10);
+                    }
+
+                    if (facturaManejaImpuesto) {
+                      if (impuestoDeFactura > 0) {
+                        rowPosition += parseInt(30);
+                        footerFormat =
+                          "LEFT 5 T 0 2 0 " + rowPosition + "SUB TOTAL: \r\n";
+                        footerFormat =
+                          footerFormat +
+                          "RIGHT 550 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          currencySymbol +
+                          ". " +
+                          format_number(
+                            results.rows.item(0).TOTAL_AMOUNT -
+                              impuestoDeFactura,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                      } else {
+                        rowPosition += parseInt(30);
+                        footerFormat =
+                          "LEFT 5 T 0 2 0 " + rowPosition + "SUB TOTAL: \r\n";
+                        footerFormat =
+                          footerFormat +
+                          "RIGHT 550 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          currencySymbol +
+                          ". " +
+                          format_number(
+                            results.rows.item(0).TOTAL_AMOUNT,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                      }
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " +
+                        rowPosition +
+                        " IMPUESTO " +
+                        etiquetaPorcentajeDeImpuesto +
+                        "%: \r\n";
+                      footerFormat +=
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          impuestoDeFactura,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " + rowPosition + " TOTAL: \r\n";
+                      footerFormat +=
+                        footerFormat +
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          results.rows.item(0).TOTAL_AMOUNT,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      if (creditAmount && creditAmount > 0) {
+                        rowPosition += parseInt(30);
+                        footerFormat +=
+                          "LEFT 5 T 0 2 0 " + rowPosition + " CREDITO: \r\n";
+                        footerFormat +=
+                          "RIGHT 550 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          currencySymbol +
+                          ". " +
+                          format_number(
+                            creditAmount,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                      }
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " + rowPosition + " EFECTIVO:\r\n";
+                      footerFormat +=
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        (creditAmount && creditAmount > 0
+                          ? format_number(
+                              Number(results.rows.item(0).CASH_AMOUNT),
+                              configuracionDecimales.defaultDisplayDecimals
+                            )
+                          : format_number(
+                              Number(results.rows.item(0).TOTAL_AMOUNT) +
+                                Number(results.rows.item(0).CHANGE),
+                              configuracionDecimales.defaultDisplayDecimals
+                            )) +
+                        "\r\n";
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " + rowPosition + " CAMBIO: \r\n";
+                      footerFormat +=
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          results.rows.item(0).CHANGE,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+                    } else {
+                      if (
+                        Object.keys(muestraPorcentaje).length !== 0 &&
+                        muestraPorcentaje.Value == 1
+                      ) {
+                        rowPosition += parseInt(30);
+                        footerFormat =
+                          "LEFT 5 T 0 2 0 " + rowPosition + " DESCUENTO: \r\n";
+                        footerFormat =
+                          footerFormat +
+                          "RIGHT 550 T 0 2 0 " +
+                          rowPosition +
+                          " %. " +
+                          format_number(
+                            discount,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          " --- " +
+                          currencySymbol +
+                          ". " +
+                          format_number(
+                            discountAmount,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                      }
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " + rowPosition + " TOTAL: \r\n";
+                      footerFormat +=
+                        footerFormat +
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          results.rows.item(0).TOTAL_AMOUNT - discountAmount,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      if (creditAmount && creditAmount > 0) {
+                        rowPosition += parseInt(30);
+                        footerFormat +=
+                          "LEFT 5 T 0 2 0 " + rowPosition + " CREDITO: \r\n";
+                        footerFormat +=
+                          "RIGHT 550 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          currencySymbol +
+                          ". " +
+                          format_number(
+                            creditAmount,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                      }
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " + rowPosition + " EFECTIVO: \r\n";
+                      footerFormat +=
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        (creditAmount && creditAmount > 0
+                          ? format_number(
+                              results.rows.item(0).CASH_AMOUNT,
+                              configuracionDecimales.defaultDisplayDecimals
+                            )
+                          : format_number(
+                              Number(
+                                results.rows.item(0).TOTAL_AMOUNT -
+                                  discountAmount
+                              ) + Number(results.rows.item(0).CHANGE),
+                              configuracionDecimales.defaultDisplayDecimals
+                            )) +
+                        "\r\n";
+
+                      rowPosition += parseInt(30);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " + rowPosition + " CAMBIO: \r\n";
+                      footerFormat +=
+                        "RIGHT 550 T 0 2 0 " +
+                        rowPosition +
+                        " " +
+                        currencySymbol +
+                        ". " +
+                        format_number(
+                          results.rows.item(0).CHANGE,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+                    }
+
+                    if (creditAmount && creditAmount > 0) {
+                      rowPosition += parseInt(50);
+                      footerFormat +=
+                        "LEFT 5 T 0 2 0 " +
+                        rowPosition +
+                        " Fecha de Vencimiento: " +
+                        (results.rows.item(0).DUE_DATE
+                          ? results.rows.item(0).DUE_DATE.split(" ")[0]
+                          : getDateTime()) +
+                        "\r\n";
+                    }
+
+                    if (rutaUsaFel) {
+                      rowPosition += 30;
+                      footerFormat =
+                        footerFormat +
+                        "L 5 " +
+                        rowPosition +
+                        " 570 " +
+                        rowPosition +
+                        " 1\r\n";
+
+                      if (results.rows.item(0).IS_CONTINGENCY_DOCUMENT === 0) {
+                        frasesYEscenarios.forEach(function(frase) {
+                          rowPosition += 25;
+                          footerFormat +=
+                            "LEFT 5 T 0 2 0 " +
+                            rowPosition +
+                            " " +
+                            frase.TextToShow +
+                            "\r\n";
+                        });
+
+                        rowPosition += 30;
+                        footerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          rowPosition +
+                          " DATOS DEL CERTIFICADOR \r\n";
+
+                        rowPosition += 20;
+                        footerFormat +=
+                          "LEFT 5 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          etiquetaDeImpuesto +
+                          ": " +
+                          (localStorage.getItem("FEL_CERTIFIER_TAX_ID") ||
+                            "N/A") +
+                          "\r\n";
+
+                        rowPosition += 20;
+                        footerFormat +=
+                          "LEFT 5 T 0 2 0 " +
+                          rowPosition +
+                          " " +
+                          (localStorage.getItem("FEL_CERTIFIER_NAME") ||
+                            "N/A") +
+                          "\r\n";
+                      } else {
+                        rowPosition += 25;
+                        footerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          rowPosition +
+                          " Emision en contingencia, verifique su validez en el sitio\r\n";
+
+                        rowPosition += 25;
+                        footerFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          rowPosition +
+                          " www.sat.gob.gt/fel\r\n";
+                      }
+
+                      rowPosition += 30;
+                      footerFormat =
+                        footerFormat +
+                        "L 5 " +
+                        rowPosition +
+                        " 570 " +
+                        rowPosition +
+                        " 1\r\n";
+                    }
+
+                    rowPosition += 30;
+                    footerFormat +=
+                      "CENTER 550 T 0 2 0 " +
+                      rowPosition +
+                      " [" +
+                      gIsOnline +
+                      "] " +
+                      getDateTime() +
+                      " / RUTA " +
+                      gCurrentRoute +
+                      " \r\n";
+
+                    rowPosition += parseInt(30);
+
+                    footerFormat = footerFormat + "\r\nPRINT\r\n";
+
+                    var invoiceFormat =
+                      headerFormat + detailFormat + footerFormat;
+
+                    invoiceFormat = invoiceFormat.replace(
+                      "_DOC_LEN_",
+                      rowPosition + 200
+                    );
+
+                    bluetoothSerial.write(
+                      invoiceFormat,
+                      function() {
+                        callBack();
+                      },
+                      function() {
+                        my_dialog("", "", "close");
+                        notify(
+                          "Lo sentimos no se pudo imprimir el documento..."
+                        );
+                        callBack();
+                      }
+                    );
+
+                    my_dialog("", "", "close");
+                  },
+                  function(_txError, err) {
+                    my_dialog("", "", "close");
+                    notify("ERROR: " + err.message);
+                    return err.code;
+                  }
+                );
+              });
+              my_dialog("", "", "close");
             }
           );
-
-          my_dialog("", "", "close");
         },
-        function(err) {
-          my_dialog("", "", "close");
-          notify("ERROR, 8.1.17: " + err.code);
-          return err.code;
+        function(error) {
+          notify(
+            "Error al obtener parámetro para impresión de porcentaje: " +
+              error.message
+          );
         }
       );
-    });
-    my_dialog("", "", "close");
+    };
+
+    var implementacionUsaFel = localStorage.getItem("IMPLEMENTS_FEL");
+    if (implementacionUsaFel && implementacionUsaFel == "true") {
+      var tipoDeDocumentoFel = localStorage.getItem("FEL_DOCUMENT_TYPE");
+
+      if (!tipoDeDocumentoFel || tipoDeDocumentoFel.length === 0) {
+        notify(
+          "Error al imprimir factura, no se ha encontrado el tipo de documento FEL a utilizar."
+        );
+        procesarImpresionDeFactura(false, []);
+      } else {
+        var facturacionElectronicaServicio = new FacturacionElectronicaServicio();
+        facturacionElectronicaServicio.obtenerFrasesYEscenariosPorTipoDeDocumentoFel(
+          tipoDeDocumentoFel,
+          function(frasesYEscenarios) {
+            procesarImpresionDeFactura(true, frasesYEscenarios);
+          },
+          function(resultado) {
+            notify(
+              "Error al imprimir factura, no se han podido obtener frases FEL. " +
+                resultado.mensaje
+            );
+            procesarImpresionDeFactura(false, []);
+          }
+        );
+      }
+    } else {
+      procesarImpresionDeFactura(false, []);
+    }
   } catch (e) {
-    notify("print.invoice.catch:" + e.message);
+    notify("Error al intentar imprimir la factura debido a: " + e.message);
+    my_dialog("", "", "close");
+  }
+}
+
+function formatoImpresionHonduras(pInvoiceId, pIsReprinted, callback, escopia) {
+  var invoicePrintFormat = "";
+  var resultados;
+  var facturaManejaImpuesto = false;
+  var impuestoDeFactura = 0,
+    posY = 0;
+  var fecha;
+
+  var etiquetaDeImpuesto = localStorage.getItem("TAX_ID");
+  var etiquetaDeResolucion = localStorage.getItem("TAX_RESOLUTION_ID");
+  var etiquetaPorcentajeDeImpuesto = localStorage.getItem("TAX_PERCENT");
+
+  try {
+    var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
+    var muestraPorcentaje = {};
+    ParametroServicio.ObtenerParametro(
+      "INVOICE",
+      "SHOW_PERCENTAGE_INVOICE",
+      function(parametro) {
+        muestraPorcentaje = parametro;
+      },
+      function(error) {
+        notify(
+          "Error al obtener parámetro para impresión de porcentaje: " +
+            error.message
+        );
+      }
+    );
+
+    calcularImpuestoPorLineaDeFactura(function(resumenDefactura) {
+      resumeInvoiceObject = resumenDefactura;
+    });
+
+    configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+      function(configuracionDecimales) {
+        var pSql =
+          "SELECT IFNULL(IH.DISCOUNT,0) AS DISCOUNT_HEADER, IH.*, ID.*, IFNULL(T.TASK_ADDRESS, '') TASK_ADDRESS ";
+        pSql +=
+          " FROM INVOICE_HEADER IH INNER JOIN INVOICE_DETAIL ID ON IH.INVOICE_NUM = ID.INVOICE_NUM ";
+        pSql +=
+          " LEFT JOIN TASK T ON T.RELATED_CLIENT_CODE = IH.CLIENT_ID AND T.TASK_TYPE = 'SALE'  ";
+        pSql +=
+          " WHERE IH.IS_CREDIT_NOTE = 0 AND IH.INVOICE_NUM = " + pInvoiceId;
+
+        SONDA_DB_Session.transaction(function(tx) {
+          tx.executeSql(
+            pSql,
+            [],
+            function(tx, results) {
+              resultados = results;
+              fecha = new Date(results.rows.item(0).POSTED_DATETIME);
+              var discount = results.rows.item(0).DISCOUNT_HEADER;
+              var discountAmount =
+                discount > 0
+                  ? (discount / 100) * results.rows.item(0).TOTAL_AMOUNT
+                  : 0;
+              var creditAmount = results.rows.item(0).CREDIT_AMOUNT;
+
+              var dia = fecha.getDate();
+              var mes = fecha.getMonth() + 1;
+              var año = fecha.getFullYear();
+              var hora = fecha.getHours();
+              var minuto = fecha.getMinutes();
+
+              if (
+                results.rows.item(0).HANDLE_TAX === 1 ||
+                results.rows.item(0).HANDLE_TAX === "1"
+              ) {
+                facturaManejaImpuesto = true;
+                methodCalculationType = localStorage.getItem(
+                  "METHOD_CALCULATION_TAX"
+                );
+                impuestoDeFactura = results.rows.item(0).TAX_PERCENT;
+              }
+
+              var pExpiresAuth = localStorage.getItem("SAT_RES_EXPIRE");
+              fecha = new Date(pExpiresAuth);
+              var diaExpiracion = fecha.getDate();
+              var mesExpiracion = fecha.getMonth() + 1;
+              var añoExpiracion = fecha.getFullYear();
+
+              var pRes = localStorage.getItem("POS_SAT_RESOLUTION");
+
+              invoicePrintFormat = "! 0 50 50 _DocLength_ 1\r\n";
+              invoicePrintFormat += "! U1 LMARGIN 10\r\n";
+              invoicePrintFormat += "! U\r\n";
+              invoicePrintFormat += "! U1 PAGE-WIDTH 1400\r\n";
+              invoicePrintFormat += "ON-FEED IGNORE\r\n";
+
+              if (gBranchName.length > 35) {
+                posY += 40;
+                invoicePrintFormat += "SETBOLD 1\r\n";
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  CenterText(gCompanyName) +
+                  "\r\n";
+                invoicePrintFormat += "SETBOLD 0\r\n";
+
+                posY += 40;
+                invoicePrintFormat += "SETBOLD 1\r\n";
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  gBranchName.substring(0, 35) +
+                  "\r\n";
+                invoicePrintFormat += "SETBOLD 0\r\n";
+
+                posY += 40;
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  gBranchName.substring(35, gBranchName.length - 1) +
+                  "\r\n";
+              } else {
+                posY += 40;
+                invoicePrintFormat += "SETBOLD 1\r\n";
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  CenterText(gCompanyName) +
+                  "\r\n";
+                invoicePrintFormat += "SETBOLD 0\r\n";
+
+                posY += 40;
+                invoicePrintFormat += "SETBOLD 1\r\n";
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " + posY + " " + gBranchName + "\r\n";
+                invoicePrintFormat += "SETBOLD 0\r\n";
+              }
+
+              posY += 40;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " +
+                posY +
+                " " +
+                etiquetaDeImpuesto +
+                ": " +
+                localStorage.getItem("NitEnterprise") +
+                " \r\n";
+              posY += 10;
+
+              if (gBranchAddress.length > 30) {
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  gBranchAddress.substring(0, 30) +
+                  "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  gBranchAddress.substring(31, gBranchAddress.length - 1) +
+                  "\r\n";
+              } else {
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  localStorage.getItem("direccionFacturacion01") +
+                  "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  localStorage.getItem("direccionFacturacion02") +
+                  "\r\n";
+
+                if (localStorage.getItem("direccionFacturacion03").length > 0) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "CENTER 550 T 0 2 0 " +
+                    posY +
+                    " " +
+                    localStorage.getItem("direccionFacturacion03") +
+                    "\r\n";
+                }
+
+                if (localStorage.getItem("direccionFacturacion04").length > 0) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "CENTER 550 T 0 2 0 " +
+                    posY +
+                    " " +
+                    localStorage.getItem("direccionFacturacion04") +
+                    "\r\n";
+                }
+              }
+
+              posY += 30;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " +
+                posY +
+                " Tel.: " +
+                localStorage.getItem("telefonoEmpresa") +
+                "\r\n";
+
+              posY += 30;
+              invoicePrintFormat += "UNDERLINE ON\r\n";
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " +
+                posY +
+                " " +
+                localStorage.getItem("correoElectronicoEmpresa") +
+                "\r\n";
+              invoicePrintFormat += "UNDERLINE OFF\r\n";
+
+              posY += 45;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 0 " + posY + " " + etiquetaDeResolucion + ":\r\n";
+              posY += 30;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 0 " + posY + " " + pRes + "\r\n";
+
+              posY += 45;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 0 " + posY + " Factura No.:\r\n";
+              invoicePrintFormat += "SETBOLD 1\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 115 " +
+                posY +
+                " " +
+                results.rows.item(0).SAT_SERIE +
+                " " +
+                pInvoiceId +
+                "\r\n";
+              invoicePrintFormat += "SETBOLD 0\r\n";
+
+              posY += 30;
+              invoicePrintFormat += "LEFT 5 T 0 2 0 " + posY + " Fecha:\r\n";
+              invoicePrintFormat += "SETBOLD 1\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 115 " +
+                posY +
+                " " +
+                (dia < 10 ? "0" + dia : dia) +
+                "/" +
+                (mes < 10 ? "0" + mes : mes) +
+                "/" +
+                año +
+                "\r\n";
+              invoicePrintFormat += "SETBOLD 0\r\n";
+
+              posY += 30;
+              invoicePrintFormat += "LEFT 5 T 0 2 0 " + posY + " Hora:\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 115 " +
+                posY +
+                " " +
+                (hora < 10 ? "0" + hora : hora) +
+                ":" +
+                (minuto < 10 ? "0" + minuto : minuto) +
+                "\r\n";
+
+              posY += 60;
+              invoicePrintFormat += "LEFT 5 T 0 2 0 " + posY + " Cliente:\r\n";
+              invoicePrintFormat += "SETBOLD 1\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 115 " +
+                posY +
+                " " +
+                results.rows.item(0).CLIENT_NAME +
+                "\r\n";
+              invoicePrintFormat += "SETBOLD 0\r\n";
+
+              posY += 30;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 0 " + posY + " " + etiquetaDeImpuesto + ":\r\n";
+              invoicePrintFormat += "SETBOLD 1\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 150 " +
+                posY +
+                " " +
+                results.rows.item(0).ERP_INVOICE_ID +
+                "\r\n";
+              invoicePrintFormat += "SETBOLD 0\r\n";
+
+              posY += 30;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 0 " + posY + " Dirección:\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 115 " +
+                posY +
+                " " +
+                results.rows.item(0).TASK_ADDRESS +
+                "\r\n";
+
+              posY += 60;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 100 " + posY + " DESCRIPCIÓN\r\n";
+              invoicePrintFormat += "LEFT 5 T 0 2 335 " + posY + " CANT.\r\n";
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 395 " + posY + " PRECIO/U\r\n";
+              invoicePrintFormat += "RIGHT 550 T 0 2 0 " + posY + " TOTAL\r\n";
+
+              var i;
+              for (i = 0; i <= results.rows.length - 1; i++) {
+                posY += 30;
+                if (results.rows.item(i).SKU_NAME.length > 35) {
+                  invoicePrintFormat +=
+                    "LEFT 5 T 0 2 0 " +
+                    posY +
+                    " " +
+                    results.rows.item(i).SKU_NAME.substring(0, 35) +
+                    "..." +
+                    "\r\n";
+                } else {
+                  invoicePrintFormat +=
+                    "LEFT 5 T 0 2 0 " +
+                    posY +
+                    " " +
+                    results.rows.item(i).SKU_NAME +
+                    "\r\n";
+                }
+
+                invoicePrintFormat +=
+                  "RIGHT 550 T 0 2 0 " +
+                  posY +
+                  " " +
+                  format_number(
+                    results.rows.item(i).PRICE *
+                      results.rows.item(i).QTY *
+                      (1 - results.rows.item(i).DISCOUNT / 100),
+                    configuracionDecimales.defaultDisplayDecimals
+                  ) +
+                  "\r\n"; //format_number(trunc_number((results.rows.item(i).PRICE * results.rows.item(i).QTY), configuracionDecimales.defaultCalculationsDecimals), configuracionDecimales.defaultDisplayDecimals) + "\r\n";
+                invoicePrintFormat +=
+                  "RIGHT 460 T 0 2 0 " +
+                  posY +
+                  " " +
+                  format_number(
+                    trunc_number(
+                      results.rows.item(i).PRICE,
+                      configuracionDecimales.defaultCalculationsDecimals
+                    ),
+                    configuracionDecimales.defaultDisplayDecimals
+                  ) +
+                  "\r\n";
+                invoicePrintFormat +=
+                  "RIGHT 370 T 0 2 0 " +
+                  posY +
+                  " " +
+                  format_number(
+                    results.rows.item(i).QTY,
+                    configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                  ) +
+                  "\r\n";
+                if (
+                  Object.keys(muestraPorcentaje).length !== 0 &&
+                  muestraPorcentaje.Value == 1
+                ) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 0 2 0 " + posY + " Desc: \r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 370 T 0 2 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      results.rows.item(i).DISCOUNT,
+                      configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                    ) +
+                    "\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 460 T 0 2 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      trunc_number(
+                        results.rows.item(i).PRICE *
+                          results.rows.item(i).QTY *
+                          (results.rows.item(i).DISCOUNT / 100),
+                        configuracionDecimales.defaultCalculationsDecimals
+                      ),
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+                }
+              }
+
+              posY += 30;
+              invoicePrintFormat += "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+              if (facturaManejaImpuesto) {
+                switch (methodCalculationType) {
+                  case "BY_ROW":
+                    posY += 30;
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Total Gravado:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        trunc_number(
+                          resumeInvoiceObject.total -
+                            resumeInvoiceObject.impuesto,
+                          configuracionDecimales.defaultCalculationsDecimals
+                        ),
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+
+                    posY += 30;
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Exento:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        0,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+
+                    posY += 30;
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Impuesto " +
+                      etiquetaPorcentajeDeImpuesto +
+                      "% S/V:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        resumeInvoiceObject.impuesto,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+
+                    posY += 30;
+                    invoicePrintFormat += "SETBOLD 1\r\n";
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Total:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        resumeInvoiceObject.total,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+                    invoicePrintFormat += "SETBOLD 0\r\n";
+                    break;
+
+                  case "BY_TOTAL_AMOUNT":
+                    posY += 30;
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Total Gravado:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        trunc_number(
+                          results.rows.item(0).TOTAL_AMOUNT - impuestoDeFactura,
+                          configuracionDecimales.defaultCalculationsDecimals
+                        ),
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+
+                    posY += 30;
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Exento:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        0,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+
+                    posY += 30;
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Impuesto " +
+                      etiquetaPorcentajeDeImpuesto +
+                      "% S/V:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        impuestoDeFactura,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+
+                    posY += 30;
+                    invoicePrintFormat += "SETBOLD 1\r\n";
+                    invoicePrintFormat +=
+                      "RIGHT 550 T 0 2 0 " +
+                      posY +
+                      " Total:\t" +
+                      currencySymbol +
+                      ".\t" +
+                      format_number(
+                        results.rows.item(0).TOTAL_AMOUNT,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      "\r\n";
+                    invoicePrintFormat += "SETBOLD 0\r\n";
+                    break;
+                }
+              } else {
+                posY += 30;
+                invoicePrintFormat +=
+                  "RIGHT 550 T 0 2 0 " +
+                  posY +
+                  " Total Gravado:\t" +
+                  currencySymbol +
+                  ".\t" +
+                  format_number(
+                    results.rows.item(0).TOTAL_AMOUNT,
+                    configuracionDecimales.defaultDisplayDecimals
+                  ) +
+                  "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "RIGHT 550 T 0 2 0 " +
+                  posY +
+                  " Exento:\t" +
+                  currencySymbol +
+                  ".\t" +
+                  format_number(
+                    0,
+                    configuracionDecimales.defaultDisplayDecimals
+                  ) +
+                  "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "RIGHT 550 T 0 2 0 " +
+                  posY +
+                  " Impuesto " +
+                  etiquetaPorcentajeDeImpuesto +
+                  "% S/V:\t" +
+                  currencySymbol +
+                  ".\t" +
+                  format_number(
+                    0,
+                    configuracionDecimales.defaultDisplayDecimals
+                  ) +
+                  "\r\n";
+
+                if (
+                  Object.keys(muestraPorcentaje).length !== 0 &&
+                  muestraPorcentaje.Value == 1
+                ) {
+                  posY += 30;
+                  invoicePrintFormat += "SETBOLD 1\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 0 2 0 " +
+                    posY +
+                    " Descuento: %." +
+                    format_number(
+                      discount,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    " --- " +
+                    currencySymbol +
+                    ". " +
+                    format_number(
+                      discountAmount,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+                  invoicePrintFormat += "SETBOLD 0\r\n";
+                }
+
+                posY += 30;
+                invoicePrintFormat += "SETBOLD 1\r\n";
+                invoicePrintFormat +=
+                  "RIGHT 550 T 0 2 0 " +
+                  posY +
+                  " Total:\t" +
+                  currencySymbol +
+                  ".\t" +
+                  format_number(
+                    results.rows.item(0).TOTAL_AMOUNT - discountAmount,
+                    configuracionDecimales.defaultDisplayDecimals
+                  ) +
+                  "\r\n";
+                invoicePrintFormat += "SETBOLD 0\r\n";
+              }
+
+              if (creditAmount && creditAmount > 0) {
+                posY += parseInt(50);
+                invoicePrintFormat +=
+                  "LEFT 5 T 0 2 0 " +
+                  posY +
+                  " Fecha de Vencimiento: " +
+                  (results.rows.item(0).DUE_DATE
+                    ? results.rows.item(0).DUE_DATE.split(" ")[0]
+                    : getDateTime()) +
+                  " (Crédito) \r\n";
+              }
+
+              posY += 35;
+              invoicePrintFormat +=
+                "LEFT 5 T 0 2 0 " +
+                posY +
+                " Vendedor: " +
+                localStorage.getItem("NAME_USER") +
+                "\r\n";
+
+              posY += 50;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " +
+                posY +
+                " ****** Gracias por su Compra ******\r\n";
+
+              posY += 50;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " + posY + " Rango Autorizado\r\n";
+
+              posY += 30;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " +
+                posY +
+                " Del: " +
+                results.rows.item(0).SAT_SERIE +
+                " " +
+                pCurrentSAT_Res_DocStart +
+                " al " +
+                results.rows.item(0).SAT_SERIE +
+                " " +
+                pCurrentSAT_Res_DocFinish +
+                "\r\n";
+
+              var fechaLimite = new Date(
+                localStorage.getItem("SAT_RES_EXPIRE")
+              );
+
+              var diaL = fechaLimite.getDate();
+              var mesL = fechaLimite.getMonth() + 1;
+              var añoL = fechaLimite.getFullYear();
+
+              posY += 30;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " +
+                posY +
+                " Fecha Limite Emisión: " +
+                (diaL < 10 ? "0" + diaL : diaL) +
+                "/" +
+                (mesL < 10 ? "0" + mesL : mesL) +
+                "/" +
+                añoL +
+                "\r\n";
+
+              posY += 50;
+              if (escopia === 1) {
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " + posY + " Copia: Contabilidad\r\n";
+              } else {
+                invoicePrintFormat +=
+                  "CENTER 550 T 0 2 0 " + posY + " Original: Cliente\r\n";
+              }
+
+              posY += 30;
+              invoicePrintFormat +=
+                "CENTER 550 T 0 2 0 " + posY + "  " + pIsReprinted + " \r\n";
+
+              invoicePrintFormat += "PRINT\r\n";
+
+              invoicePrintFormat = invoicePrintFormat.replace(
+                "_DocLength_",
+                (posY + 200).toString()
+              );
+
+              bluetoothSerial.write(
+                invoicePrintFormat,
+                function() {
+                  callback();
+                },
+                function() {
+                  my_dialog("", "", "close");
+                  notify("Lo sentimos no se pudo imprimir el documento...");
+                  callback();
+                }
+              );
+
+              my_dialog("", "", "close");
+            },
+            function(err) {
+              my_dialog("", "", "close");
+              notify("ERROR, 8.1.17: " + err.code);
+              return err.code;
+            }
+          );
+        });
+        my_dialog("", "", "close");
+      }
+    );
+  } catch (e) {
+    notify("printinvoice_joininfo: " + e.message);
     my_dialog("", "", "close");
     return e.message;
   }
 }
-function savezpl() {
-  try {
-    var pTextZPL = $("#text_prtZpl").text();
-    socket.emit("savezpl", { labelid: "STANDARD_GUIDE", zpltext: pTextZPL });
-  } catch (e) {
-    notify(e.message);
+
+function obtenerNombreDelMes(numeroDeMes) {
+  switch (numeroDeMes) {
+    case 1:
+      return "Enero";
+    case 2:
+      return "Febrero";
+    case 3:
+      return "Marzo";
+    case 4:
+      return "Abril";
+    case 5:
+      return "Mayo";
+    case 6:
+      return "Junio";
+    case 7:
+      return "Julio";
+    case 8:
+      return "Agosto";
+    case 9:
+      return "Septiembre";
+    case 10:
+      return "Octubre";
+    case 11:
+      return "Noviembre";
+    case 12:
+      return "Diciembre";
+    default:
+      return numeroDeMes;
   }
 }
 
-function printtest(pPrinterAddress, pType) {
+function formatoDeImpresionDiprocom(invoiceId, isReprint, callback, esCopia) {
+  var invoicePrintFormat = "";
+  var resultados;
+  var facturaManejaImpuesto = false;
+  var impuestoDeFactura = 0,
+    posY = 0;
+  var fecha;
+
+  var etiquetaTipoDeImpuesto = localStorage.getItem("TAX_LABEL_ID");
+  var etiquetaDeImpuesto = localStorage.getItem("TAX_ID");
+  var etiquetaDeResolucion = localStorage.getItem("TAX_RESOLUTION_ID");
+  var etiquetaPorcentajeDeImpuesto = localStorage.getItem("TAX_PERCENT");
+
   try {
-    var lheader = "";
-    var xdate = getDateTime();
+    var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
 
-    lheader = "! 0 50 50 620 1\r\n";
-    lheader +=
-      "! U1 LMARGIN 10\r\n! U\r\n! U1 PAGE-WIDTH 1400\r\nON-FEED IGNORE\r\n";
-    lheader += "CENTER 570 T 0 3 0 10 MOBILITY SCM\r\n";
-    lheader += "B QR 380 60 M 2 U 8 \r\n";
-    lheader += "M0A,1234515155-1/1\r\n";
-    lheader += "ENDQR \r\n";
-    lheader += "LEFT 5 T 4 4 0 70 1/1\r\n";
-    lheader += "L 5 240 570 240 1\r\n";
-    lheader += "CENTER 570 T 0 3 0 270 GUIA: 1234515155\r\n";
-    lheader +=
-      "LEFT 5 T 0 2 0 300 REMITENTE    : CODIGO Y NOMBRE REMITENTE\r\n";
-    lheader +=
-      "LEFT 5 T 0 2 0 330 DESTINATARIO : CODIGO Y NOMBRE DESTINATARIO\r\n";
-    lheader += "LEFT 5 T 0 2 0 360 DIRECCION DESTINARIO 1\r\n";
-    lheader += "LEFT 5 T 0 2 0 390 COURIER      : CODIGO, NOMBRE COURIER\r\n";
-    lheader += "LEFT 5 T 0 2 0 420 FECHA Y HORA : " + xdate + "\r\n";
-    lheader += "L 5 470 570 470 1\r\n";
-    lheader += "CENTER 570 T 0 1 1 500 www.mobilityscm.com\r\n";
+    var muestraPorcentaje = {};
+    ParametroServicio.ObtenerParametro(
+      "INVOICE",
+      "SHOW_PERCENTAGE_INVOICE",
+      function(parametro) {
+        muestraPorcentaje = parametro;
+      },
+      function(error) {
+        notify(
+          "Error al obtener parámetro para impresión de porcentaje: " +
+            error.message
+        );
+      }
+    );
 
-    lheader += "\r\nPRINT\r\n";
-    lheader += '! U1 getvar "device.host_status"\r\n';
-    $("#lblScannedQR").text("");
+    calcularImpuestoPorLineaDeFactura(function(resumenDefactura) {
+      resumeInvoiceObject = resumenDefactura;
 
-    /*bluetoothSerial.isConnected(
-            function () {
-                
-                my_dialog("", "", "close");
-                bluetoothSerial.write(lheader, function () { }, function () { notify('unable to write to printer'); });
-                //bluetoothSerial.disconnect(function () { }, function () { notify('Printer is unable to get disconnected'); });
-                $(".printerclass").buttonMarkup({ icon: "print" });
-                gPrinterIsAvailable = 1;
+      ParametroServicio.ObtenerParametro(
+        "INVOICE",
+        "LENGHT_TO_FILL_NUMBER",
+        resultado => {
+          var longitudDelNumero = resultado;
+          ParametroServicio.ObtenerParametro(
+            "INVOICE",
+            "CHARACTER_TO_FILL_NUMER",
+            resultado => {
+              var caracterDeRelleno = resultado;
 
+              configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+                function(configuracionDecimales) {
+                  var pSql =
+                    "SELECT IFNULL(IH.DISCOUNT,0) AS DISCOUNT_HEADER, IH.*, ID.*, IFNULL(T.TASK_ADDRESS, '') TASK_ADDRESS ";
+                  pSql +=
+                    " FROM INVOICE_HEADER IH INNER JOIN INVOICE_DETAIL ID ON IH.INVOICE_NUM = ID.INVOICE_NUM ";
+                  pSql +=
+                    " LEFT JOIN TASK T ON T.RELATED_CLIENT_CODE = IH.CLIENT_ID AND T.TASK_TYPE = 'SALE'  ";
+                  pSql +=
+                    " WHERE IH.IS_CREDIT_NOTE = 0 AND IH.INVOICE_NUM = " +
+                    invoiceId;
+
+                  SONDA_DB_Session.transaction(function(tx) {
+                    tx.executeSql(
+                      pSql,
+                      [],
+                      function(tx, results) {
+                        resultados = results;
+                        var discount = results.rows.item(0).DISCOUNT_HEADER;
+                        var discountAmount =
+                          discount > 0
+                            ? (discount / 100) *
+                              results.rows.item(0).TOTAL_AMOUNT
+                            : 0;
+                        var creditAmount = results.rows.item(0).CREDIT_AMOUNT;
+
+                        if (
+                          results.rows.item(0).HANDLE_TAX === 1 ||
+                          results.rows.item(0).HANDLE_TAX === "1"
+                        ) {
+                          facturaManejaImpuesto = true;
+                          methodCalculationType = localStorage.getItem(
+                            "METHOD_CALCULATION_TAX"
+                          );
+                          impuestoDeFactura = results.rows.item(0).TAX_PERCENT;
+                        }
+
+                        var pRes = localStorage.getItem("POS_SAT_RESOLUTION");
+
+                        invoicePrintFormat = "! 0 50 50 _DocLength_ 1\r\n";
+                        invoicePrintFormat += "! U1 LMARGIN 10\r\n";
+                        invoicePrintFormat += "! U\r\n";
+                        invoicePrintFormat += "! U1 PAGE-WIDTH 1400\r\n";
+                        invoicePrintFormat += "ON-FEED IGNORE\r\n";
+
+                        //Informacion de la empresa-----------------------------------------------------------------------------------------------
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          " " +
+                          gCompanyName +
+                          "\r\n";
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          " " +
+                          gBranchName +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          " " +
+                          localStorage.getItem("direccionFacturacion01") +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          " " +
+                          localStorage.getItem("direccionFacturacion02") +
+                          "\r\n";
+
+                        if (
+                          localStorage.getItem("direccionFacturacion03")
+                            .length > 0
+                        ) {
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "CENTER 550 T 0 2 0 " +
+                            posY +
+                            " " +
+                            localStorage.getItem("direccionFacturacion03") +
+                            "\r\n";
+                        }
+
+                        if (
+                          localStorage.getItem("direccionFacturacion04")
+                            .length > 0
+                        ) {
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "CENTER 550 T 0 2 0 " +
+                            posY +
+                            " " +
+                            localStorage.getItem("direccionFacturacion04") +
+                            "\r\n";
+                        }
+
+                        posY += 50;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          " " +
+                          localStorage.getItem("correoElectronicoEmpresa") +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          "  " +
+                          localStorage.getItem("telefonoEmpresa") +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 0 2 0 " +
+                          posY +
+                          " " +
+                          etiquetaDeImpuesto +
+                          ": " +
+                          localStorage.getItem("NitEnterprise") +
+                          " \r\n";
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                        //Informacion de resolucion de facturacion (CAI) -------------------------------------------------------------------------------------------
+
+                        posY += 30;
+                        var fechaCreacion = new Date(
+                          results.rows.item(0).POSTED_DATETIME
+                        );
+                        invoicePrintFormat +=
+                          "CENTER 550 T 7 0 0 " +
+                          posY +
+                          " " +
+                          ((fechaCreacion.getDate() < 10
+                            ? "0" + fechaCreacion.getDate()
+                            : fechaCreacion.getDate()) +
+                            " de " +
+                            obtenerNombreDelMes(fechaCreacion.getMonth() + 1) +
+                            " de " +
+                            fechaCreacion.getFullYear()) +
+                          " \r\n";
+
+                        posY += 30;
+                        invoicePrintFormat += "SETBOLD 1\r\n";
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " FACTURA No.: " +
+                          results.rows.item(0).SAT_SERIE +
+                          rellenarPalabra(
+                            longitudDelNumero.Value,
+                            caracterDeRelleno.Value,
+                            invoiceId.toString()
+                          ) +
+                          "\r\n";
+                        invoicePrintFormat += "SETBOLD 0\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " " +
+                          etiquetaDeResolucion +
+                          ": " +
+                          pRes +
+                          " \r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " RANGO AUTORIZADO DE FACTURAS \r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " INICIAL: " +
+                          (results.rows.item(0).SAT_SERIE +
+                            rellenarPalabra(
+                              longitudDelNumero.Value,
+                              caracterDeRelleno.Value,
+                              pCurrentSAT_Res_DocStart.toString()
+                            )) +
+                          " \r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " FINAL: " +
+                          (results.rows.item(0).SAT_SERIE +
+                            rellenarPalabra(
+                              longitudDelNumero.Value,
+                              caracterDeRelleno.Value,
+                              pCurrentSAT_Res_DocFinish.toString()
+                            )) +
+                          " \r\n";
+
+                        var fechaLimite = new Date(
+                          localStorage.getItem("SAT_RES_EXPIRE")
+                        );
+
+                        var diaL = fechaLimite.getDate();
+                        var mesL = fechaLimite.getMonth() + 1;
+                        var añoL = fechaLimite.getFullYear();
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " FECHA LIMITE DE EMISION: " +
+                          (diaL < 10 ? "0" + diaL : diaL) +
+                          "/" +
+                          (mesL < 10 ? "0" + mesL : mesL) +
+                          "/" +
+                          añoL +
+                          " \r\n";
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                        //Informacion del comprador -----------------------------------------------------------------------------------
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " CLIENTE: " +
+                          results.rows.item(0).CLIENT_ID +
+                          "/" +
+                          results.rows.item(0).CLIENT_NAME +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " DIRECCION: " +
+                          (results.rows.item(0).TASK_ADDRESS.length > 30
+                            ? results.rows
+                                .item(0)
+                                .TASK_ADDRESS.substring(0, 25) + "..."
+                            : results.rows.item(0).TASK_ADDRESS) +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " TELEFONO: " +
+                          (results.rows.item(0).TELEPHONE_NUMBER
+                            ? results.rows.item(0).TELEPHONE_NUMBER
+                            : "N/A") +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " " +
+                          etiquetaDeImpuesto +
+                          ": " +
+                          results.rows.item(0).ERP_INVOICE_ID +
+                          "\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " VENDEDOR: " +
+                          (gCurrentRoute +
+                            "/" +
+                            localStorage.getItem("NAME_USER")) +
+                          "\r\n";
+
+                        posY += 40;
+                        if (esCopia === 1) {
+                          invoicePrintFormat +=
+                            "CENTER 550 T 7 0 0 " +
+                            posY +
+                            " *Copia (Contabilidad)\r\n";
+                        } else {
+                          invoicePrintFormat +=
+                            "CENTER 550 T 7 0 0 " +
+                            posY +
+                            " *Original (Cliente)\r\n";
+                        }
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                        //Informacion de Productos comprados ---------------------------------------------------------------------------------------------------------
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 5 " + posY + " CODIGO\r\n";
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 150 " + posY + " DESCRIPCION\r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 15 " + posY + " CANTIDAD\r\n";
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 165 " + posY + " PRECIO UNIT.\r\n";
+                        invoicePrintFormat +=
+                          "RIGHT 550 T 7 0 0 " + posY + " TOTAL\r\n";
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                        var i;
+                        for (i = 0; i <= results.rows.length - 1; i++) {
+                          var product = results.rows.item(i);
+
+                          var skuPrice =
+                            facturaManejaImpuesto &&
+                            methodCalculationType == "BY_ROW"
+                              ? product.PRICE -
+                                obtenerValorADescontarEnBaseaImpuesto(
+                                  product,
+                                  resumeInvoiceObject
+                                ) /
+                                  product.QTY
+                              : product.PRICE;
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 5 " +
+                            posY +
+                            " " +
+                            product.SKU +
+                            "\r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 150 " +
+                            posY +
+                            " " +
+                            (product.SKU_NAME.length > 30
+                              ? product.SKU_NAME.substring(0, 25) + "..."
+                              : product.SKU_NAME) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 0 2 15 " +
+                            posY +
+                            " " +
+                            (format_number(
+                              product.QTY,
+                              configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                            ) +
+                              " " +
+                              product.PACK_UNIT) +
+                            "\r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 0 2 165 " +
+                            posY +
+                            " " +
+                            format_number(
+                              trunc_number(
+                                skuPrice,
+                                configuracionDecimales.defaultCalculationsDecimals
+                              ),
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 0 2 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              skuPrice * product.QTY,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+                        }
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                        if (facturaManejaImpuesto) {
+                          switch (methodCalculationType) {
+                            case "BY_ROW":
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " BASE GRAVADA " +
+                                etiquetaPorcentajeDeImpuesto +
+                                "% \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  resumeInvoiceObject.baseGravada,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " BASE GRAVADA 18% \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  0,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " + posY + " BASE EXENTA \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  resumeInvoiceObject.exento,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " BASE EXONERADA \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  0,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " + posY + " SUB TOTAL \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  trunc_number(
+                                    resumeInvoiceObject.subTotal,
+                                    configuracionDecimales.defaultCalculationsDecimals
+                                  ),
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              if (
+                                Object.keys(muestraPorcentaje).length !== 0 &&
+                                muestraPorcentaje.Value == 1
+                              ) {
+                                posY += 30;
+                                invoicePrintFormat +=
+                                  "LEFT 5 T 7 0 0 " + posY + " DESCUENTO \r\n";
+                                invoicePrintFormat +=
+                                  "LEFT 5 T 7 0 350 " +
+                                  posY +
+                                  " " +
+                                  currencySymbol +
+                                  ".\r\n";
+                                invoicePrintFormat +=
+                                  "RIGHT 550 T 7 0 0 " +
+                                  posY +
+                                  " " +
+                                  format_number(
+                                    0,
+                                    configuracionDecimales.defaultDisplayDecimals
+                                  ) +
+                                  "\r\n";
+                              }
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " " +
+                                etiquetaTipoDeImpuesto +
+                                " -" +
+                                etiquetaPorcentajeDeImpuesto +
+                                "%- \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  resumeInvoiceObject.impuesto,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " + posY + " ISV -18%- \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  0,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " TOTAL A PAGAR \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  resumeInvoiceObject.total,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              break;
+
+                            case "BY_TOTAL_AMOUNT":
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " BASE GRAVADA " +
+                                etiquetaPorcentajeDeImpuesto +
+                                "%- \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  resumeInvoiceObject.baseGravada,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " BASE GRAVADA 18% \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  0,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " + posY + " BASE EXENTA \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  resumeInvoiceObject.exento,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " BASE EXONERADA \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  0,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " + posY + " SUB TOTAL \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  trunc_number(
+                                    results.rows.item(0).TOTAL_AMOUNT -
+                                      impuestoDeFactura,
+                                    configuracionDecimales.defaultCalculationsDecimals
+                                  ),
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              if (
+                                Object.keys(muestraPorcentaje).length !== 0 &&
+                                muestraPorcentaje.Value == 1
+                              ) {
+                                posY += 30;
+                                invoicePrintFormat +=
+                                  "LEFT 5 T 7 0 0 " + posY + " DESCUENTO \r\n";
+                                invoicePrintFormat +=
+                                  "LEFT 5 T 7 0 350 " +
+                                  posY +
+                                  " " +
+                                  currencySymbol +
+                                  ".\r\n";
+                                invoicePrintFormat +=
+                                  "RIGHT 550 T 7 0 0 " +
+                                  posY +
+                                  " " +
+                                  format_number(
+                                    0,
+                                    configuracionDecimales.defaultDisplayDecimals
+                                  ) +
+                                  "\r\n";
+                              }
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " +
+                                posY +
+                                " " +
+                                etiquetaTipoDeImpuesto +
+                                " -" +
+                                etiquetaPorcentajeDeImpuesto +
+                                "%- \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  impuestoDeFactura,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              posY += 30;
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 0 " + posY + " TOTAL \r\n";
+                              invoicePrintFormat +=
+                                "LEFT 5 T 7 0 350 " +
+                                posY +
+                                " " +
+                                currencySymbol +
+                                ".\r\n";
+                              invoicePrintFormat +=
+                                "RIGHT 550 T 7 0 0 " +
+                                posY +
+                                " " +
+                                format_number(
+                                  results.rows.item(0).TOTAL_AMOUNT,
+                                  configuracionDecimales.defaultDisplayDecimals
+                                ) +
+                                "\r\n";
+
+                              break;
+                          }
+                        } else {
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " +
+                            posY +
+                            " BASE GRAVADA " +
+                            etiquetaPorcentajeDeImpuesto +
+                            "%- \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              resumeInvoiceObject.baseGravada,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " + posY + " BASE GRAVADA 18% \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              0,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " + posY + " BASE EXENTA \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              0,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " + posY + " BASE EXONERADA \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              0,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " + posY + " SUB TOTAL \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              results.rows.item(0).TOTAL_AMOUNT,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          if (
+                            Object.keys(muestraPorcentaje).length !== 0 &&
+                            muestraPorcentaje.Value == 1
+                          ) {
+                            posY += 30;
+                            invoicePrintFormat +=
+                              "LEFT 5 T 7 0 0 " + posY + " DESCUENTO \r\n";
+                            invoicePrintFormat +=
+                              "LEFT 5 T 7 0 350 " +
+                              posY +
+                              " " +
+                              currencySymbol +
+                              ".\r\n";
+                            invoicePrintFormat +=
+                              "RIGHT 550 T 7 0 0 " +
+                              posY +
+                              " " +
+                              format_number(
+                                discount,
+                                configuracionDecimales.defaultDisplayDecimals
+                              ) +
+                              "\r\n";
+                          }
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " +
+                            posY +
+                            " " +
+                            etiquetaTipoDeImpuesto +
+                            " -" +
+                            etiquetaPorcentajeDeImpuesto +
+                            "%- \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              0,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " + posY + " ISV -18%- \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              0,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " + posY + " TOTAL A PAGAR \r\n";
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 350 " +
+                            posY +
+                            " " +
+                            currencySymbol +
+                            ".\r\n";
+                          invoicePrintFormat +=
+                            "RIGHT 550 T 7 0 0 " +
+                            posY +
+                            " " +
+                            format_number(
+                              results.rows.item(0).TOTAL_AMOUNT,
+                              configuracionDecimales.defaultDisplayDecimals
+                            ) +
+                            "\r\n";
+                        }
+
+                        //Pie de factura --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                        var totalInvoicedInWords =
+                          numberToWord(
+                            results.rows.item(0).TOTAL_AMOUNT
+                          ).toUpperCase() +
+                          " " +
+                          localStorage.getItem("NAME_CURRENCY");
+
+                        if (totalInvoicedInWords.length > 45) {
+                          posY += 50;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " +
+                            posY +
+                            " " +
+                            totalInvoicedInWords.substring(0, 46) +
+                            " \r\n";
+
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " +
+                            posY +
+                            " " +
+                            totalInvoicedInWords.substring(
+                              46,
+                              totalInvoicedInWords.length
+                            ) +
+                            " \r\n";
+                        } else {
+                          posY += 50;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " +
+                            posY +
+                            " " +
+                            totalInvoicedInWords +
+                            " \r\n";
+                        }
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                        posY += 25;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " No. ORDEN COMPRA EXENTA: \r\n";
+
+                        posY += 20;
+                        invoicePrintFormat +=
+                          "LEFT 35 L 285 " + posY + " 550 " + posY + " 1 \r\n";
+
+                        posY += 20;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " No. REGISTRO EXONERADOS: \r\n";
+
+                        posY += 20;
+                        invoicePrintFormat +=
+                          "LEFT 35 L 280 " + posY + " 550 " + posY + " 1 \r\n";
+
+                        posY += 20;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " No. REGISTRO S.A.G.: \r\n";
+
+                        posY += 20;
+                        invoicePrintFormat +=
+                          "LEFT 35 L 235 " + posY + " 550 " + posY + " 1 \r\n";
+
+                        posY += 50;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " +
+                          posY +
+                          " FORMA DE PAGO: " +
+                          (creditAmount && creditAmount > 0
+                            ? "Crédito"
+                            : "Contado") +
+                          " \r\n";
+                        if (creditAmount && creditAmount > 0) {
+                          posY += 30;
+                          invoicePrintFormat +=
+                            "LEFT 5 T 7 0 0 " +
+                            posY +
+                            " FECHA DE VENCIMIENTO: " +
+                            (results.rows.item(0).DUE_DATE
+                              ? results.rows.item(0).DUE_DATE.split(" ")[0]
+                              : getDateTime()) +
+                            " \r\n";
+                        }
+
+                        posY += 150;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " + posY + " FIRMA: \r\n";
+
+                        posY += 20;
+                        invoicePrintFormat +=
+                          "LEFT 35 L 70 " + posY + " 550 " + posY + " 1 \r\n";
+
+                        posY += 50;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 7 0 0 " +
+                          posY +
+                          " GRACIAS POR SU COMPRA \r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 7 0 0 " +
+                          posY +
+                          " LA FACTURA ES BENEFICIO DE TODOS, EXIJALA \r\n";
+
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 7 0 0 " +
+                          posY +
+                          " ORIGINAL: Cliente - COPIA: Emisor \r\n";
+
+                        posY += 40;
+                        invoicePrintFormat +=
+                          "CENTER 550 T 7 0 0 " +
+                          posY +
+                          "  " +
+                          isReprint +
+                          " \r\n";
+
+                        invoicePrintFormat += "PRINT\r\n";
+
+                        invoicePrintFormat = invoicePrintFormat.replace(
+                          "_DocLength_",
+                          (posY + 200).toString()
+                        );
+
+                        bluetoothSerial.write(
+                          invoicePrintFormat,
+                          function() {
+                            callback();
+                          },
+                          function() {
+                            my_dialog("", "", "close");
+                            notify(
+                              "Lo sentimos no se pudo imprimir el documento..."
+                            );
+                            callback();
+                          }
+                        );
+
+                        my_dialog("", "", "close");
+                      },
+                      function(err) {
+                        my_dialog("", "", "close");
+                        notify("ERROR, 8.1.17: " + err.code);
+                        return err.code;
+                      }
+                    );
+                  });
+                  my_dialog("", "", "close");
+                }
+              );
             },
-            function () {
-                bluetoothSerial.connectInsecure(pPrinterAddress,
-                    function () {
-                        
-                        my_dialog("", "", "close");
-                        bluetoothSerial.write(lheader, function () { }, function () { notify('unable to write to printer'); });
-                        //bluetoothSerial.disconnect(function () { }, function () { notify('Printer is unable to get disconnected'); });
-                        gPrinterIsAvailable = 1;
-                        $(".printerclass").buttonMarkup({ icon: "print" });
-                    },
-                    function () {
-                        $(".printerclass").buttonMarkup({ icon: "delete" });
-
-                        notify("ERROR, No se pudo conectar a la impresora:" + pPrinterAddress);
-                        my_dialog("", "", "close");
-                        gPrinterIsAvailable = 0;
-
-                    }
-                );
+            error => {
+              notify(
+                "Error al obtener parámetro para la longitud del numero: " +
+                  error
+              );
             }
-        );*/
+          );
+        },
+        error => {
+          notify(
+            "Error al obtener parámetro para la longitud del numero: " + error
+          );
+        }
+      );
+    });
+  } catch (e) {
+    notify("printinvoice_joininfo: " + e.message);
+    my_dialog("", "", "close");
+    return e.message;
+  }
+}
 
-    try {
-      bluetoothSerial.isConnected(
-        function() {
-          try {
-            $(".printerclass").buttonMarkup({ icon: "print" });
-            bluetoothSerial.write(
-              lheader,
-              function() {
-                DesconectarImpresora(
+function formatoDeImpresionSaritaHonduras(
+  invoiceId,
+  isReprint,
+  callback,
+  esCopia
+) {
+  var invoicePrintFormat = "";
+  var resultados;
+  var facturaManejaImpuesto = false;
+  var impuestoDeFactura = 0,
+    posY = 0;
+  var fecha;
+
+  var etiquetaTipoDeImpuesto = localStorage.getItem("TAX_LABEL_ID");
+  var etiquetaDeImpuesto = localStorage.getItem("TAX_ID");
+  var etiquetaDeResolucion = localStorage.getItem("TAX_RESOLUTION_ID");
+  var etiquetaPorcentajeDeImpuesto = localStorage.getItem("TAX_PERCENT");
+
+  try {
+    var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
+
+    var muestraPorcentaje = {};
+    ParametroServicio.ObtenerParametro(
+      "INVOICE",
+      "SHOW_PERCENTAGE_INVOICE",
+      function(parametro) {
+        muestraPorcentaje = parametro;
+      },
+      function(error) {
+        notify(
+          "Error al obtener parámetro para impresión de porcentaje: " +
+            error.message
+        );
+      }
+    );
+
+    calcularImpuestoPorLineaDeFactura(function(resumenDefactura) {
+      resumeInvoiceObject = resumenDefactura;
+
+      configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+        function(configuracionDecimales) {
+          var pSql =
+            "SELECT IFNULL(IH.DISCOUNT,0) AS DISCOUNT_HEADER, IH.*, ID.*, IFNULL(T.TASK_ADDRESS, '') TASK_ADDRESS ";
+          pSql +=
+            " FROM INVOICE_HEADER IH INNER JOIN INVOICE_DETAIL ID ON IH.INVOICE_NUM = ID.INVOICE_NUM ";
+          pSql +=
+            " LEFT JOIN TASK T ON T.RELATED_CLIENT_CODE = IH.CLIENT_ID AND T.TASK_TYPE = 'SALE'  ";
+          pSql +=
+            " WHERE IH.IS_CREDIT_NOTE = 0 AND IH.INVOICE_NUM = " + invoiceId;
+
+          SONDA_DB_Session.transaction(function(tx) {
+            tx.executeSql(
+              pSql,
+              [],
+              function(tx, results) {
+                resultados = results;
+                var discount = results.rows.item(0).DISCOUNT_HEADER;
+                var discountAmount =
+                  discount > 0
+                    ? (discount / 100) * results.rows.item(0).TOTAL_AMOUNT
+                    : 0;
+                var creditAmount = results.rows.item(0).CREDIT_AMOUNT;
+
+                if (
+                  results.rows.item(0).HANDLE_TAX === 1 ||
+                  results.rows.item(0).HANDLE_TAX === "1"
+                ) {
+                  facturaManejaImpuesto = true;
+                  methodCalculationType = localStorage.getItem(
+                    "METHOD_CALCULATION_TAX"
+                  );
+                  impuestoDeFactura = results.rows.item(0).TAX_PERCENT;
+                }
+
+                var pRes = localStorage.getItem("POS_SAT_RESOLUTION");
+
+                invoicePrintFormat = "! 0 50 50 _DocLength_ 1\r\n";
+                invoicePrintFormat += "! U1 LMARGIN 10\r\n";
+                invoicePrintFormat += "! U\r\n";
+                invoicePrintFormat += "! U1 PAGE-WIDTH 1400\r\n";
+                invoicePrintFormat += "ON-FEED IGNORE\r\n";
+
+                //Informacion de la empresa-----------------------------------------------------------------------------------------------
+
+                posY += 5;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " + posY + " " + gCompanyName + "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " + posY + " " + gBranchName + "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " +
+                  posY +
+                  " " +
+                  localStorage.getItem("direccionFacturacion01") +
+                  "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " +
+                  posY +
+                  " " +
+                  localStorage.getItem("direccionFacturacion02") +
+                  "\r\n";
+
+                if (localStorage.getItem("direccionFacturacion03").length > 0) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "CENTER 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    localStorage.getItem("direccionFacturacion03") +
+                    "\r\n";
+                }
+
+                if (localStorage.getItem("direccionFacturacion04").length > 0) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "CENTER 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    localStorage.getItem("direccionFacturacion04") +
+                    "\r\n";
+                }
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " +
+                  posY +
+                  " " +
+                  localStorage.getItem("correoElectronicoEmpresa") +
+                  "\r\n";
+
+                if (localStorage.getItem("telefonoEmpresa").length > 0) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "CENTER 550 T 7 0 0 " +
+                    posY +
+                    "  " +
+                    localStorage.getItem("telefonoEmpresa") +
+                    "\r\n";
+                }
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " +
+                  posY +
+                  " " +
+                  etiquetaDeImpuesto +
+                  ": " +
+                  localStorage.getItem("NitEnterprise") +
+                  " \r\n";
+
+                posY += 25;
+                invoicePrintFormat += "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                //Informacion de resolucion de facturacion (CAI) -------------------------------------------------------------------------------------------
+
+                posY += 10;
+                var fechaCreacion = new Date(
+                  results.rows.item(0).POSTED_DATETIME
+                );
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " +
+                  posY +
+                  " Impreso el " +
+                  ((fechaCreacion.getDate() < 10
+                    ? "0" + fechaCreacion.getDate()
+                    : fechaCreacion.getDate()) +
+                    " de " +
+                    obtenerNombreDelMes(fechaCreacion.getMonth() + 1) +
+                    " de " +
+                    fechaCreacion.getFullYear()) +
+                  " \r\n";
+
+                posY += 30;
+                invoicePrintFormat += "SETBOLD 1\r\n";
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " FACTURA No.: " +
+                  (results.rows.item(0).SAT_SERIE +
+                    rellenarPalabra(8, "0", invoiceId.toString())) +
+                  "\r\n";
+                invoicePrintFormat += "SETBOLD 0\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " " +
+                  etiquetaDeResolucion +
+                  ": " +
+                  pRes +
+                  " \r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " RANGO AUTORIZADO DE FACTURAS \r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " INICIAL: " +
+                  (results.rows.item(0).SAT_SERIE +
+                    rellenarPalabra(8, "0", pCurrentSAT_Res_DocStart)) +
+                  " \r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " FINAL: " +
+                  (results.rows.item(0).SAT_SERIE +
+                    rellenarPalabra(8, "0", pCurrentSAT_Res_DocFinish)) +
+                  " \r\n";
+
+                var fechaLimite = new Date(
+                  localStorage.getItem("SAT_RES_EXPIRE")
+                );
+
+                var diaL = fechaLimite.getDate();
+                var mesL = fechaLimite.getMonth() + 1;
+                var añoL = fechaLimite.getFullYear();
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " FECHA LIMITE DE EMISION: " +
+                  (diaL < 10 ? "0" + diaL : diaL) +
+                  "/" +
+                  (mesL < 10 ? "0" + mesL : mesL) +
+                  "/" +
+                  añoL +
+                  " \r\n";
+
+                posY += 20;
+                invoicePrintFormat += "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                //Informacion del comprador -----------------------------------------------------------------------------------
+                cortarLineaDeTexto(
+                  results.rows.item(0).CLIENT_ID +
+                    "/" +
+                    results.rows.item(0).CLIENT_NAME,
+                  35
+                ).forEach(function(linea, numeroDeLinea) {
+                  posY += numeroDeLinea > 0 ? 18 : 10;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " +
+                    posY +
+                    (numeroDeLinea === 0 ? " CLIENTE: " : " ") +
+                    linea +
+                    "\r\n";
+                });
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " " +
+                  etiquetaDeImpuesto +
+                  ": " +
+                  results.rows.item(0).ERP_INVOICE_ID +
+                  "\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " VENDEDOR: " +
+                  (gCurrentRoute + "/" + localStorage.getItem("NAME_USER")) +
+                  "\r\n";
+
+                posY += 40;
+                invoicePrintFormat += "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                //Informacion de Productos comprados ---------------------------------------------------------------------------------------------------------
+                posY += 30;
+                invoicePrintFormat += "LEFT 5 T 7 0 5 " + posY + " CODIGO\r\n";
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 150 " + posY + " DESCRIPCION\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 15 " + posY + " CANTIDAD\r\n";
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 165 " + posY + " PRECIO UNIT.\r\n";
+
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 325 " + posY + " DESCUENTO\r\n";
+
+                invoicePrintFormat +=
+                  "RIGHT 550 T 7 0 0 " + posY + " TOTAL\r\n";
+
+                posY += 40;
+                invoicePrintFormat += "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                var i;
+                for (i = 0; i <= results.rows.length - 1; i++) {
+                  var product = results.rows.item(i);
+
+                  var skuPrice =
+                    facturaManejaImpuesto && methodCalculationType == "BY_ROW"
+                      ? product.PRICE -
+                        obtenerValorADescontarEnBaseaImpuesto(
+                          product,
+                          resumeInvoiceObject
+                        ) /
+                          product.QTY
+                      : product.PRICE;
+
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 5 " + posY + " " + product.SKU + "\r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 150 " +
+                    posY +
+                    " " +
+                    (product.SKU_NAME.length > 30
+                      ? product.SKU_NAME.substring(0, 25) + "..."
+                      : product.SKU_NAME) +
+                    "\r\n";
+
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 0 2 15 " +
+                    posY +
+                    " " +
+                    (format_number(
+                      product.QTY,
+                      configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                    ) +
+                      " " +
+                      product.PACK_UNIT) +
+                    "\r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 0 2 165 " +
+                    posY +
+                    " " +
+                    format_number(
+                      trunc_number(
+                        skuPrice,
+                        configuracionDecimales.defaultCalculationsDecimals
+                      ),
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 325 " +
+                    posY +
+                    " " +
+                    format_number(
+                      product.DISCOUNT ? product.DISCOUNT : 0,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 0 2 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      skuPrice * product.QTY,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+                }
+
+                posY += 20;
+                invoicePrintFormat += "L 5 " + posY + " 570 " + posY + " 1\r\n";
+
+                if (facturaManejaImpuesto) {
+                  switch (methodCalculationType) {
+                    case "BY_ROW":
+                      posY += 10;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " EXENTO \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          resumeInvoiceObject.exento,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " SUB TOTAL \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          trunc_number(
+                            resumeInvoiceObject.subTotal,
+                            configuracionDecimales.defaultCalculationsDecimals
+                          ),
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      // if (
+                      //   Object.keys(muestraPorcentaje).length !== 0 &&
+                      //   muestraPorcentaje.Value == 1
+                      // ) {
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " DESCUENTO \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          discount,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+                      //}
+
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " +
+                        posY +
+                        " " +
+                        etiquetaTipoDeImpuesto +
+                        " -" +
+                        etiquetaPorcentajeDeImpuesto +
+                        "%- \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          resumeInvoiceObject.impuesto,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " TOTAL \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          resumeInvoiceObject.total,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      break;
+
+                    case "BY_TOTAL_AMOUNT":
+                      posY += 10;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " EXENTO \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          resumeInvoiceObject.exento,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " SUB TOTAL \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          trunc_number(
+                            results.rows.item(0).TOTAL_AMOUNT -
+                              impuestoDeFactura,
+                            configuracionDecimales.defaultCalculationsDecimals
+                          ),
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      if (
+                        Object.keys(muestraPorcentaje).length !== 0 &&
+                        muestraPorcentaje.Value == 1
+                      ) {
+                        posY += 30;
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 0 " + posY + " DESCUENTO \r\n";
+                        invoicePrintFormat +=
+                          "LEFT 5 T 7 0 350 " +
+                          posY +
+                          " " +
+                          currencySymbol +
+                          ".\r\n";
+                        invoicePrintFormat +=
+                          "RIGHT 550 T 7 0 0 " +
+                          posY +
+                          " " +
+                          format_number(
+                            0,
+                            configuracionDecimales.defaultDisplayDecimals
+                          ) +
+                          "\r\n";
+                      }
+
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " +
+                        posY +
+                        " " +
+                        etiquetaTipoDeImpuesto +
+                        " -" +
+                        etiquetaPorcentajeDeImpuesto +
+                        "%- \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          impuestoDeFactura,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      posY += 30;
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 0 " + posY + " TOTAL \r\n";
+                      invoicePrintFormat +=
+                        "LEFT 5 T 7 0 350 " +
+                        posY +
+                        " " +
+                        currencySymbol +
+                        ".\r\n";
+                      invoicePrintFormat +=
+                        "RIGHT 550 T 7 0 0 " +
+                        posY +
+                        " " +
+                        format_number(
+                          results.rows.item(0).TOTAL_AMOUNT,
+                          configuracionDecimales.defaultDisplayDecimals
+                        ) +
+                        "\r\n";
+
+                      break;
+                  }
+                } else {
+                  posY += 10;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " + posY + " EXENTO \r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 350 " + posY + " " + currencySymbol + ".\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      0,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " + posY + " SUB TOTAL \r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 350 " + posY + " " + currencySymbol + ".\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      results.rows.item(0).TOTAL_AMOUNT,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+
+                  // if (
+                  //   Object.keys(muestraPorcentaje).length !== 0 &&
+                  //   muestraPorcentaje.Value == 1
+                  // ) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " + posY + " DESCUENTO \r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 350 " + posY + " " + currencySymbol + ".\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      discount,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+                  //}
+
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " +
+                    posY +
+                    " " +
+                    etiquetaTipoDeImpuesto +
+                    " -" +
+                    etiquetaPorcentajeDeImpuesto +
+                    "%- \r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 350 " + posY + " " + currencySymbol + ".\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      0,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " + posY + " TOTAL \r\n";
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 350 " + posY + " " + currencySymbol + ".\r\n";
+                  invoicePrintFormat +=
+                    "RIGHT 550 T 7 0 0 " +
+                    posY +
+                    " " +
+                    format_number(
+                      results.rows.item(0).TOTAL_AMOUNT,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "\r\n";
+                }
+
+                //Pie de factura --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                var totalInvoicedInWords =
+                  numberToWord(
+                    results.rows.item(0).TOTAL_AMOUNT
+                  ).toUpperCase() +
+                  " " +
+                  localStorage.getItem("NAME_CURRENCY");
+
+                if (totalInvoicedInWords.length > 45) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " +
+                    posY +
+                    " " +
+                    totalInvoicedInWords.substring(0, 46) +
+                    " \r\n";
+
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " +
+                    posY +
+                    " " +
+                    totalInvoicedInWords.substring(
+                      46,
+                      totalInvoicedInWords.length
+                    ) +
+                    " \r\n";
+                } else {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " +
+                    posY +
+                    " " +
+                    totalInvoicedInWords +
+                    " \r\n";
+                }
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " FORMA DE PAGO: " +
+                  (creditAmount && creditAmount > 0 ? "Crédito" : "Contado") +
+                  " \r\n";
+                if (creditAmount && creditAmount > 0) {
+                  posY += 30;
+                  invoicePrintFormat +=
+                    "LEFT 5 T 7 0 0 " +
+                    posY +
+                    " FECHA DE VENCIMIENTO: " +
+                    (results.rows.item(0).DUE_DATE
+                      ? results.rows.item(0).DUE_DATE.split(" ")[0]
+                      : getDateTime()) +
+                    " \r\n";
+                }
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " + posY + " No. Correlativo exento:\r\n";
+                invoicePrintFormat +=
+                  "L 325 " + (posY + 20) + " 570 " + (posY + 20) + " 1\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " + posY + " No. Correlativo exonerado:\r\n";
+                invoicePrintFormat +=
+                  "L 325 " + (posY + 20) + " 570 " + (posY + 20) + " 1\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " + posY + " No. Registro S.A.G. :\r\n";
+                invoicePrintFormat +=
+                  "L 325 " + (posY + 20) + " 570 " + (posY + 20) + " 1\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " + posY + " ORIGINAL: CLIENTE\r\n";
+
+                posY += 30;
+                invoicePrintFormat +=
+                  "LEFT 5 T 7 0 0 " +
+                  posY +
+                  " COPIA: Obligado tributario emisor\r\n";
+
+                posY += 40;
+                invoicePrintFormat += "LEFT 5 T 7 0 0 " + posY + " FIRMA: \r\n";
+
+                posY += 20;
+                invoicePrintFormat +=
+                  "LEFT 35 L 70 " + posY + " 570 " + posY + " 1 \r\n";
+
+                // posY += 10;
+                // if (esCopia === 1) {
+                //   invoicePrintFormat += "CENTER 550 T 7 0 0 " + posY + " *Copia (Contabilidad)\r\n";
+                // } else {
+                //   invoicePrintFormat += "CENTER 550 T 7 0 0 " + posY + " *Original (Cliente)\r\n";
+                // }
+
+                posY += 20;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " + posY + " GRACIAS POR SU COMPRA \r\n";
+
+                posY += 20;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " +
+                  posY +
+                  " LA FACTURA ES BENEFICIO DE TODOS, EXIJALA \r\n";
+
+                posY += 20;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " + posY + " www.heladosarita.com \r\n";
+
+                posY += 18;
+                invoicePrintFormat +=
+                  "CENTER 550 T 7 0 0 " + posY + "  " + isReprint + " \r\n";
+
+                invoicePrintFormat += "PRINT\r\n";
+
+                invoicePrintFormat = invoicePrintFormat.replace(
+                  "_DocLength_",
+                  (posY + 70).toString()
+                );
+
+                bluetoothSerial.write(
+                  invoicePrintFormat,
                   function() {
-                    console.log("Disconnect succesful");
-                    return true;
+                    my_dialog("", "", "close");
+                    callback();
                   },
                   function() {
-                    notify("Unable to disconnect from printer");
-                    return false;
+                    my_dialog("", "", "close");
+                    notify("Lo sentimos no se pudo imprimir el documento...");
+                    callback();
                   }
                 );
               },
-              function() {
-                notify("unable to write to printer");
+              function(err) {
+                my_dialog("", "", "close");
+                console.log("Lo sentimos no se pudo imprimir el documento...");
+                console.dir(err);
+                notify("Lo sentimos no se pudo imprimir el documento.");
+                callback();
               }
             );
-            gPrinterIsAvailable = 1;
-          } catch (ex) {
-            console.log(ex.message);
-          }
-        },
-        function() {
-          $(".printerclass").buttonMarkup({ icon: "print" });
-          bluetoothSerial.connect(
-            pPrinterAddress,
-            function() {
-              $(".printerclass").buttonMarkup({ icon: "print" });
-              try {
-                bluetoothSerial.write(
-                  lheader,
-                  function() {
-                    DesconectarImpresora(
-                      function() {
-                        console.log("Disconnect succesful");
-                      },
-                      function() {
-                        notify("Unable to disconnect from printer");
-                      }
-                    );
-                  },
-                  function() {
-                    notify("unable to write to printer");
-                  }
-                );
-                gPrinterIsAvailable = 1;
-              } catch (e) {
-                console.log(e.message);
-              }
-            },
-            function() {
-              notify(
-                "ERROR, No se pudo conectar a la impresora:" + pPrinterAddress
-              );
-              gPrinterIsAvailable = 0;
-            }
-          );
-          ToastThis("Conectado a " + pPrinterAddress);
+          });
+          my_dialog("", "", "close");
         }
       );
-    } catch (e) {
-      notify("print.guide.catch:" + e.message);
-    }
-    my_dialog("", "", "close");
+    });
   } catch (e) {
-    notify("print.test.catch:" + e.message);
+    notify("Lo sentimos no se pudo imprimir el documento. Error: " + e.message);
+    my_dialog("", "", "close");
   }
 }
 
+function obtenerValorADescontarEnBaseaImpuesto(product, resumeInvoiceObject) {
+  var sku = resumeInvoiceObject.skusDeDetalle.find(function(skuDetalle) {
+    return (
+      skuDetalle.SKU == product.SKU && skuDetalle.PACK_UNIT == product.PACK_UNIT
+    );
+  });
+
+  if (sku && sku.TAX_VALUE > 0) {
+    return sku.TAX;
+  } else {
+    return 0;
+  }
+}
+
+function printinvoice(pInvoice, pIsRePrinted, callBack) {
+  try {
+    my_dialog("Imprimiendo Factura", "#" + pInvoice + " Espere...", "open");
+    var to;
+    var procesarImpresionDeFactura = function(invoiceId, isReprint, callback) {
+      switch (localStorage.getItem("PRINT_FORMAT")) {
+        case "GT-STANDARD":
+          printinvoice_joininfo(
+            invoiceId,
+            isReprint,
+            function() {
+              callback();
+            },
+            0
+          );
+
+          to = setTimeout(function() {
+            printinvoice_joininfo(invoiceId, isReprint, function() {}, 1);
+            clearTimeout(to);
+          }, 2000);
+
+          break;
+
+        case "HN-STANDARD":
+          formatoImpresionHonduras(
+            invoiceId,
+            isReprint,
+            function() {
+              callback();
+            },
+            0
+          );
+
+          to = setTimeout(function() {
+            formatoImpresionHonduras(invoiceId, isReprint, function() {}, 1);
+            clearTimeout(to);
+          }, 2000);
+
+          break;
+
+        case "HN-STANDARD-DIPROCOM":
+          formatoDeImpresionDiprocom(
+            invoiceId,
+            isReprint,
+            function() {
+              callback();
+            },
+            0
+          );
+
+          to = setTimeout(function() {
+            formatoDeImpresionDiprocom(invoiceId, isReprint, function() {}, 1);
+            clearTimeout(to);
+          }, 2000);
+
+          break;
+
+        case "HN-STANDARD-SARITA":
+          formatoDeImpresionSaritaHonduras(
+            invoiceId,
+            isReprint,
+            function() {
+              callback();
+            },
+            0
+          );
+
+          to = setTimeout(function() {
+            formatoDeImpresionSaritaHonduras(
+              invoiceId,
+              isReprint,
+              function() {},
+              1
+            );
+            clearTimeout(to);
+          }, 2000);
+
+          break;
+
+        default:
+          printinvoice_joininfo(
+            invoiceId,
+            isReprint,
+            function() {
+              callback();
+            },
+            0
+          );
+
+          to = setTimeout(function() {
+            printinvoice_joininfo(invoiceId, isReprint, function() {}, 1);
+            clearTimeout(to);
+          }, 2000);
+
+          break;
+      }
+    };
+
+    bluetoothSerial.isConnected(
+      function() {
+        procesarImpresionDeFactura(pInvoice, pIsRePrinted, callBack);
+      },
+      function() {
+        try {
+          bluetoothSerial.connect(
+            gPrintAddress,
+            function() {
+              procesarImpresionDeFactura(pInvoice, pIsRePrinted, callBack);
+            },
+            function() {
+              my_dialog("", "", "close");
+              notify(
+                "ERROR, Unable to connect to the printer.(" +
+                  gPrintAddress +
+                  ")"
+              );
+            }
+          );
+        } catch (e) {
+          my_dialog("", "", "close");
+          notify("printinvoice: " + e.message);
+        }
+      }
+    );
+  } catch (e) {
+    my_dialog("", "", "close");
+    alert("cannot print " + e.message);
+  }
+}
 function onBatteryStatus(info) {
   // Handle the online event
   gBatteryLevel = info.level;
+  $("#lblBattLevel").text(gBatteryLevel + "%");
+  $("#lblBattLevel").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevel").css("color", "white");
 
-  $(".batteryclass" + "" + "" + "").text("    " + gBatteryLevel + "%");
-  switch (true) {
-    case gBatteryLevel < 6:
-      $(".batteryclass").addClass("fa-battery-empty");
-      break;
+  $("#lblBattLevelMenu").text(gBatteryLevel + "%");
+  $("#lblBattLevelMenu").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelMenu").css("color", "white");
 
-    case gBatteryLevel > 5 && gBatteryLevel < 45:
-      $(".batteryclass").addClass("fa-battery-quarter");
-      break;
+  $("#lblBattLevelCust").text(gBatteryLevel + "%");
+  $("#lblBattLevelCust").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelCust").css("color", "white");
 
-    case gBatteryLevel > 44 && gBatteryLevel < 70:
-      $(".batteryclass").addClass("fa-battery-half");
-      break;
+  $("#lblBattLevelSkusPOS").text(gBatteryLevel + "%");
+  $("#lblBattLevelSkusPOS").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelSkusPOS").css("color", "white");
 
-    case gBatteryLevel > 69 && gBatteryLevel < 95:
-      $(".batteryclass").addClass("fa-battery-three-quarters");
-      break;
+  $("#lblBattLevelSkusPOS_1").text(gBatteryLevel + "%");
+  $("#lblBattLevelSkusPOS_1").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelSkusPOS_1").css("color", "white");
 
-    case gBatteryLevel > 94 && gBatteryLevel < 101:
-      $(".batteryclass").addClass("fa-battery-full");
-      break;
-  }
-  //$('.batteryclass').buttonMarkup({ icon: "battery-full" });
-  $(".batteryclass").css("color", "white");
+  $("#lblBattLevelLogin").text(gBatteryLevel + "%");
+  $("#lblBattLevelLogin").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelLogin").css("color", "white");
+
+  //--
+  $("#lblBattLevelDevolucion").text(gBatteryLevel + "%");
+  $("#lblBattLevelDevolucion").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelDevolucion").css("color", "white");
+
+  // dato de estadistica page
+  $("#lblBattLevelEstadistica").text(gBatteryLevel + "%");
+  $("#lblBattLevelEstadistica").buttonMarkup({ icon: "eye" });
+  $("#lblBattLevelEstadistica").css("color", "white");
 }
-
 function onBatteryCritical(info) {
   // Handle the battery critical event
   gBatteryLevel = info.level;
+  $("#lblBattLevel").text(gBatteryLevel + "%");
+  $("#lblBattLevel").css("color", "red");
+  $("#lblBattLevel").buttonMarkup({ icon: "delete" });
 
-  $(".batteryclass").text(gBatteryLevel + "%");
-  $(".batteryclass").buttonMarkup({ icon: "delete" });
-  $(".batteryclass").css("color", "white");
+  $("#lblBattLevelMenu").text(gBatteryLevel + "%");
+  $("#lblBattLevelMenu").buttonMarkup({ icon: "delete" });
+  $("#lblBattLevelMenu").css("color", "red");
 
-  notify("Critical Battery Level " + info.level + "%\n Â¡Recarge pronto!");
+  $("#lblBattLevelCust").text(gBatteryLevel + "%");
+  $("#lblBattLevelCust").buttonMarkup({ icon: "delete" });
+  $("#lblBattLevelCust").css("color", "red");
+
+  $("#lblBattLevelSkusPOS").text(gBatteryLevel + "%");
+  $("#lblBattLevelSkusPOS").buttonMarkup({ icon: "delete" });
+  $("#lblBattLevelSkusPOS").css("color", "red");
+
+  $("#lblBattLevelSkusPOS_1").text(gBatteryLevel + "%");
+  $("#lblBattLevelSkusPOS_1").buttonMarkup({ icon: "delete" });
+  $("#lblBattLevelSkusPOS_1").css("color", "red");
+
+  //--
+  $("#lblBattLevelDevolucion").text(gBatteryLevel + "%");
+  $("#lblBattLevelDevolucion").buttonMarkup({ icon: "delete" });
+  $("#lblBattLevelDevolucion").css("color", "red");
+
+  // dato de estadistica page
+  $("#lblBattLevelEstadistica").text(gBatteryLevel + "%");
+  $("#lblBattLevelEstadistica").buttonMarkup({ icon: "delete" });
+  $("#lblBattLevelEstadistica").css("color", "red");
+
+  notify("Battery Level Critical " + info.level + "%\n Recarge pronto!");
 }
 function onBatteryLow(info) {
   // Handle the battery low event
   gBatteryLevel = info.level;
+  $("#lblBattLevel").text(gBatteryLevel + "%");
+  $("#lblBattLevel").css("color", "yellow");
+  $("#lblBattLevel").buttonMarkup({ icon: "alert" });
 
-  $(".batteryclass").text(gBatteryLevel + "%");
-  $(".batteryclass").buttonMarkup({ icon: "notify" });
-  $(".batteryclass").css("color", "white");
+  $("#lblBattLevelMenu").text(gBatteryLevel + "%");
+  $("#lblBattLevelMenu").buttonMarkup({ icon: "alert" });
+  $("#lblBattLevelMenu").css("color", "yellow");
 
-  notify("Low Battery Level " + info.level + "%");
+  $("#lblBattLevelCust").text(gBatteryLevel + "%");
+  $("#lblBattLevelCust").buttonMarkup({ icon: "alert" });
+  $("#lblBattLevelCust").css("color", "yellow");
+
+  $("#lblBattLevelSkusPOS").text(gBatteryLevel + "%");
+  $("#lblBattLevelSkusPOS").buttonMarkup({ icon: "alert" });
+  $("#lblBattLevelSkusPOS").css("color", "yellow");
+
+  $("#lblBattLevelSkusPOS_1").text(gBatteryLevel + "%");
+  $("#lblBattLevelSkusPOS_1").buttonMarkup({ icon: "alert" });
+  $("#lblBattLevelSkusPOS_1").css("color", "yellow");
+
+  //alert("Battery Level Low " + info.level + "%");
+
+  // dato de estadistica page
+  $("#lblBattLevelEstadistica").text(gBatteryLevel + "%");
+  $("#lblBattLevelEstadistica").buttonMarkup({ icon: "alert" });
+  $("#lblBattLevelEstadistica").css("color", "yellow");
+}
+function ShowInventoryPage() {
+  $.mobile.changePage("#inv_page", {
+    transition: "none",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
+
+  PopulateInvGrid();
+}
+function ShowInvoiceListPage() {
+  listallinvoices();
+  $.mobile.changePage("#invoice_list_page", {
+    transition: "pop",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
 }
 
-function getType(sender) {
-  var tp = sender.name;
-  return tp;
+function ShowTaskOutOfRoutePlanPage() {
+  limpiarFiltro();
+  $.mobile.changePage("#UiNewTaskOutsideOfRoutePlanPage", {
+    transition: "slide",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
 }
 
-function ShowListPicker(options, callback) {
-  window.plugins.listpicker.showPicker(options, callback);
+function listallinvoices() {
+  try {
+    var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
+    configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+      function(configuracionDecimales) {
+        var telephoneNumber = "";
+        SONDA_DB_Session.transaction(
+          function(tx) {
+            var vLI = "";
+
+            var sql =
+              "SELECT * FROM INVOICE_HEADER AS IH " +
+              "WHERE IH.IS_CREDIT_NOTE = 0 " +
+              "ORDER BY IH.INVOICE_NUM";
+            tx.executeSql(
+              sql,
+              [],
+              function(tx, results) {
+                $("#invoiceslist_listview")
+                  .children()
+                  .remove("li");
+                $("#invoiceslist_listview").listview();
+                var xonclick1 = "";
+                for (var i = 0; i <= results.rows.length - 1; i++) {
+                  var pIS_POSTED = results.rows.item(i).IS_POSTED;
+                  var pSTATUS = results.rows.item(i).STATUS;
+                  telephoneNumber = results.rows.item(i).TELEPHONE_NUMBER;
+                  var isFromDeliveryNote = results.rows.item(i)
+                    .IS_FROM_DELIVERY_NOTE;
+                  var isContingencyDocument = results.rows.item(i)
+                    .IS_CONTINGENCY_DOCUMENT;
+                  var taskId = results.rows.item(i).TASK_ID;
+                  var validationResult = results.rows.item(i).VALIDATION_RESULT;
+
+                  try {
+                    var pcName = results.rows.item(i).CLIENT_NAME.trim();
+
+                    xonclick1 =
+                      "showInvoiceActions(" +
+                      results.rows.item(i).INVOICE_NUM +
+                      "," +
+                      format_number(
+                        results.rows.item(i).TOTAL_AMOUNT,
+                        configuracionDecimales.defaultDisplayDecimals
+                      ) +
+                      ",'" +
+                      pcName.trim() +
+                      "'," +
+                      results.rows.item(i).IS_PAID_CONSIGNMENT +
+                      "," +
+                      (telephoneNumber === "" ? "''" : telephoneNumber) +
+                      "," +
+                      (isFromDeliveryNote ? isFromDeliveryNote : 0) +
+                      "," +
+                      (isContingencyDocument ? isContingencyDocument : 0) +
+                      "," +
+                      taskId +
+                      "," +
+                      validationResult +
+                      ");";
+                  } catch (e) {
+                    notify("listallinvoices.add.catch:" + e.message);
+                  }
+
+                  var xmsg;
+                  if (results.rows.item(i).IS_POSTED === 2) {
+                    xmsg =
+                      "<img src='css/styles/images/icons-png/check-black.png'></img>";
+                  } else {
+                    xmsg =
+                      "<img src='css/styles/images/icons-png/forbidden-black.png'></img>";
+                  }
+
+                  var imgDocType = "";
+                  if (localStorage.getItem("IMPLEMENTS_FEL") === "true") {
+                    let styles = [];
+                    let properties = [];
+                    styles.push("right: 0px;");
+                    styles.push("width: 10%;");
+                    styles.push("height: 24%;");
+                    styles.push("position: absolute;");
+                    styles.push("transform: rotate(-20deg);");
+                    // properties.push("width='30'");
+                    // properties.push("height='30'");
+                    properties.push("style='" + styles.join(" ") + "'");
+                    if (results.rows.item(i).VALIDATION_RESULT == 1) {
+                      imgDocType =
+                        "<img src='css/styles/images/icons-png/signed-doc.png' " +
+                        properties.join(" ") +
+                        "></img>";
+                    } else {
+                      if (results.rows.item(i).IS_CONTINGENCY_DOCUMENT === 1) {
+                        imgDocType =
+                          "<img src='css/styles/images/icons-png/contingency-doc.png' " +
+                          properties.join(" ") +
+                          "></img>";
+                      }
+                    }
+                  }
+
+                  vLI = "";
+                  if (results.rows.item(i).STATUS == 3) {
+                    vLI = '<li class="ui-nodisc-icon ui-alt-icon">';
+                    vLI =
+                      vLI +
+                      '<p><span class="title" style="color:red">' +
+                      xmsg +
+                      " Factura #" +
+                      results.rows.item(i).INVOICE_NUM +
+                      " (Anulada)</span>" +
+                      imgDocType +
+                      "</p>";
+                  } else {
+                    vLI =
+                      '<li class="ui-nodisc-icon ui-alt-icon" onclick="' +
+                      xonclick1 +
+                      '">';
+                    if (
+                      telephoneNumber !== null &&
+                      telephoneNumber !== undefined
+                    ) {
+                      vLI =
+                        vLI +
+                        '<p><span class="title" style="color: green;">' +
+                        xmsg +
+                        " Factura #" +
+                        results.rows.item(i).INVOICE_NUM +
+                        " (" +
+                        (results.rows.item(i).CREDIT_AMOUNT &&
+                        results.rows.item(i).CREDIT_AMOUNT > 0
+                          ? "Crédito"
+                          : "Contado") +
+                        ")</span>" +
+                        imgDocType +
+                        "</p>";
+                    } else {
+                      vLI =
+                        vLI +
+                        '<p><span class="title" style="color: red;">' +
+                        xmsg +
+                        " Factura #" +
+                        results.rows.item(i).INVOICE_NUM +
+                        " (" +
+                        (results.rows.item(i).CREDIT_AMOUNT &&
+                        results.rows.item(i).CREDIT_AMOUNT > 0
+                          ? "Crédito"
+                          : "Contado") +
+                        ")</span>" +
+                        imgDocType +
+                        "</p>";
+                    }
+                  }
+
+                  vLI =
+                    vLI +
+                    '<p><span class="medium">' +
+                    results.rows.item(i).CLIENT_NAME +
+                    "</span></p>";
+
+                  vLI =
+                    vLI +
+                    '<p><span class="medium">' +
+                    results.rows.item(i).POSTED_DATETIME +
+                    "</span></p>";
+                  vLI =
+                    vLI +
+                    '<p><span class="small-roboto ui-li-count">' +
+                    currencySymbol +
+                    ". " +
+                    format_number(
+                      results.rows.item(i).TOTAL_AMOUNT,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "</span></p>";
+                  if (
+                    results.rows.item(i).CONSIGNMENT_ID !== undefined &&
+                    results.rows.item(i).CONSIGNMENT_ID !== null
+                  ) {
+                    facturaTieneConsignacion = true;
+                    vLI +=
+                      '<p><span class="small-roboto">Consignación: ' +
+                      results.rows.item(i).CONSIGNMENT_ID +
+                      "</span></p>";
+                  } else {
+                    facturaTieneConsignacion = false;
+                  }
+                  if (
+                    telephoneNumber !== undefined &&
+                    telephoneNumber !== null
+                  ) {
+                    vLI =
+                      vLI +
+                      '<p><span class="medium">Número Telefónico: ' +
+                      results.rows.item(i).TELEPHONE_NUMBER +
+                      "</span></p>";
+                  } else {
+                    vLI =
+                      vLI +
+                      '<p><span class="medium">Número Telefónico: SIN ASIGNAR </span></p>';
+                  }
+                  vLI = vLI + "</li>";
+                  //alert(vLI);
+                  try {
+                    $("#invoiceslist_listview")
+                      .append(vLI)
+                      .trigger("create");
+                    $("#invoiceslist_listview").listview("refresh");
+                  } catch (ex) {
+                    notify("listallinvoices: " + ex.message);
+                  }
+                }
+
+                my_dialog("", "", "close");
+              },
+              function(err) {
+                if (err.code !== 0) {
+                  alert("Error processing SQL: " + err.code);
+                }
+              }
+            );
+          },
+          function(err) {
+            if (err.code !== 0) {
+              alert("Error processing SQL: " + err.code);
+            }
+          }
+        );
+      }
+    );
+    my_dialog("", "", "close");
+  } catch (e) {
+    notify("listallinvoices: " + e.message);
+  }
+}
+function showinvoicedetail(pInvoiceID) {
+  try {
+    var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
+    configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+      function(configuracionDecimales) {
+        var fieldSet = $("#fldDetailView");
+        fieldSet.empty();
+
+        SONDA_DB_Session.transaction(
+          function(tx) {
+            var vLI = "";
+            tx.executeSql(
+              "SELECT * FROM INVOICE_DETAIL WHERE INVOICE_NUM =" + pInvoiceID,
+              [],
+              function(tx, results) {
+                for (i = 0; i <= results.rows.length - 1; i++) {
+                  vLI = "";
+                  vLI =
+                    '<div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u"  data-inset="true">';
+                  vLI +=
+                    '<h4><span class="small-roboto">' +
+                    results.rows.item(i).SKU_NAME +
+                    "</span></h4>";
+                  vLI +=
+                    '<ul data-role="listview" data-inset="false" data-count-theme="b">';
+                  vLI +=
+                    '<li><span class="medium">Cantidad: ' +
+                    format_number(
+                      results.rows.item(i).QTY,
+                      configuracionDecimales.defaultDisplayDecimalsForSkuQty
+                    ) +
+                    "</span>";
+                  vLI +=
+                    '<span class="small-roboto ui-li-count">' +
+                    currencySymbol +
+                    ". " +
+                    format_number(
+                      results.rows.item(i).PRICE,
+                      configuracionDecimales.defaultDisplayDecimals
+                    ) +
+                    "</span></li>";
+                  vLI +=
+                    '<li><span class="medium">Celular: ' +
+                    results.rows.item(i).PHONE +
+                    "</span></li>";
+                  vLI +=
+                    '<li><span class="medium">Serie: ' +
+                    results.rows.item(i).SERIE +
+                    "</span></li>";
+                  vLI +=
+                    '<li><span class="medium">#IMEI: ' +
+                    results.rows.item(i).SERIE_2 +
+                    "</span></li></ul></div>";
+                  vLI += "";
+
+                  fieldSet.append(vLI);
+                }
+
+                fieldSet.trigger("create");
+
+                my_dialog("", "", "close");
+              },
+              function(err) {
+                if (err.code != 0) {
+                  alert("Error processing SQL: " + err.code);
+                }
+              }
+            );
+          },
+          function(err) {
+            if (err.code != 0) {
+              alert("Error processing SQL: " + err.code);
+            }
+          },
+          function() {
+            if (facturaTieneConsignacion) {
+              var contenedorSkus = $("#contenedorDetalleSkusConsignacion");
+              contenedorSkus.css("display", "block");
+              contenedorSkus = null;
+              var sql = "";
+              sql =
+                "SELECT CH.CONSIGNMENT_ID FROM INVOICE_HEADER IH INNER JOIN CONSIGNMENT_HEADER CH ON (CH.CONSIGNMENT_BO_NUM = IH.CONSIGNMENT_ID) WHERE INVOICE_NUM = " +
+                pInvoiceID;
+
+              SONDA_DB_Session.transaction(
+                function(tx) {
+                  tx.executeSql(
+                    sql,
+                    [],
+                    function(tx, results) {
+                      if (results.rows.length > 0) {
+                        var consignacionId = results.rows.item(0)
+                          .CONSIGNMENT_ID;
+                        ObtenerDetallePorConsignacion(
+                          consignacionId,
+                          null,
+                          function(detalleConsignacion) {
+                            if (detalleConsignacion.length > 0) {
+                              var objetoUl = $("#UiListaSkusConsignacion");
+                              objetoUl.children().remove("li");
+
+                              for (
+                                var i = 0;
+                                i < detalleConsignacion.length;
+                                i++
+                              ) {
+                                var itemDetalle = detalleConsignacion[i];
+                                var li = "";
+
+                                li = "<li>";
+                                li += "<a href='#'>";
+                                li +=
+                                  "<h5>" +
+                                  itemDetalle.SKU +
+                                  " " +
+                                  itemDetalle.SKU_NAME +
+                                  "</h2>";
+                                li += "<p>";
+                                li +=
+                                  "<strong>Cantidad: </strong> " +
+                                  itemDetalle.QTY_CONSIGNMENT;
+                                li +=
+                                  "<strong> Precio: </strong> " +
+                                  currencySymbol +
+                                  ". " +
+                                  format_number(
+                                    itemDetalle.PRICE,
+                                    configuracionDecimales.defaultDisplayDecimals
+                                  );
+                                li += "</p>";
+                                li +=
+                                  "<span class='ui-li-count'><strong>" +
+                                  currencySymbol +
+                                  ". " +
+                                  format_number(
+                                    itemDetalle.TOTAL_LINE,
+                                    configuracionDecimales.defaultDisplayDecimals
+                                  ) +
+                                  " </strong></span>";
+                                li += "</a>";
+                                li += "</li>";
+
+                                objetoUl.append(li);
+                                objetoUl.listview("refresh");
+                              }
+                              objetoUl = null;
+                            }
+                          },
+                          function(error) {
+                            notify(error.message);
+                          }
+                        );
+                      }
+                    },
+                    function(err) {
+                      if (err.code !== 0) {
+                        notify(err.message);
+                      }
+                    }
+                  );
+                },
+                function(err) {
+                  if (err.code !== 0) {
+                    notify(err.message);
+                  }
+                }
+              );
+            }
+          }
+        );
+
+        my_dialog("", "", "close");
+      }
+    );
+  } catch (e) {
+    notify("showinvoicedetail: " + e.message);
+  }
+}
+function viewinvoice(pInvoiceID, pInvoiceCustName, pAmount, telephoneNumber) {
+  try {
+    $("#invoice_view_id").text(pInvoiceID);
+    $("#invoice_view_custname").text(pInvoiceCustName);
+    $("#telephoneNumberAssociatedToInvoice").text(
+      telephoneNumber === null || telephoneNumber === undefined
+        ? "Número Telefónico: SIN ASIGNAR"
+        : "Número Telefónico: " + telephoneNumber
+    );
+    $("#invoice_view_amount").text(currencySymbol + ". " + pAmount);
+
+    var contenedorSkusEnConsignacion = $("#contenedorDetalleSkusConsignacion");
+    contenedorSkusEnConsignacion.css("display", "none");
+    contenedorSkusEnConsignacion = null;
+
+    $.mobile.changePage("#view_invoice_page", {
+      transition: "pop",
+      reverse: true,
+      changeHash: true,
+      showLoadMsg: false
+    });
+    showinvoicedetail(pInvoiceID);
+  } catch (e) {
+    notify("viewinvoice: " + e.message);
+  }
 }
 
 function onDeviceReady() {
+  const path = cordova.file.externalDataDirectory;
+  console.log(path)
+  window.resolveLocalFileSystemURL(path, (dir) => {
+      console.log("got main dir",dir);
+      dir.getFile("conf.json", {create:true}, (file) => {
+          console.log("got the file", file);
+          logOb = file;
+      });
+  });
   try {
-    $("#login_isonline").text("OFF");
-    $(".sonda-version").text("Sonda " + SondaVersion);
+    controlDeSecuenciaServicio = new ControlDeSecuenciaServicio();
+
+    var validacionDeLicenciaControlador = new ValidacionDeLicenciaControlador();
+    validacionDeLicenciaControlador.delegarValidacionDeLicenciaControlador();
+    validacionDeLicenciaControlador = null;
+
+    $("#login_isonline").text("OffLine");
+    $("#lblNetworkLogin").text("OffLine");
+    $("#lblNetworkDeliveryMenu").text("OffLine");
+    $("#lblNetworkSkusPOS_1").text("OffLine");
+    $("#lblNetworkEstadistica").text("OffLine");
+    $("#lblSondaVersion").text(SondaVersion);
 
     delegate_events();
+    DelegarConsignacionControlador();
+    DelegarImpresionConsignacionControlador();
+    delegarListadoDeConsignacionesControlador();
+    delegarCantidadSkuEnConsignacion();
 
-    $("#login_isonline").text("/");
+    PagoConsignacionesControlador.DelegarPagoConsignacionesControlador();
+    CantidadSkuARecogerProductoEnConsignacionControlador.delegarIngresoDeCantidadSkuARecogerControlador();
+    CantidadSkuEnConsignacionControlador.delegarIngresoDeCantidadSkuEnConsignacionControlador();
+    DocumentosDeDevolucionControlador.DelegarDocumentosDeDevolucionControlador();
+    SincronizacionControlador.DelegarSincronizacionControlador();
+
+    if (!mensajero) {
+      mensajero = new Messenger();
+    }
+
+    var reporteDeLiquidacionControlador = new ReporteDeLiquidacionControlador();
+    reporteDeLiquidacionControlador.delegarReporteDeLiquidacionControlador();
+    reporteDeLiquidacionControlador = null;
+
+    var serieControlador = new SerieControlador();
+    serieControlador.delegarSerieControlador();
+    serieControlador = null;
+
+    var tareaControlador = new TareaControlador();
+    tareaControlador.delegarTareaControlador();
+    tareaControlador = null;
+
+    var encuestaCompetenciaControlador = new EncuestaCompetenciaControlador();
+    encuestaCompetenciaControlador.delegarEncuestaCompetenciaControlador();
+    encuestaCompetenciaControlador = null;
+
+    var notificacionControlador = new NotificacionControlador();
+    notificacionControlador.delegarNotificacionControlador();
+    notificacionControlador = null;
+
+    var transferenciaDetalleControlador = new TransferenciaDetalleControlador();
+    transferenciaDetalleControlador.delegarTransferenciaDetalleControlador();
+    transferenciaDetalleControlador = null;
+
+    delegarTareaFueraDeRutaControlador();
+
+    var scoutingControlador = new ScoutingControlador(mensajero);
+    scoutingControlador.delegarScoutingControlador();
+    scoutingControlador = null;
+
+    var asociarTelefonoAFacturaControlador = new AsociarTelefonoAFacturaControlador();
+    asociarTelefonoAFacturaControlador.delegarAsociacionDeTelefonoAFacturaControlador();
+    asociarTelefonoAFacturaControlador = null;
+
+    manifiestoControlador = new ManifiestoControlador(mensajero);
+    manifiestoControlador.delegarManifiestoControlador();
+
+    var entregaControlador = new EntregaControlador(mensajero);
+    entregaControlador.delegarEntregaControlador();
+    entregaControlador = null;
+
+    var entregaDetalleControlador = new EntregaDetalleControlador(mensajero);
+    entregaDetalleControlador.delegarEntregaControlador();
+    entregaDetalleControlador = null;
+
+    var confirmacionDeNotaDeEntrega = new ConfirmacionDeNotaDeEntregaControlador(
+      mensajero
+    );
+    confirmacionDeNotaDeEntrega.delegarConfirmacionDeNotaDeEntregaControlador();
+    confirmacionDeNotaDeEntrega = null;
+
+    DelegarGlobalUtils(mensajero);
+
+    var reporteDeEntregaControlador = new ReporteDeEntregaControlador(
+      mensajero
+    );
+    reporteDeEntregaControlador.delegarReporteDeEntregaControlador();
+    reporteDeEntregaControlador = null;
+
+    var cobroDeFacturaVencidaControlador = new CobroDeFacturaVencidaControlador(
+      mensajero
+    );
+    cobroDeFacturaVencidaControlador.delegarCobroDeFacturaVencidaControlador();
+    cobroDeFacturaVencidaControlador = null;
+
+    var confirmacionDePagoControlador = new ConfirmacionDePagoControlador(
+      mensajero
+    );
+    confirmacionDePagoControlador.delegarConfirmacionDePagoControlador();
+    confirmacionDePagoControlador = null;
+
+    estadisticaDeVentaControlador = new EstadisticaDeVentaControlador();
+
+    var tipoDePagoEnFacturaVencidaControlador = new TipoDePagoEnFacturaVencidaControlador(
+      mensajero
+    );
+    tipoDePagoEnFacturaVencidaControlador.delegarTipoDePagoEnFacturaVencidaControlador();
+    tipoDePagoEnFacturaVencidaControlador = null;
+
+    var listaDePagoControlador = new ListaDePagoControlador(mensajero);
+    listaDePagoControlador.delegarListaDePagoControlador();
+    listaDePagoControlador = null;
+
+    var detalleDePagoControlador = new DetalleDePagoControlador(mensajero);
+    detalleDePagoControlador.delegarDetalleDePagoControlador();
+    detalleDePagoControlador = null;
+
+    imagenDeEntregaControlador = new ImagenDeEntregaControlador(mensajero);
+    imagenDeEntregaControlador.delegarImagenDeEntregaControlador();
+
+    firmaControlador = new FirmaControlador(mensajero);
+    firmaControlador.delegarFirmaControlador();
+
+    estadisticaDeVentaPorDiaControlador = new EstadisticaDeVentaPorDiaControlador();
+    estadisticaDeVentaPorDiaControlador.delegarEstadisticaDeVentaPorDiaControlador();
+
+    resumenDeTareaControlador = new ResumenDeTareaControlador(mensajero);
+    resumenDeTareaControlador.delegarResumenDeTareaControlador();
+
+    tareaControladorADelegar = new TareaControlador();
+    confirmacionControlador = new ConfirmacionControlador();
+    confirmacionControlador.asignarEventoABotonSolicitarFirma();
+
+    facturacionElectronicaServicio = new FacturacionElectronicaServicio();
 
     if (gPrepared === 0) {
       try {
         preparedb();
         gPrepared = 1;
+        setTimeout(PagoConsignacionesServicio.LimpiarTablasTemporales(), 2000);
+
+        setInterval(EnviarData(), 60000);
       } catch (ex) {
-        notify("onDeviceReady:" + ex.message);
+        notify("onDeviceReady: " + ex.message);
       }
+    } else {
+      setInterval(EnviarData(), 60000);
     }
 
-    DelegateSondaRoute();
-    DelagateSalesController();
-    DelegeteStartRouteController();
-    DelegateCustomerController();
-    DelegatePaymentController();
-    DelegarACapturaDeFirma();
-    DelegarASincronizacion();
-    DelegarAFinDeRuta();
-    DelegarPreSaleController();
-    DelegarTareaControlador();
-    DelegarListadoOrdenDeVentaControlador();
-    DelegadoDispositivo();
+    $("#login_panel").css({ opacity: 0.85 });
+    $("#mainmenu_panel").css({ opacity: 0.85 });
+    $("#lstmainlist").css({ opacity: 0.5 });
+    $("#lstmainfield").css({ opacity: 0.5 });
+    $("#loginfieldset").css({ opacity: 0.9 });
 
-    if (mensajero === undefined) {
-      mensajero = new Messenger();
-    }
+    pPOSStatus = CheckPOS();
+    if (pPOSStatus !== "CLOSED") {
+      UpdateLoginInfo("get");
 
-    tareaDetalleControlador = new TareaDetalleControlador(mensajero);
-    tareaDetalleControlador.delegadoTareaDetalleControlador();
+      currencySymbol = localStorage.getItem("CURRENCY_SYMBOL");
 
-    var documentoVentaControlador = new DocumentoVentaControlador(mensajero);
-    documentoVentaControlador.delegarDocumentoControlador();
+      var menuControlador = new MenuControlador();
+      menuControlador.mostrarUOcultarOpcionesDeFacturacion(function() {
+        goHome("none");
+      });
+      menuControlador.cargarInformacionFel(
+        localStorage.getItem("user_type"),
+        (display, implementaFel, secuenciaDocumento) => {
+          menuControlador.seValidoCorrectamente(display, secuenciaDocumento);
+          goHome("none");
+        },
+        error => {
+          notify("No se pudo validar si usará FEL debido a: " + error.mensaje);
+        }
+      );
 
-    var listaSkuControlador = new ListaSkuControlador(mensajero);
-    listaSkuControlador.delegadoListaSkuControlador();
+      ToastThis("Bienvenido " + gLastLogin);
 
-    var denominacionSkuControlador = new DenominacionSkuControlador(mensajero);
-    denominacionSkuControlador.delegarDenominacionSkuControlador();
-
-    var resumenOrdenDeVentaControlador = new ResumenOrdenDeVentaControlador(
-      mensajero
-    );
-    resumenOrdenDeVentaControlador.delegarResumenOrdenDeVentaControlador();
-
-    var draftControlador = new DraftControlador(mensajero);
-    draftControlador.delegarDraftControlador();
-
-    var dividirOrdenDeVentaControlador = new DividirOrdenDeVentaControlador(
-      mensajero
-    );
-    dividirOrdenDeVentaControlador.delegadoDividirOrdenDeVentaControlador();
-
-    var tomaDeInventarioControlador = new TomaDeInventarioControlador(
-      mensajero
-    );
-    tomaDeInventarioControlador.delegarTomaDeInventarioControlador();
-
-    var unidadesDeMedidaTomaDeInventarioControlador = new UnidadesDeMedidaTomaDeInventarioControlador(
-      mensajero
-    );
-    unidadesDeMedidaTomaDeInventarioControlador.delegarUnidadesDeMedidaTomaDeInventarioControlador();
-
-    var listaSkuTomaDeInventarioControlador = new ListaSkuTomaDeInventarioControlador(
-      mensajero
-    );
-    listaSkuTomaDeInventarioControlador.delegadoListaSkuTomaDeInventarioControlador();
-
-    var resumenTomaDeInventarioControlador = new ResumenTomaDeInventarioControlador(
-      mensajero
-    );
-    resumenTomaDeInventarioControlador.delegadoResumenTomaDeInventarioControlador();
-
-    var tareaSinGestion = new TareaSinGestion(mensajero);
-    tareaSinGestion.delegadoTareaSinGestion();
-
-    var nuevaTareaControlador = new NuevaTareaControlador(mensajero);
-    nuevaTareaControlador.delegarNuevaTareaControlador();
-
-    var cambiosEnClienteControlador = new CambiosEnClienteControlador(
-      mensajero
-    );
-    cambiosEnClienteControlador.delegarCambiosEnClienteControlador();
-
-    var impresionManifiestoControlador = new ImpresionManifiestoControlador(
-      mensajero
-    );
-    impresionManifiestoControlador.delegarImpresionManifiestoConrolador();
-
-    var pagoControlador = new PagoControlador(mensajero);
-    pagoControlador.delegadoPagoControlador();
-
-    var consultaDeInventarioPorZonaControlador = new ConsultaDeInventarioPorZonaControlador();
-    consultaDeInventarioPorZonaControlador.delegarConsultaDeInventarioControlador();
-
-    var bonificacionPorComboControlador = new BonificacionPorComboControlador(
-      mensajero
-    );
-    bonificacionPorComboControlador.delegarBonificacionPorComboControlador();
-
-    var validacionDeLicenciaControlador = new ValidacionDeLicenciaControlador(
-      mensajero
-    );
-    validacionDeLicenciaControlador.delegarValidacionDeLicenciaControlador();
-
-    var seleccionDeImpresoraControlador = new SeleccionDeImpresoraControlador(
-      mensajero
-    );
-    seleccionDeImpresoraControlador.delegarSeleccionDeImpresoraControlador();
-
-    var firmaControlador = new FirmaControlador(mensajero);
-    firmaControlador.delegadoFirmaControlador();
-
-    var resumenDePedidoControlador = new ResumenDePedidoControlador(mensajero);
-    resumenDePedidoControlador.delegarResumenDePedidoControlador();
-
-    var controlDeFinDeRutaControlador = new ControlDeFinDeRutaControlador();
-    controlDeFinDeRutaControlador.delegarControlDeFinDeRuta();
-
-    estadisticaDeVentaControlador = new EstadisticaDeVentaControlador();
-
-    var promocionesPorClienteControlador = new PromocionesPorClienteControlador();
-    promocionesPorClienteControlador.delegarPromocionesPorClienteControlador();
-
-    var avanceDeRutaControlador = new AvanceDeRutaControlador();
-    avanceDeRutaControlador.delegarAvanceDeRutaControlador();
-
-    encuestaControlador = new EncuestaControlador(mensajero);
-    encuestaControlador.delegarEncuestaControlador();
-
-    cobroDeFacturaVencidaControlador = new CobroDeFacturaVencidaControlador(
-      mensajero
-    );
-    cobroDeFacturaVencidaControlador.delegarCobroDeFacturaVencidaControlador();
-
-    tipoDePagoDeFacturaVencidaControlador = new TipoDePagoEnFacturaVencidaControlador(
-      mensajero
-    );
-    tipoDePagoDeFacturaVencidaControlador.delegarTipoDePagoEnFacturaVencidaControlador();
-
-    confirmacionDePagoDeFacturaVencidaControlador = new ConfirmacionDePagoControlador(
-      mensajero
-    );
-    confirmacionDePagoDeFacturaVencidaControlador.delegarConfirmacionDePagoControlador();
-
-    listaDePagoControlador = new ListaDePagoControlador(mensajero);
-    listaDePagoControlador.delegarListaDePagoControlador();
-
-    detalleDePagoControlador = new DetalleDePagoControlador(mensajero);
-    detalleDePagoControlador.delegarDetalleDePagoControlador();
-
-    catalogoDeProductoControlador = new CatalogoDeProductoControlador(
-      mensajero
-    );
-    catalogoDeProductoControlador.delegarCatalogoDeProductoControlador();
-
-    galeriaDeImagenControlador = new GaleriaDeImagenControlador();
-    galeriaDeImagenControlador.delegarGaleriaDeImagenControlador();
-
-    //// TODO: EJEMPLO DE COMO USAR EL MESSENGER
-    //var mensajero = new Messenger();
-    //var publisher = new Publisher(mensajero);
-    //var subscriptor = new Subscriber(mensajero);
-    //var subscriptor2 = new Subscriber(mensajero);
-    //publisher.publicarMensaje();
-    //subscriptor.cancelarSuscripcion();
-    //publisher.publicarMensaje();
-
-    $("#login_panel").css({ opacity: 0.9 });
-    $("#menu_panel").css({ opacity: 0.9 });
-    $("#presales_panel").css({ opacity: 0.9 });
-
-    UpdateLoginInfo("get");
-    checkloginstatus();
-
-    var pPrinterAddress = "";
-    gPrintAddress = localStorage.getItem("PRINTER_GUIAS");
-
-    $(".printerclass").buttonMarkup({ icon: "forbidden" });
-
-    window.bluetoothSerial.connectInsecure(
-      pPrinterAddress,
-      function() {
-        $(".printerclass").buttonMarkup({ icon: "print" });
-      },
-      function() {
-        $(".printerclass").buttonMarkup({ icon: "delete" });
-      }
-    );
-
-    if (gLoginStatus === "OPEN") {
-      if (!socket || !socket.connected) {
-        var validacionDeLicencia = new ValidacionDeLicenciaControlador(
-          new Messenger()
-        );
+      if (
+        !SocketControlador.socketIo ||
+        !SocketControlador.socketIo.connected
+      ) {
+        var validacionDeLicencia = new ValidacionDeLicenciaControlador();
         validacionDeLicencia.validarLicencia(
-          localStorage.getItem("pUserID"),
-          localStorage.getItem("pUserCode"),
+          localStorage.getItem("UserID"),
+          localStorage.getItem("UserCode"),
           false
         );
       }
-
-      ToastThis("Bienvenido " + gLastLogin);
-      gTimeout = setTimeout(welcome_back(), 1000);
-      clearTimeout(gTimeout);
     } else {
-      $("#txtUserID").text(gLastLogin);
-
-      if (gLastLogin !== null) {
-        $("#txtPin").focus();
-      } else {
-        $("#txtUserID").focus();
-      }
+      $("#txtUserID").focus();
     }
 
-    if (
-      localStorage.getItem("POS_STATUS") !== undefined &&
-      localStorage.getItem("POS_STATUS") !== null &&
-      localStorage.getItem("POS_STATUS") === "OPEN"
-    ) {
-      if (
-        localStorage.getItem("SeCargaronListas") !== undefined &&
-        localStorage.getItem("SeCargaronListas") !== null &&
-        localStorage.getItem("SeCargaronListas") === "SI"
-      ) {
-        cargarListaDeTareas();
-      }
-    }
+    // Inicializa la tabla de secuencias de documentos locales de la aplicacion
+    controlDeSecuenciaServicio.inicializarControlDeSequencias();
 
     //Polyfill de metodos que no se incluyen en librerias de android 4
     //https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Array/includes
@@ -2978,330 +6801,206 @@ function onDeviceReady() {
       };
     }
   } catch (e) {
-    console.log("onDeviceReady:" + e.message);
-    notify("onDeviceReady:" + e.message);
+    alert("onDeviceReady:" + e.message);
   }
 }
 
-function checkloginstatus() {
+function ReleaseUnsedSeries() {
   try {
-    gLoginStatus = localStorage.getItem("LOGIN_STATUS");
-    if (gLoginStatus === null) {
-      gLoginStatus = "CLOSED";
+    SONDA_DB_Session.transaction(
+      function(tx) {
+        var pSql = "";
+
+        pSql = "UPDATE SKU_SERIES SET STATUS = 0 WHERE STATUS = 3";
+        tx.executeSql(pSql);
+        pSql = null;
+      },
+      function(err) {
+        if (err.code !== 0) {
+          notify("Error al actualizar los numeros de serie: " + err.message);
+        }
+      }
+    );
+  } catch (e) {
+    notify("ReleaseUnsedSeries: " + e.message);
+  }
+}
+function ReleaseUnsedSKUs() {
+  try {
+    SONDA_DB_Session.transaction(
+      function(tx) {
+        var pSQL = "";
+        // pSQL = "DELETE FROM INVOICE_HEADER WHERE STATUS = 3";
+        // tx.executeSql(pSQL);
+
+        pSQL = "DELETE FROM INVOICE_DETAIL WHERE INVOICE_NUM = -9999";
+        tx.executeSql(pSQL);
+
+        ReleaseUnsedSeries();
+
+        localStorage.setItem("POS_ITEM_SEQ", 0);
+        pSQL = null;
+      },
+      function(err) {
+        if (err.code !== 0) {
+          notify("ReleaseUnsedSKUs: " + err.message);
+        }
+      }
+    );
+  } catch (e) {
+    notify("ReleaseUnsedSKUs: " + e.message);
+  }
+}
+function onResume(callBack) {
+  try {
+    var listadoDeSkusOrdenDeVenta = document.querySelectorAll(
+      "#pos_skus_page_listview li"
+    );
+
+    if (listadoDeSkusOrdenDeVenta.length > 0) {
+      SONDA_DB_Session.transaction(function(tx) {
+        var pSql = "";
+        try {
+          if (!vieneDeListadoDeDocumentosDeEntrega) {
+            for (var i = 0; i < listadoDeSkusOrdenDeVenta.length; i++) {
+              var objetoSku = listadoDeSkusOrdenDeVenta[i];
+              var sku = objetoSku.attributes["id"].nodeValue;
+              var split = sku.split("_", 2);
+              var codigoSku = split[1];
+              var qty = objetoSku.attributes["skuqty"].nodeValue;
+              var requiereSerie =
+                objetoSku.attributes["requiereserie"].nodeValue;
+              var skuSerie = objetoSku.attributes["skuserie"].nodeValue;
+
+              if (parseInt(requiereSerie) === 1) {
+                pSql =
+                  "UPDATE SKU_SERIES SET STATUS = 0 WHERE SKU='" +
+                  codigoSku +
+                  "' AND SERIE = '" +
+                  skuSerie +
+                  "'";
+                tx.executeSql(pSql);
+              }
+            }
+          }
+
+          pSql = "DELETE FROM INVOICE_DETAIL WHERE INVOICE_NUM = -9999";
+          tx.executeSql(pSql);
+
+          if (!vieneDeListadoDeDocumentosDeEntrega) {
+            ReleaseUnsedSeries();
+          }
+
+          localStorage.setItem("POS_ITEM_SEQ", 0);
+
+          callBack();
+        } catch (e) {
+          notify(e.message);
+        }
+      });
+    } else {
+      callBack();
     }
   } catch (e) {
-    gLoginStatus = "CLOSED";
+    notify(e.message);
   }
 }
-
-function onResume() {}
-
-function simulate_scanpackage() {
-  var xscanned = $("#lblScannedPacks").text();
-  var xlabels = $("#lblGuideLabels").text();
-
-  if (parseInt(xscanned) >= parseInt(xlabels)) {
-    $("#btnDeliveryPhotoSignature").removeClass("ui-disabled");
-  } else {
-    $("#btnDeliveryPhotoSignature")
-      .removeClass("ui-disabled")
-      .addClass("ui-disabled");
-
-    xscanned = parseInt(xscanned) + 1;
-    $("#lblScannedPacks").text(xscanned);
-
-    if (parseInt(xscanned) >= parseInt(xlabels)) {
-      $("#btnDeliveryPhotoSignature").removeClass("ui-disabled");
-    } else {
-      $("#btnDeliveryPhotoSignature")
-        .removeClass("ui-disabled")
-        .addClass("ui-disabled");
-    }
-    refresh_guidetodeliver_stats();
-  }
-}
-
 function delegate_events() {
-  document.addEventListener("menubutton", onMenuKeyDown, true);
-  document.addEventListener("backbutton", onBackKeyDown, true);
-  document.addEventListener("online", DeviceIsOnline, true);
-  document.addEventListener("offline", DeviceIsOffline, true);
+  document.addEventListener("menubutton", onMenuKeyDown, false);
+  document.addEventListener("backbutton", onBackKeyDown, false);
+  document.addEventListener("online", DeviceIsOnline, false);
+  document.addEventListener("offline", DeviceIsOffline, false);
 
   window.addEventListener("batterystatus", onBatteryStatus, true);
   window.addEventListener("batterycritical", onBatteryCritical, true);
   window.addEventListener("batterylow", onBatteryLow, true);
 
-  $("#btnPictureOnDelivery").bind("touchstart", function() {
-    take_picture_pickup("delivery");
-  });
-  $("#btnAcceptOnDelivery").bind("touchstart", function() {
-    CompletedDeliveryTask();
-  });
+  $("#btnCreateNewDeposit").attr("href", "#deposit_page");
+  $("#btnCreateNewInvoice").attr("onclick", "start_invoicing();");
 
-  $("#btnDeliveryRoute").bind("touchstart", function() {
-    StartDeliveryRoute();
+  $("#btnRefreshRemoteSkus").bind("touchstart", function() {
+    ShowInventoryPage();
   });
 
-  $(".loggedclass").bind("touchstart", function() {
-    var usuario =
-      localStorage.getItem("LAST_LOGIN_NAME") +
-      "\n\r" +
-      localStorage.getItem("pUserID");
-    notify(usuario);
-    usuario = null;
+  $("#btnGetBankAccounts").bind("touchstart", function() {
+    showBankAccounts();
   });
 
-  $("#btnStartMyManifest").bind("touchstart", function() {
-    UserWantsAcceptManifest();
-  });
-
-  $("#btnCancelManifest").bind("touchstart", function() {
-    $("#lblManifest").text("");
-    $("#lblManifestDateCreation").text("dd/mm/yyyy");
-    $("#lblManifestNumDoc").text("");
-    $("#lblManifestRuta").text("");
-
-    $("#txtManifestHeader").val("");
-    $("#txtManifestHeader").focus();
-  });
-
-  $("#btnScannManifest").bind("touchstart", function() {
-    cordova.plugins.diagnostic.isCameraAuthorized(
-      function(enabled) {
-        if (enabled) {
-          cordova.plugins.barcodeScanner.scan(
-            function(result) {
-              if (result.text.length > 0) {
-                var existe = false;
-                var resultado = result.text.split("");
-
-                if (
-                  resultado.indexOf("L") !== -1 &&
-                  resultado.indexOf("P") !== -1
-                ) {
-                  existe = true;
-                }
-
-                if (existe) {
-                  resultado = result.text.split("LP")[1];
-                  document.getElementById(
-                    "UiTxtNumeroDeManifiesto"
-                  ).value = resultado;
-                  $.mobile.changePage("#UiPagePrintManifest", {
-                    transition: "flow",
-                    reverse: true,
-
-                    showLoadMsg: false
-                  });
-                } else {
-                  $("#txtManifestHeader").val(result.text);
-                  UserWantsGetManifest();
-                  navigator.vibrate(1000);
-                }
-              }
-            },
-            function(error) {
-              notify("No se ha podido escanear debido a: " + error);
-            }
-          );
-        } else {
-          cordova.plugins.diagnostic.requestCameraAuthorization(
-            function(authorization) {
-              if (authorization === "DENIED") {
-                ToastThis(
-                  "Debe autorizar el uso de la Cámara para poder leer el Código."
-                );
-                cordova.plugins.diagnostic.switchToSettings();
-              } else if (authorization === "GRANTED") {
-                cordova.plugins.barcodeScanner.scan(
-                  function(result) {
-                    if (result.text.length > 0) {
-                      var existe = false;
-                      var resultado = result.text.split("");
-
-                      if (
-                        resultado.indexOf("L") !== -1 &&
-                        resultado.indexOf("P") !== -1
-                      ) {
-                        existe = true;
-                      }
-
-                      if (existe) {
-                        resultado = result.text.split("LP")[1];
-                        document.getElementById(
-                          "UiTxtNumeroDeManifiesto"
-                        ).value = resultado;
-                        $.mobile.changePage("#UiPagePrintManifest", {
-                          transition: "flow",
-                          reverse: true,
-
-                          showLoadMsg: false
-                        });
-                      } else {
-                        $("#txtManifestHeader").val(result.text);
-                        UserWantsGetManifest();
-                        navigator.vibrate(1000);
-                      }
-                    }
-                  },
-                  function(error) {
-                    notify("No se ha podido escanear debido a: " + error);
-                  }
-                );
-              } else {
-                cordova.plugins.diagnostic.switchToSettings();
-              }
-            },
-            function(error) {
-              notify(error);
-            }
-          );
-        }
-      },
-      function(error) {
-        notify(error);
-      }
-    );
-  });
-
-  $("#btnDeliveryPhotoSignature").bind("touchstart", function() {
-    SignAndPhoto("delivery");
-  });
-
-  $("#btnDeliveryPrint").bind("touchstart", function() {
-    printdelivery();
-  });
-
-  $("#btnDeliveryFinish").bind("touchstart", function() {
-    navigator.notification.confirm(
-      "Confirma finalizar entrega?",
-      function(buttonIndex) {
-        if (buttonIndex === 2) {
-          postguide();
-        }
-      },
-      "Sonda® Ruta " + SondaVersion,
-      ["No", "Si"]
-    );
-  });
-
-  $("#btnNewTaskOffPlan").bind("touchstart", function() {
-    $.mobile.changePage("#offplan_task_page", {
-      transition: "flow",
+  $("#btnShowPrinterConfig").bind("touchstart", function() {
+    $.mobile.changePage("#printer_page", {
+      transition: "none",
       reverse: true,
+      changeHash: true,
+      showLoadMsg: false
+    });
+    exploredevices();
+  });
+  $("#lnkPrintRemoteInvoice").bind("touchstart", function() {
+    $.mobile.changePage("#remote_invoice_page", {
+      transition: "none",
+      reverse: true,
+      changeHash: true,
       showLoadMsg: false
     });
   });
 
-  $("#btnSaveTaskOffPlan").bind("touchstart", function() {
-    create_task_offplan();
-  });
+  $("#btnSetSKU_QTY").bind("touchstart", function() {
+    var qtySku = $("#txtSKUCant");
+    var disponible = $("#lblCurrentSKUInventory");
+    var unitMeasure = $("#lblSKU_IDCant").attr("UM");
 
-  $("#btnAcceptManifest").bind("touchstart", function() {
-    navigator.notification.confirm(
-      "Acepta manifiesto?", // message
-      function(buttonIndex) {
-        if (buttonIndex === 2) {
-          ProcessAcceptManifest(gManifestID);
-          my_dialog("", "", "close");
+    if (qtySku.val() !== "") {
+      if (vieneDeListadoDeDocumentosDeEntrega) {
+        if (parseFloat(qtySku.val()) >= 0) {
+          SetSpecifiSKUQty(parseFloat(qtySku.val()), unitMeasure);
+
+          window.vieneDeIngresoCantidad = true;
+          $.mobile.changePage("#pos_skus_page", {
+            transition: "pop",
+            reverse: true,
+            changeHash: true,
+            showLoadMsg: false
+          });
+        } else {
+          notify("Debe ingresar la cantidad correcta.");
+          qtySku.focus();
         }
-      }, // callback to invoke with index of button pressed
-      "Sonda® Ruta " + SondaVersion, // title
-      "No,Si" // buttonLabels
-    );
-  });
-
-  $("#btntestqrscanner").bind("touchstart", function() {
-    cordova.plugins.barcodeScanner.scan(
-      function(result) {
-        $("#lblScannedQR").text(result.text);
-        navigator.vibrate(1000);
-      },
-      function(error) {
-        notify("Scanning failed: " + error);
+      } else {
+        if (parseFloat(qtySku.val()) > 0) {
+          SetSpecifiSKUQty(parseFloat(qtySku.val()), unitMeasure);
+          window.vieneDeIngresoCantidad = true;
+          $.mobile.changePage("#pos_skus_page", {
+            transition: "pop",
+            reverse: true,
+            changeHash: true,
+            showLoadMsg: false
+          });
+        } else {
+          notify("Debe ingresar una cantidad mayor a cero.");
+          qtySku.focus();
+        }
       }
-    );
-  });
-
-  $("#btnFinishCollecting").bind("touchstart", function() {
-    finishroute();
-  });
-
-  $("#btnSignatureGuide").bind("touchstart", function() {
-    SignAndPhoto("pickup");
-  });
-
-  $("#btnSignatureGuideInvoice").bind("touchstart", function() {
-    SignAndPhoto("pickup");
-  });
-
-  $("#btnClearSignature").bind("touchstart", function() {
-    clearsignaturepad();
-  });
-
-  $("#btnClearSignature_delivery").bind("touchstart", function() {
-    clearsignaturepad();
-  });
-
-  $("#btnTakePicture").bind("touchstart", function() {
-    take_picture_pickup("pickup");
-  });
-
-  $("#btnTakePicture_delivery").bind("touchstart", function() {
-    take_picture_pickup("delivery");
-  });
-
-  $("#btnSaveSignAndPicture").bind("touchstart", function() {
-    savesignature("pickup");
-  });
-
-  $("#btnSaveSignAndPicture_delivery").bind("touchstart", function() {
-    savesignature("delivery");
-  });
-
-  $("#btnFinishPickup").bind("touchstart", function() {
-    CompletePreSaleTask();
-  });
-
-  $("#btnGuideIsCompleted").bind("touchstart", function() {
-    GuideCompleted();
-  });
-
-  $("#btnNewOrder").bind("touchstart", function() {
-    ShowNewOrder();
-  });
-
-  $("#btnShowPrinterConfig").bind("touchstart", function() {
-    if (localStorage.getItem("isPrinterZebra") === "1") {
-      $.mobile.changePage("#UiPaginaSeleccionDeImpresora", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
     } else {
-      exploredevices();
-      $.mobile.changePage("#printers_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
+      notify("Debe ingresar la cantidad deseada de SKU.");
+      qtySku.focus();
+    }
+
+    qtySku = null;
+    disponible = null;
+    unitMeasure = null;
+  });
+
+  $("#lblTotalInvoices").bind("touchstart", function() {
+    if (pPOSStatus != "CLOSED") {
+      ShowInvoiceListPage();
     }
   });
 
-  $(".printerclass_btn").bind("touchstart", function() {
-    if (localStorage.getItem("isPrinterZebra") === "1") {
-      $.mobile.changePage("#UiPaginaSeleccionDeImpresora", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
-    } else {
-      exploredevices();
-      $.mobile.changePage("#printers_page", {
-        transition: "flow",
-        reverse: true,
-        showLoadMsg: false
-      });
+  $("#btnPrintRemoteInvoice").bind("touchstart", function() {
+    try {
+      print_remote_invoice_joininfo(pInvoiceJson);
+    } catch (e) {
+      notify(e.message);
     }
   });
 
@@ -3311,36 +7010,69 @@ function delegate_events() {
   $("#btnSavePrinter").bind("touchstart", function() {
     SavePrinter();
   });
-
-  $("#btnTryPrinter1").bind("touchstart", function() {
-    gPrintAddress = $("input[name=itemDev]:checked").val();
-    if (gPrintAddress !== "") {
-      printtest(gPrintAddress, "");
-    }
+  $("#btnSyncAuthInvInfo").bind("touchstart", function() {
+    var data = {
+      routeid: gCurrentRoute,
+      default_warehouse: gDefaultWhs,
+      dbuser: gdbuser,
+      dbuserpass: gdbuserpass
+    };
+    SocketControlador.socketIo.emit("ValidateRoute", data);
   });
-
-  $("#btnSavePrinter1").bind("touchstart", function() {
-    SavePrinter();
-  });
-
   $("#btnOut").bind("touchstart", function() {
-    bluetoothSerial.disconnect(
-      function() {},
-      function() {
-        notify("Printer is unable to get disconnected");
-      }
-    );
     navigator.app.exitApp();
   });
   $("#btnPrintIT").bind("touchstart", function() {
-    printinvoice(gInvoiceNUM, "");
+    if (localStorage.getItem("IMPLEMENTS_FEL") === "true") {
+      printinvoice(gInvoiceNUM, "", function() {});
+    } else {
+      if (gcountPrints > 0) {
+        notify("Ya se ejecuto el proceso de impresion de la Factura actual.");
+      } else {
+        printinvoice(gInvoiceNUM, "", function() {
+          //ImprimirDetalleDeConsignacion();
+        });
+        gcountPrints++;
+      }
+    }
+  });
+
+  $("#btnInquest").bind("touchstart", function() {
+    $.mobile.changePage("#businnes_rival_poll", {
+      transition: "none",
+      reverse: true,
+      changeHash: true,
+      showLoadMsg: false
+    });
+  });
+
+  $(document).on("pageshow", "#pos_skus_page", function() {
+    var lblCurrencySimbolSkusPage = $("#UiLblCurrencyTotalSku");
+    lblCurrencySimbolSkusPage.text("Total: " + currencySymbol + ". ");
+    lblCurrencySimbolSkusPage = null;
+
+    if (
+      window.vieneDeIngresoCantidad === false ||
+      window.vieneDeListadoDeDocumentosDeEntrega
+    ) {
+      PopulateInvoiceSKUsList();
+    }
+  });
+
+  $(document).on("pageshow", "#skucant_page", function() {
+    var txtSkuCant = document.getElementById("txtSKUCant");
+    txtSkuCant.value = "";
+    txtSkuCant.focus();
+    txtSkuCant = null;
   });
 
   $("#btnCloseInvoiceDialog").bind("touchstart", function() {
     $("#invoice_actions_dialog").popup("close");
   });
   $("#btnRePrintInvoice").bind("touchstart", function() {
-    printinvoice(gInvoiceNUM, "***RE-IMPRESO***");
+    printinvoice(gInvoiceNUM, "***RE-IMPRESO***", function() {
+      //...
+    });
   });
   $("#btnVoidInvoice").bind("touchstart", function() {
     showvoidinvoice(gInvoiceNUM);
@@ -3350,25 +7082,22 @@ function delegate_events() {
   });
 
   $("#btnGetImagesInvoice").bind("touchstart", function() {
-    notify(gInvoiceNUM);
+    alert(gInvoiceNUM);
   });
   $("#btnShowDeposit").bind("touchstart", function() {
     showdepositform();
   });
 
-  $("#btnFinishPOS").bind("touchstart", function() {
-    closepos_action();
-  });
   $("#btnLogByScan").bind("touchstart", function() {
     scanloginid();
   });
+  $("#btnStartPOS").bind("touchstart", function() {
+    startpos();
+  });
+  $("#btnStartPOS_action").bind("touchstart", function() {
+    startpos_action();
+  });
   $("#btnQuit").bind("touchstart", function() {
-    bluetoothSerial.disconnect(
-      function() {},
-      function() {
-        notify("Printer is unable to get disconnected");
-      }
-    );
     navigator.app.exitApp();
   });
   $("#btnPOS").bind("touchstart", function() {
@@ -3378,6 +7107,9 @@ function delegate_events() {
     cust_list();
   });
 
+  $("#panelTotalSKU").bind("touchstart", function() {
+    TotalSKU_Click("venta");
+  });
   $("#btnOK_series").bind("touchstart", function() {
     UpdateSKUSeries();
   });
@@ -3385,15 +7117,79 @@ function delegate_events() {
   $("#btnCancel_series").bind("touchstart", function() {
     ReturnSkus();
   });
-  $("#btnContinue_Client").bind("touchstart", function() {
-    ContinueToSkus();
+
+  $("#btnContinue_Client").on("click", function(ev) {
+    InteraccionConUsuarioServicio.bloquearPantalla();
+    ev.preventDefault();
+    verificarDatosDeFacturacion(function(nit, nombreFacturacion) {
+      if ($("#lblClientCode").html() != "C000000") {
+        InteraccionConUsuarioServicio.desbloquearPantalla();
+        ContinueToSkus();
+      } else {
+        TareaServicio.CrearTareaParaClienteConsumidorFinal(
+          nit,
+          nombreFacturacion,
+          function(nuevaTarea) {
+            gTaskId = nuevaTarea.taskId;
+            gTaskType = nuevaTarea.taskType;
+            gClientCode = nuevaTarea.relatedClientCode;
+            gClientName = nuevaTarea.relatedClientName;
+            esEntregaParcial = false;
+            gClientID = nuevaTarea.relatedClientCode;
+
+            $.mobile.changePage("#pos_skus_page", {
+              transition: "none",
+              reverse: true,
+              changeHash: true,
+              showLoadMsg: false
+            });
+
+            InteraccionConUsuarioServicio.desbloquearPantalla();
+          },
+          function(error) {
+            notify(error);
+          }
+        );
+      }
+    });
   });
+
   $("#btnSetCF").bind("touchstart", function() {
     SetCF();
   });
 
+  if ($(window).height() < 580) {
+    $(".product-list-table").height(
+      $(window).height() - ($(window).height() * 30) / 100
+    );
+  } else if ($(window).height() < 764) {
+    $(".product-list-table").height(
+      $(window).height() - ($(window).height() * 20) / 100
+    );
+  } else if ($(window).height() < 992) {
+    $(".product-list-table").height(
+      $(window).height() - ($(window).height() * 15) / 100
+    );
+  }
+
+  $("#panelTotalSKUSumm").on("click", function(e) {
+    e.preventDefault();
+    if (estaEnConfirmacionDeFacturacion) {
+      return false;
+    }
+
+    estaEnConfirmacionDeFacturacion = true;
+
+    VerificarLimiteDeCreditoExcedidoPorVentaActual(function() {
+      confirmacionControlador.validarSiImplementaraFEL(function() {
+        ConfirmPostInvoice();
+      });
+    });
+  });
+
   $("#btnConfirmedInvoice").bind("touchstart", function() {
     ConfirmedInvoice();
+    EnviarData();
   });
 
   $("#btnPreviewImg1").bind("touchstart", function() {
@@ -3404,6 +7200,16 @@ function delegate_events() {
   });
   $("#btnPreviewImg3").bind("touchstart", function() {
     preview_picture("3");
+  });
+
+  $("#btnTakePic1").bind("touchstart", function() {
+    take_picture("1");
+  });
+  $("#btnTakePic2").bind("touchstart", function() {
+    take_picture("2");
+  });
+  $("#btnTakePic3").bind("touchstart", function() {
+    take_picture("3");
   });
 
   $("#btnTakePicDepositBank").bind("touchstart", function() {
@@ -3420,6 +7226,10 @@ function delegate_events() {
     ShowInvoiceListPage();
   });
 
+  $("#UiBtnViewTaskOutsideOfRoutePlan").bind("touchstart", function() {
+    ShowTaskOutOfRoutePlanPage();
+  });
+
   $("#btnDepositsList").bind("touchstart", function() {
     ShowDepositsListPage();
   });
@@ -3427,100 +7237,428 @@ function delegate_events() {
     ShowDepositsListPage();
   });
 
-  $(document).on("pageshow", "#finishroutes_page", function() {
-    ShowHideOptions();
-  });
+  $("#menu_page").on("pageshow", function() {
+    EnviarData();
+    $("#UiLblTaxResolutionIdMainMenu").text(
+      localStorage.getItem("TAX_RESOLUTION_ID") === null ||
+        localStorage.getItem("TAX_RESOLUTION_ID") === undefined
+        ? "Aut. #: "
+        : localStorage.getItem("TAX_RESOLUTION_ID") + ": "
+    );
 
-  $(document).on("pageshow", "#pageManifestHeader", function() {
-    $("#txtManifestHeader").focus();
-  });
+    currencySymbol = localStorage.getItem("CURRENCY_SYMBOL");
 
-  $(document).on("pageshow", "#NotDeliveryReason_page", function() {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        pSQL =
-          "SELECT * FROM REASONS WHERE REASON_TYPE = 'NOT_DELIVERY_REASONS'";
-        gNotDeliveryReasons = [];
-        var xclick = "";
+    var tareaControlador = new TareaControlador();
+    actualizarConfiguracionDeFormatoDeCantidades(currencySymbol, 2);
 
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            if (results.rows.length >= 1) {
-              var pDomElement = $("#listview_no_delivery_reason");
-              pDomElement.children().remove("li");
-
-              for (i = 0; i <= results.rows.length - 1; i++) {
-                xclick =
-                  "ProcessNotDelivered('" +
-                  results.rows.item(i).REASON_PROMPT +
-                  "');";
-                //ojo
-
-                var pInjectedHtml =
-                  '<li class="ui-alt-icon ui-nodisc-icon"><a href="#" onclick="' +
-                  xclick +
-                  '">' +
-                  results.rows.item(i).REASON_VALUE +
-                  "</a></li>";
-                console.log(pInjectedHtml);
-
-                pDomElement.append(pInjectedHtml);
-
-                pDomElement.listview("refresh");
-              }
-              pDomElement = null;
-            }
-          },
-          function(tx, err) {
-            my_dialog("", "", "close");
-            notify("ShowHideOptions: " + err.message);
+    tareaControlador.UsuarioDeseaObtenerTareasPorEstado(
+      "'" + TareaEstado.Asignada + "','" + TareaEstado.Aceptada + "'",
+      function(listaTareas) {
+        tareaControlador.CrearListadoDeTareas(listaTareas, function() {
+          tareaControlador = null;
+          ActualizarCantidadDeNotificaciones();
+          displaysumminfo();
+          if (InteraccionConUsuarioServicio.pantallaEstaBloqueada) {
+            InteraccionConUsuarioServicio.desbloquearPantalla();
           }
-        );
+
+          var reglaServicio = new ReglaServicio();
+          reglaServicio.obtenerRegla(
+            ReglaTipo.MostrarModuloDeMetas,
+            function(regla) {
+              estadisticaDeVentaControlador.mostrarUOcultarContenedorDeModuloDeMEtas(
+                regla.rows.length > 0 &&
+                  regla.rows.item(0).ENABLED.toUpperCase() === "SI"
+              );
+            },
+            function(error) {
+              estadisticaDeVentaControlador.mostrarUOcultarContenedorDeModuloDeMEtas(
+                false
+              );
+            }
+          );
+
+          var botonTareasAsignadas = $("#UiBtnMostrarTareasAsignadas");
+          botonTareasAsignadas.click();
+          botonTareasAsignadas = null;
+        });
       },
-      function(err) {
-        notify("ProcessNotDelivered.1.Error processing SQL: " + err.message);
+      function(error) {
+        notify(error);
+        ActualizarCantidadDeNotificaciones();
+      }
+    );
+    let menuControlador = new MenuControlador();
+    menuControlador.cargarInformacionFel(
+      localStorage.getItem("user_type"),
+      (display, implementaFel, secuenciaDocumento) => {
+        menuControlador.seValidoCorrectamente(display, secuenciaDocumento);
+        goHome("none");
+      },
+      error => {
+        notify("No se pudo validar si usará FEL debido a: " + error.mensaje);
       }
     );
   });
 
-  $(document).on("pageshow", "#deliver_guides_page", function() {
-    try {
-      refresh_guidetodeliver_stats();
-      if (gSignatedDelivery === true) {
-        $("#btnDeliveryPrint")
-          .removeClass("ui-disabled")
-          .addClass("ui-enabled");
-      } else {
-        $("#btnDeliveryPrint")
-          .removeClass("ui-disabled")
-          .addClass("ui-disabled");
-      }
-    } catch (e) {
-      notify(e.message);
+  $("#pos_client_page").on("pageshow", function() {
+    $("#UiLblTaxIdClientTask").text(
+      localStorage.getItem("TAX_ID") === null ||
+        localStorage.getItem("TAX_ID") === undefined
+        ? "NIT: "
+        : localStorage.getItem("TAX_ID") + ": "
+    );
+
+    if (gClientCode === "C000000") {
+      document
+        .getElementById("UiClientHasConsignment")
+        .setAttribute("CONSIGNMENTS", "0");
+      document.getElementById("UiClientHasConsignment").style.display = "none";
+      document.getElementById("UiLblTotalConsignment").innerText =
+        currencySymbol + ". " + format_number(0, 2);
+      SetCF();
     }
-  });
-  $(document).on("pageshow", "#manifest_guides_page", function() {
-    filtermydispatchplan("PENDING");
+
+    ReleaseUnsedSKUs();
+    InteraccionConUsuarioServicio.desbloquearPantalla();
   });
 
-  $(document).on("pageshow", "#taskpickup_page", function() {
-    $("#listview_guidedetail")
-      .listview()
-      .listview("refresh");
-    RefreshMyGuidesOnTask();
+  $("#summary_page").on("pageshow", function() {
+    var lblTotalSummSku = $("#UiLblCurrencyTotalSummSku");
+    lblTotalSummSku.text("Total: " + currencySymbol + ". ");
+
+    $("#UiLblCurrencySubTotalFactura").text(
+      "Sub Total: " + currencySymbol + ". "
+    );
+
+    $("#UiLblCurrencyImpuestoFactura").text(
+      "Impuesto: " + currencySymbol + ". "
+    );
+
+    $("#UiLblCurrencyVueltoSumm").text(currencySymbol + ". ");
+
+    $("#txtVuelto_summ").text(format_number(0, 2));
+    var cuentaCorrienteServicio = new CuentaCorrienteServicio();
+    cuentaCorrienteServicio.procesarInformacionDeCuentaCorrienteDeCliente(
+      gClientCode,
+      function(clienteConInformacionDeCuentaCorriente) {
+        habilitarOpcionesDeFacturacionConCredito(
+          clienteConInformacionDeCuentaCorriente
+        );
+
+        var procesarInformacionDeFactura = function(
+          calculaImpuesto,
+          configuracionDecimales,
+          cliente
+        ) {
+          configurationDecimalsForResummePage = configuracionDecimales;
+          actualizarConfiguracionDeFormatoDeCantidades(
+            currencySymbol,
+            configuracionDecimales.defaultDisplayDecimals
+          );
+
+          var txtEfectivo = document.getElementById("txtCash_summ");
+          var lblCreditAmount = $("#UiLblCreditAmount");
+
+          if (calculaImpuesto) {
+            var totalFactura = 0;
+            if (gUsuarioEntraAResumenDeFacturacionDesdeListadoDeSkus) {
+              totalFactura = $("#lblTotalSKU").text();
+            } else {
+              totalFactura = $("#lblTotalSKU_summ").text();
+            }
+
+            methodCalculationType = localStorage.getItem(
+              "METHOD_CALCULATION_TAX"
+            );
+            window.gCalculaImpuesto = true;
+
+            switch (methodCalculationType) {
+              case "BY_ROW":
+                calcularImpuestoPorLineaDeFactura(function(resumenDefactura) {
+                  resumeInvoiceObject = resumenDefactura;
+                  $("#UiLblSubTotalFactura").text(
+                    format_number(
+                      resumenDefactura.subTotal,
+                      configuracionDecimales.defaultDisplayDecimals
+                    )
+                  );
+                  $("#UiLblImpuestoFactura").text(
+                    format_number(
+                      resumenDefactura.impuesto,
+                      configuracionDecimales.defaultDisplayDecimals
+                    )
+                  );
+                  $("#lblTotalSKU_summ").text(
+                    format_number(
+                      resumenDefactura.total,
+                      configuracionDecimales.defaultDisplayDecimals
+                    )
+                  );
+                });
+                break;
+
+              case "BY_TOTAL_AMOUNT":
+                {
+                  var impuestoADescontar = 0;
+                  $("#UiLiSubTotalFactura").css("display", "block");
+                  $("#UiLiImpuestoFactura").css("display", "block");
+
+                  var porcentajeImpuesto = localStorage.getItem("TAX_PERCENT");
+                  if (
+                    porcentajeImpuesto === null ||
+                    porcentajeImpuesto === "null" ||
+                    porcentajeImpuesto === undefined
+                  ) {
+                    $("#UiLblImpuestoFactura").text("0.00");
+                  } else {
+                    porcentajeImpuesto =
+                      porcentajeImpuesto === 0 || porcentajeImpuesto === "0"
+                        ? 0
+                        : format_number(
+                            parseFloat(porcentajeImpuesto),
+                            configuracionDecimales.defaultCalculationsDecimals
+                          );
+                    impuestoADescontar =
+                      porcentajeImpuesto > 0
+                        ? totalFactura -
+                          totalFactura / (1 + porcentajeImpuesto / 100)
+                        : 0;
+                    if (impuestoADescontar > 0) {
+                      $("#UiLblSubTotalFactura").text(
+                        format_number(
+                          parseFloat(
+                            totalFactura / (1 + porcentajeImpuesto / 100)
+                          ),
+                          configuracionDecimales.defaultDisplayDecimals
+                        )
+                      );
+                      $("#UiLblImpuestoFactura").text(
+                        format_number(
+                          parseFloat(impuestoADescontar),
+                          configuracionDecimales.defaultDisplayDecimals
+                        )
+                      );
+                      $("#lblTotalSKU_summ").text(
+                        format_number(
+                          totalFactura,
+                          configuracionDecimales.defaultDisplayDecimals
+                        )
+                      );
+                    } else {
+                      $("#UiLblSubTotalFactura").text(
+                        format_number(
+                          totalFactura,
+                          configuracionDecimales.defaultDisplayDecimals
+                        )
+                      );
+                      $("#UiLblImpuestoFactura").text("0.00");
+                      $("#lblTotalSKU_summ").text(
+                        format_number(
+                          totalFactura,
+                          configuracionDecimales.defaultDisplayDecimals
+                        )
+                      );
+                    }
+                  }
+
+                  if (window.facturaActualTieneConsignacion) {
+                    txtEfectivo.value = window.cantidadEfectivo;
+                    txtEfectivo.focus();
+
+                    $("#txtCash_summ").keyup();
+                  } else {
+                    txtEfectivo.value = "";
+                    document.getElementById(
+                      "UiLblDetalleTotalEnConsignacion"
+                    ).textContent = currencySymbol + ". 0.00";
+                    txtEfectivo.focus();
+                  }
+                  window.gImpuestoDeFactura = impuestoADescontar;
+                }
+                break;
+
+              default:
+                notify(
+                  "El tipo de cálculo de impuesto no se ha configurado correctamente, por favor, verifique y vuelva a intentar."
+                );
+            }
+          } else {
+            window.gCalculaImpuesto = false;
+            $("#UiLiSubTotalFactura").css("display", "none");
+            $("#UiLiImpuestoFactura").css("display", "none");
+            $("#lblTotalSKU_summ").text(
+              format_number(
+                facturaActualTieneConsignacion
+                  ? $("#lblTotalSKU_summ").text()
+                  : gInvocingTotal,
+                configuracionDecimales.defaultDisplayDecimals
+              )
+            );
+
+            if (window.facturaActualTieneConsignacion) {
+              txtEfectivo.value = window.cantidadEfectivo;
+              txtEfectivo.focus();
+
+              $("#txtCash_summ").keyup();
+            } else {
+              txtEfectivo.value = "";
+              document.getElementById(
+                "UiLblDetalleTotalEnConsignacion"
+              ).textContent = currencySymbol + ". 0.00";
+              txtEfectivo.focus();
+            }
+          }
+
+          dividirMontoDeFacturaEntreEfectivoYCreditoDisponibleDeCliente(
+            cliente,
+            function(clienteProcesado) {
+              txtEfectivo.value = cliente.canBuyOnCredit
+                ? window.accounting.unformat(
+                    window.accounting.formatNumber(clienteProcesado.cashAmount)
+                  )
+                : "";
+              lblCreditAmount.text(
+                window.accounting.formatMoney(clienteProcesado.creditAmount)
+              );
+              clienteProcesadoConInformacionDeCuentaCorriente = clienteProcesado;
+              clienteProcesadoConInformacionDeCuentaCorrienteParaPagoDeFacturasAbiertas = new Cliente();
+              clienteProcesadoConInformacionDeCuentaCorrienteParaPagoDeFacturasAbiertas = Object.assign(
+                new Cliente(),
+                clienteProcesado
+              );
+            }
+          );
+        };
+
+        var clienteServicio = new ClienteServicio();
+        clienteServicio.obtenerUltimoComentarioDeFactura(function(comentario) {
+          var campoComentarioDeFactura = $("#UiInvoiceComment");
+          campoComentarioDeFactura.val(comentario);
+          campoComentarioDeFactura = null;
+          var configuracionDeDecimalesServicio = new ManejoDeDecimalesServicio();
+          configuracionDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(
+            function(configuracionDecimales) {
+              var reglaServicio = new ReglaServicio();
+
+              reglaServicio.obtenerRegla(
+                "CalcularImpuesto",
+                function(resultado) {
+                  if (resultado.rows.length > 0) {
+                    if (resultado.rows.item(0).ENABLED.toUpperCase() === "SI") {
+                      procesarInformacionDeFactura(
+                        true,
+                        configuracionDecimales,
+                        clienteConInformacionDeCuentaCorriente
+                      );
+                      reglaServicio = null;
+                    } else {
+                      procesarInformacionDeFactura(
+                        false,
+                        configuracionDecimales,
+                        clienteConInformacionDeCuentaCorriente
+                      );
+                      reglaServicio = null;
+                    }
+                  } else {
+                    procesarInformacionDeFactura(
+                      false,
+                      configuracionDecimales,
+                      clienteConInformacionDeCuentaCorriente
+                    );
+                    reglaServicio = null;
+                  }
+                },
+                function(error) {
+                  procesarInformacionDeFactura(
+                    false,
+                    configuracionDecimales,
+                    clienteConInformacionDeCuentaCorriente
+                  );
+                  reglaServicio = null;
+                }
+              );
+            }
+          );
+        });
+      },
+      function(error) {
+        notify(error.mensaje);
+      }
+    );
   });
 
-  $(document).on("pageshow", "#pickupplan_page", function() {
-    EnviarData();
+  $(document).on("pageshow", "#deposit_page", function() {
+    $("#UiLblCurrencyFacturadoDepositos").text(
+      "Facturado " + currencySymbol + ":"
+    );
+    $("#UiLblCurrencyDepositadoDepositos").text(
+      "Depositado " + currencySymbol + ":"
+    );
+    $("#UiLblCurrencySugeridoDepositos").text(
+      "Sugerido " + currencySymbol + ":"
+    );
+
+    $("#lblSold_Dep").text(
+      format_number(
+        gTotalInvoiced,
+        parseInt(localStorage.getItem("DEFAULT_DISPLAY_DECIMALS"))
+      )
+    );
+    $("#lblDeposited_Dep").text(
+      format_number(
+        gTotalDeposited,
+        parseInt(localStorage.getItem("DEFAULT_DISPLAY_DECIMALS"))
+      )
+    );
+    $("#txtDepositAmount").val(
+      format_number(
+        gTotalInvoiced - gTotalDeposited,
+        parseInt(localStorage.getItem("DEFAULT_DISPLAY_DECIMALS"))
+      )
+    );
+
+    $("#btnTakePicDepositBank").attr("srcpic", "");
+    $("#btnTakePicDepositBank").buttonMarkup({ icon: "user" });
+
+    $("#btnMakeDepositBank").css("visibility", "hidden");
+
+    $("#lblBankName").text();
+    $("#lblBankAccount").text();
+
+    gSelectedAccount = null;
+    $("#UiEtiquetaCuentaBancaria").text("...");
+  });
+
+  $(document).on("pageshow", "#dialog_startpos", function() {
+    $("#UiLblTaxResolutionIdStartPos").text(
+      localStorage.getItem("TAX_RESOLUTION_ID") === null ||
+        localStorage.getItem("TAX_RESOLUTION_ID") === undefined
+        ? "Res. #: "
+        : localStorage.getItem("TAX_RESOLUTION_ID") + ": "
+    );
+
+    $("#UiLblTaxIdStartPos").text(
+      localStorage.getItem("TAX_ID") === null ||
+        localStorage.getItem("TAX_ID") === undefined
+        ? "NIT: "
+        : localStorage.getItem("TAX_ID") + ": "
+    );
   });
 
   $(document).on("pageshow", "#series_page", function() {
     $("#txtSerie_series").focus();
   });
 
-  $("#login_page").swipe({
+  $("#invoice_actions_dialog")
+    .on("popupafteropen", function() {
+      gPanelOptionsIsOpen = 1;
+    })
+    .on("popupafterclose", function() {
+      gPanelOptionsIsOpen = 0;
+    });
+
+  $("#pos_client_page").swipe({
     swipe: function(
       event,
       direction,
@@ -3529,15 +7667,49 @@ function delegate_events() {
       fingerCount,
       fingerData
     ) {
-      if (fingerCount === 1 && direction === "right") {
-        var myPanel = $.mobile.activePage.children('[data-role="panel"]');
-        myPanel.panel("toggle");
+      if (direction === "right") {
+        $.mobile.changePage("#menu_page", {
+          transition: "none",
+          reverse: true,
+          changeHash: true,
+          showLoadMsg: false
+        });
+      }
+      if (direction === "left") {
+        ContinueToSkus();
       }
     }
   });
 
-  $("#taskpickupguide_page").on("swiperight", function() {
-    GetAvailablePackageTypes();
+  $("#login_page").on("swiperight", function() {
+    var myPanel = $.mobile.activePage.children('[data-role="panel"]');
+    myPanel.panel("toggle");
+    myPanel = null;
+  });
+
+  $("#pos_skus_page").on(
+    "swipeleft",
+    "#pos_skus_page_listview li",
+    pos_sku_swipeHandler
+  );
+
+  $("#pos_skus_page").swipe({
+    swipe: function(
+      event,
+      direction,
+      distance,
+      duration,
+      fingerCount,
+      fingerData
+    ) {
+      if (direction === "right" && !vieneDeListadoDeDocumentosDeEntrega) {
+        pos_skus_swipeHandler({ type: "swiperight" });
+      }
+    }
+  });
+
+  $("#pos_skus_page").on("pageshow", function() {
+    estaEnFacturaTemporal = true;
   });
 
   $("#menu_page").swipe({
@@ -3549,154 +7721,836 @@ function delegate_events() {
       fingerCount,
       fingerData
     ) {
-      if (direction === "right") {
-        var myPanel = $.mobile.activePage.children('[data-role="panel"]');
-        myPanel.panel("toggle");
+      if (direction == "right") {
+        var myPanel = $("#mainmenu_panel");
+        myPanel.panel("open");
+        myPanel = null;
       }
     }
   });
 
-  $("#menu_page").on("pageshow", function() {
-    if (socket) {
-      socket.emit("RegisterClientSocketConnected", { routeid: gCurrentRoute });
-    }
+  $("#txtNIT").keypress(function(event) {
+    if (event.which == 13) {
+      $("#txtNombre").focus();
 
-    estadisticaDeVentaControlador.mostrarUOcultarContenedorDeModuloDeMetas();
-
-    tareaDetalleControlador.debeCobrarFacturasVencidas(
-      ReglaTipo.CobroDeFacturaVencida.toString(),
-      function(cobrarFacturasVencidas) {
-        tareaDetalleControlador.debeCobrarFacturasVencidas(
-          ReglaTipo.NoVenderAlContadoConLimiteExcedido.toString(),
-          function(cobrarFacturasAbiertas) {
-            if (cobrarFacturasVencidas || cobrarFacturasAbiertas) {
-              $("#UiBtnShowPaymentsList").css("display", "block");
-            } else {
-              $("#UiBtnShowPaymentsList").css("display", "none");
-            }
-          }
-        );
-      }
-    );
-  });
-
-  $(".allownumericwithoutdecimal").on("keypress keyup blur", function(event) {
-    $(this).val(
-      $(this)
-        .val()
-        .replace(/[^\d].+/, "")
-    );
-
-    if (event.which < 48 || event.which > 57) {
       event.preventDefault();
     }
   });
 
-  $("#UiBtnGeoFences").bind("touchstart", function() {
-    $.mobile.changePage("#map-page", {
-      transition: "flow",
-      reverse: true,
+  $("#txtNIT").keyup(function() {
+    event.preventDefault();
+    $("#txtNombre").val("");
+  });
+
+  $("#txtSKUCant").keyup(function() {
+    event.preventDefault();
+    if (event.which == 13) {
+      var xcant = new Number(0);
+      xcant = parseInt($("#txtSKUCant").val());
+
+      SetSpecifiSKUQty(xcant);
+    }
+  });
+
+  $("#txtRemoteInvoice").keyup(function() {
+    event.preventDefault();
+    if (event.which === 13) {
+      var pInvoice = $("#txtRemoteInvoice").val();
+      var pCurrentSatResolution = localStorage.getItem("POS_SAT_RESOLUTION");
+      var pOptions = {
+        invoiceid: pInvoice,
+        serial: pCurrentSatResolution,
+        terminal: gCurrentRoute,
+        dbuser: gdbuser,
+        dbuserpass: gdbuserpass
+      };
+
+      notify(
+        "SERIAL:" + pCurrentSatResolution + " / terminal:" + gCurrentRoute
+      );
+
+      SocketControlador.socketIo.emit("get_basic_invoice_info", pOptions);
+    } else {
+      $("#lblRemoteInvoice_NIT").text("");
+      $("#lblRemoteInvoice_Nombre").text("");
+      $("#lblRemoteInvoice_Monto").text("Q 0.00");
+      $("#lblRemoteInvoice_FechaHora").text("");
+    }
+  });
+
+  $("#txtCash_summ").keyup(function(event) {
+    try {
+      var totalFacturado = new Number();
+      var totalEnEfectivo = new Number();
+      var totalCambio = new Number();
+
+      if (isNaN($("#txtCash_summ").val())) {
+        notify("Monto invalido");
+        $("#txtCash_summ").val(0);
+      } else {
+        totalFacturado = parseFloat($("#lblTotalSKU_summ").text());
+        gInvocingTotal = totalFacturado;
+        totalEnEfectivo = parseFloat($("#txtCash_summ").val());
+
+        if (clienteProcesadoConInformacionDeCuentaCorriente.invoiceHasCredit) {
+          if (
+            clienteProcesadoConInformacionDeCuentaCorriente.totalInvoicedIsOnCredit
+          ) {
+            return false;
+          } else {
+            gPagado =
+              totalEnEfectivo +
+                clienteProcesadoConInformacionDeCuentaCorriente.creditAmount >=
+              totalFacturado;
+            clienteProcesadoConInformacionDeCuentaCorriente.cashAmount = totalEnEfectivo;
+            totalCambio =
+              totalEnEfectivo +
+              clienteProcesadoConInformacionDeCuentaCorriente.creditAmount -
+              totalFacturado;
+          }
+        } else {
+          gPagado = totalEnEfectivo >= totalFacturado;
+          totalCambio = totalEnEfectivo - totalFacturado;
+        }
+
+        $("#UiLblCurrencyVueltoSumm").text(currencySymbol + ". ");
+        $("#txtVuelto_summ").text(
+          format_number(
+            totalCambio,
+            configurationDecimalsForResummePage.defaultDisplayDecimals
+          )
+        );
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  });
+
+  $("#confirmation_page").on("pageshow", function() {
+    window.estaEnFacturaTemporal = false;
+
+    var notificadorDeError = function(error) {
+      notify("Ha ocurrido un error al validar las reglas de la pantalla");
+    };
+
+    var reglaServicio = new ReglaServicio();
+    reglaServicio.obtenerRegla(
+      ReglaTipo.EncuestaInventarioCompetencia,
+      function(regla) {
+        if (
+          regla.rows.length > 0 &&
+          regla.rows.item(0).ENABLED.toUpperCase() === "SI"
+        ) {
+          $("#UiBtnTomarEncuesta").css("display", "block");
+          $("#UiContenedorControlesFacturacionConfirmada").removeClass(
+            "ui-grid-a"
+          );
+          $("#UiContenedorControlesFacturacionConfirmada").addClass(
+            "ui-grid-b"
+          );
+        } else {
+          $("#UiBtnTomarEncuesta").css("display", "none");
+          $("#UiContenedorControlesFacturacionConfirmada").removeClass(
+            "ui-grid-b"
+          );
+          $("#UiContenedorControlesFacturacionConfirmada").addClass(
+            "ui-grid-a"
+          );
+        }
+
+        reglaServicio.obtenerRegla(
+          ReglaTipo.VisualizarMultiplesOpcionesDeImpresion,
+          function(reglaDeOpcionesDeImpresion) {
+            var botonPrincipalDeImpresion = $("#UiMainPrintButton");
+            var contenedorDeOpcionesDeImpresion = $(
+              "#UiInvoicePrintingOptions"
+            );
+
+            if (
+              reglaDeOpcionesDeImpresion.rows.length > 0 &&
+              reglaDeOpcionesDeImpresion.rows.item(0).ENABLED.toUpperCase() ===
+                "SI"
+            ) {
+              botonPrincipalDeImpresion.css("display", "none");
+              contenedorDeOpcionesDeImpresion.css("display", "block");
+            } else {
+              botonPrincipalDeImpresion.css("display", "block");
+              contenedorDeOpcionesDeImpresion.css("display", "none");
+            }
+            botonPrincipalDeImpresion = null;
+            contenedorDeOpcionesDeImpresion = null;
+
+            InteraccionConUsuarioServicio.desbloquearPantalla();
+          },
+          function(error) {
+            notificadorDeError(error);
+          }
+        );
+      },
+      function(error) {
+        notificadorDeError(error);
+      }
+    );
+  });
+
+  DelegadoDevolucionContorles();
+
+  $("#UiTxtTelephoneNumber").keyup(function() {
+    this.value = this.value.replace(/[^0-9]/g, "");
+  });
+
+  $("#invoice_list_page").on("pageshow", function() {
+    my_dialog("", "", "close");
+    guardarInventarioDeFacturaCancelada = false;
+  });
+
+  $("#UiBtnShowDeliveryReportPage").on("click", function() {
+    $.mobile.changePage("#UiDeliveryReportPage", {
+      transition: "none",
+      reverse: false,
+      changeHash: true,
       showLoadMsg: false
     });
   });
 
-  $("#loginimg").on("click", function() {
-    cordova.plugins.diagnostic.isCameraAuthorized(
-      function(enabled) {
-        if (enabled) {
-          TomarFoto(
-            function(imagen) {
-              var imagenDeUsuario = $("#loginimg");
-              var imagenBase64 = "data:image/png;base64," + imagen;
-              imagenDeUsuario.attr("src", imagenBase64);
-              localStorage.setItem("LOGIN_IMAGE", imagenBase64);
-              imagenDeUsuario = null;
-              if (socket)
-                socket.emit("UpdateUserImage", {
-                  routeid: gCurrentRoute,
-                  image: imagenBase64,
-                  dbuser: gdbuser,
-                  dbuserpass: gdbuserpass
-                });
-            },
-            function(error) {
-              if (error !== "Camera cancelled.") notify(error);
-            }
-          );
-        } else {
-          cordova.plugins.diagnostic.requestCameraAuthorization(
-            function(authorization) {
-              if (authorization === "DENIED") {
-                ToastThis(
-                  "Debe autorizar el uso de la Cámara para poder capturar la imágen."
-                );
-                cordova.plugins.diagnostic.switchToSettings();
-              } else if (authorization === "GRANTED") {
-                TomarFoto(
-                  function(imagen) {
-                    var imagenDeUsuario = $("#loginimg");
-                    var imagenBase64 = "data:image/png;base64," + imagen;
-                    imagenDeUsuario.attr("src", imagenBase64);
-                    localStorage.setItem("LOGIN_IMAGE", imagenBase64);
-                    imagenDeUsuario = null;
-                    if (socket)
-                      socket.emit("UpdateUserImage", {
-                        routeid: gCurrentRoute,
-                        image: imagenBase64,
-                        dbuser: gdbuser,
-                        dbuserpass: gdbuserpass
-                      });
-                  },
-                  function(error) {
-                    if (error !== "Camera cancelled.") notify(error);
-                  }
-                );
-              } else {
-                cordova.plugins.diagnostic.switchToSettings();
-              }
-            },
-            function(error) {
-              notify(error);
-            }
-          );
-        }
-      },
-      function(error) {
-        notify(error);
-      }
-    );
-  });
-}
+  $("#BtnPrintMainInvoice").on("click", function(e) {
+    e.preventDefault();
+    InteraccionConUsuarioServicio.bloquearPantalla();
 
-function swipe(pagina, callback) {
-  $(pagina).swipe({
-    swipe: function(
-      event,
-      direction,
-      distance,
-      duration,
-      fingerCount,
-      fingerData
-    ) {
-      callback(direction);
+    if (mainInvoiceHasBeenPrinted) {
+      InteraccionConUsuarioServicio.desbloquearPantalla();
+      notify("Ya se ejecuto el proceso de impresion de la Factura actual.");
+    } else {
+      window.bluetoothSerial.isConnected(
+        function() {
+          mainInvoiceHasBeenPrinted = true;
+          formatoDeImpresionSaritaHonduras(
+            gInvoiceNUM,
+            String(),
+            function() {
+              InteraccionConUsuarioServicio.desbloquearPantalla();
+            },
+            0
+          );
+        },
+        function() {
+          try {
+            window.bluetoothSerial.connect(
+              gPrintAddress,
+              function() {
+                mainInvoiceHasBeenPrinted = true;
+                formatoDeImpresionSaritaHonduras(
+                  gInvoiceNUM,
+                  String(),
+                  function() {
+                    InteraccionConUsuarioServicio.desbloquearPantalla();
+                  },
+                  0
+                );
+              },
+              function() {
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                notify(
+                  "ERROR, Imposible conectarse a la impresora:  " +
+                    gPrintAddress +
+                    ""
+                );
+              }
+            );
+          } catch (e) {
+            InteraccionConUsuarioServicio.desbloquearPantalla();
+            console.log(
+              "Error al intentar conectarse a la impresora debido a: " +
+                e.message
+            );
+            notify(
+              "ERROR, Imposible conectarse a la impresora:  " +
+                gPrintAddress +
+                ""
+            );
+          }
+        }
+      );
+    }
+  });
+
+  $("#BtnPrintInvoiceCopy").on("click", function(e) {
+    e.preventDefault();
+    InteraccionConUsuarioServicio.bloquearPantalla();
+
+    if (invoiceCopyHasBeenPrinted) {
+      InteraccionConUsuarioServicio.desbloquearPantalla();
+      notify("Ya se ejecuto el proceso de impresion de la Factura actual.");
+    } else {
+      window.bluetoothSerial.isConnected(
+        function() {
+          invoiceCopyHasBeenPrinted = true;
+          formatoDeImpresionSaritaHonduras(
+            gInvoiceNUM,
+            String(),
+            function() {
+              InteraccionConUsuarioServicio.desbloquearPantalla();
+            },
+            1
+          );
+        },
+        function() {
+          try {
+            window.bluetoothSerial.connect(
+              gPrintAddress,
+              function() {
+                invoiceCopyHasBeenPrinted = true;
+                formatoDeImpresionSaritaHonduras(
+                  gInvoiceNUM,
+                  String(),
+                  function() {
+                    InteraccionConUsuarioServicio.desbloquearPantalla();
+                  },
+                  1
+                );
+              },
+              function() {
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                notify(
+                  "ERROR, Imposible conectarse a la impresora:  " +
+                    gPrintAddress +
+                    ""
+                );
+              }
+            );
+          } catch (e) {
+            InteraccionConUsuarioServicio.desbloquearPantalla();
+            console.log(
+              "Error al intentar conectarse a la impresora debido a: " +
+                e.message
+            );
+            notify(
+              "ERROR, Imposible conectarse a la impresora:  " +
+                gPrintAddress +
+                ""
+            );
+          }
+        }
+      );
     }
   });
 }
-function showVoidOptions(pInvoiceID) {
+
+function calcularImpuestoPorLineaDeFactura(callback) {
+  try {
+    obtenerSkusConCalculoDeImpuesto(
+      function(skusConInfoDeImpuesto) {
+        var objetoResumen = {
+          total: 0,
+          subTotal: 0,
+          impuesto: 0,
+          exento: 0,
+          baseGravada: 0,
+          skusDeDetalle: []
+        };
+
+        for (var i = 0; i < skusConInfoDeImpuesto.length; i++) {
+          objetoResumen.total += skusConInfoDeImpuesto[i].TOTAL_LINE;
+
+          objetoResumen.subTotal += skusConInfoDeImpuesto[i].PRICE_WITHOUT_TAX;
+
+          objetoResumen.impuesto += skusConInfoDeImpuesto[i].TAX;
+
+          objetoResumen.skusDeDetalle.push(skusConInfoDeImpuesto[i]);
+
+          if (skusConInfoDeImpuesto[i].TAX_VALUE === 0) {
+            objetoResumen.exento += skusConInfoDeImpuesto[i].TOTAL_LINE;
+          } else {
+            objetoResumen.baseGravada +=
+              skusConInfoDeImpuesto[i].PRICE_WITHOUT_TAX;
+          }
+        }
+
+        callback(objetoResumen);
+      },
+      function(error) {
+        notify(
+          "No se ha podido calcular el impuesto de la factura debido a: " +
+            error.message
+        );
+        return;
+      }
+    );
+  } catch (e) {
+    notify(
+      "No se ha podido calcular el impuesto de la factura debido a: " +
+        e.message
+    );
+    return;
+  }
+}
+
+function obtenerSkusConCalculoDeImpuesto(callback, errorCallback) {
+  SONDA_DB_Session.transaction(
+    function(trans) {
+      var sql = [];
+      var skusADevolver = [];
+
+      sql.push(
+        "SELECT ID.SKU, ID.QTY, ID.PRICE, ST.TAX_CODE, IFNULL(ST.TAX_VALUE,0) AS TAX_VALUE, ID.TOTAL_LINE, ID.PACK_UNIT"
+      );
+      sql.push(
+        ", CASE IFNULL(ST.TAX_VALUE,0) WHEN 0 THEN 0 ELSE ( (((ID.QTY * 1.00) * (ID.PRICE * 1.00)) / ( 1 + ( (IFNULL(ST.TAX_VALUE,0) * 1.00) / 100 ))) * ((IFNULL(ST.TAX_VALUE,0) * 1.00) / 100) ) END TAX "
+      );
+      sql.push(
+        "FROM INVOICE_DETAIL AS ID LEFT JOIN SWIFT_TAX AS ST ON ST.TAX_CODE = ID.TAX_CODE WHERE ID.INVOICE_NUM = " +
+          (estaEnFacturaTemporal ? -9999 : gInvoiceNUM)
+      );
+
+      trans.executeSql(
+        sql.join(""),
+        [],
+        function(transResult, results) {
+          for (var j = 0; j < results.rows.length; j++) {
+            var skuResult = results.rows.item(j);
+
+            var skuADevolver = {
+              TOTAL_LINE: skuResult.TOTAL_LINE,
+              TAX: skuResult.TAX,
+              TAX_VALUE: skuResult.TAX_VALUE,
+              SKU: skuResult.SKU,
+              PACK_UNIT: skuResult.PACK_UNIT,
+              PRICE_WITHOUT_TAX: skuResult.TOTAL_LINE - skuResult.TAX
+            };
+
+            skusADevolver.push(skuADevolver);
+          }
+          callback(skusADevolver);
+        },
+        function(transResult, error) {
+          errorCallback(error);
+        }
+      );
+    },
+    function(error) {
+      errorCallback(error);
+    }
+  );
+}
+
+function SetSKUSeries(pSKU, pSKU_NAME, pLineSeq) {
+  $.mobile.changePage("#series_page", {
+    transition: "slide",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
+  PopulateSKUSeriesGrid(pSKU, pLineSeq);
+}
+function SetSKUCant(pSKU, pSKU_NAME, pLineSeq, disponible, unidadDeMedida) {
+  if (vieneDeListadoDeDocumentosDeEntrega && !esEntregaParcial) {
+    return;
+  }
+  $("#lblCurrentSKUInventory").text(disponible);
+  $("#lblSKU_IDCant").text(pSKU + " " + pSKU_NAME);
+  $("#lblSKU_IDCant").attr("LineSeq", pLineSeq);
+  $("#lblSKU_IDCant").attr("SKU", pSKU);
+  $("#lblSKU_IDCant").attr("UM", unidadDeMedida);
+
+  $.mobile.changePage("#skucant_page", {
+    transition: "none",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
+}
+function TotalSKU_Click(vieneDe) {
+  if (gInvocingTotal > 0) {
+    validarDetalleOrdenDeVenta(
+      function(skusPendientesDeSerie) {
+        if (skusPendientesDeSerie === 1) {
+          notify(
+            "Hay " +
+              skusPendientesDeSerie +
+              " SKU que necesita de su atencion. \n" +
+              "Por favor, complete la informacion del SKU y vuelva a intentar."
+          );
+          return;
+        } else if (skusPendientesDeSerie > 1) {
+          notify(
+            "Hay " +
+              skusPendientesDeSerie +
+              " SKU's que necesitan de su atencion. \n" +
+              "Por favor, complete la informacion de los SKU's y vuelva a intentar."
+          );
+          return;
+        } else {
+          switch (vieneDe) {
+            case "venta":
+              window.gUsuarioEntraAResumenDeFacturacionDesdeListadoDeSkus = true;
+              if (!vieneDeListadoDeDocumentosDeEntrega) {
+                var reglaServicio = new ReglaServicio();
+                reglaServicio.obtenerRegla(
+                  "PuedeVenderAConsignacion",
+                  function(regla) {
+                    if (regla.rows.length > 0) {
+                      if (
+                        regla.rows.item(0).ENABLED === "Si" ||
+                        regla.rows.item(0).ENABLED === "SI"
+                      ) {
+                        if (gClientCode !== "C000000") {
+                          document.getElementById(
+                            "UiRowBtnConsignment"
+                          ).style.display = "block";
+                          reglaServicio = null;
+                          ShorSummaryPage();
+                        } else {
+                          document.getElementById(
+                            "UiRowBtnConsignment"
+                          ).style.display = "none";
+                          reglaServicio = null;
+                          ShorSummaryPage();
+                        }
+                      } else {
+                        document.getElementById(
+                          "UiRowBtnConsignment"
+                        ).style.display = "none";
+                        reglaServicio = null;
+                        ShorSummaryPage();
+                      }
+                    } else {
+                      document.getElementById(
+                        "UiRowBtnConsignment"
+                      ).style.display = "none";
+                      reglaServicio = null;
+                      ShorSummaryPage();
+                    }
+                  },
+                  function(err) {
+                    reglaServicio = null;
+                    notify(err);
+                  }
+                );
+              } else {
+                document.getElementById("UiRowBtnConsignment").style.display =
+                  "none";
+
+                if (
+                  localStorage.getItem("INVOICE_IN_ROUTE") &&
+                  localStorage.getItem("INVOICE_IN_ROUTE") == "1"
+                ) {
+                  ShorSummaryPage();
+                } else {
+                  navigator.notification.confirm(
+                    "¿Confirma finalizar la gestión?",
+                    function(buttonIndex) {
+                      if (buttonIndex === 2) {
+                        $.mobile.changePage("#UiDeliveryNoteConfirmationPage", {
+                          transition: "flow",
+                          reverse: true,
+                          changeHash: true,
+                          showLoadMsg: false
+                        });
+                      }
+                    },
+                    "Sonda® SD " + SondaVersion,
+                    ["No", "Si"]
+                  );
+                }
+              }
+
+              break;
+            case "pagoConsignacion":
+              document.getElementById("UiRowBtnConsignment").style.display =
+                "none";
+              ShorSummaryPage();
+              break;
+          }
+        }
+      },
+      function(error) {
+        notify(error.message);
+      }
+    );
+  } else {
+    if (gClientCode === "C000000") {
+      notify("ERROR, Total no puede ser cero.");
+    } else {
+      ClasificacionesServicio.ObtenerRasones(
+        TiposDeRazones.NoFacturacion,
+        function(razones) {
+          if (razones.length > 0) {
+            var listaRazones = new Array();
+            for (var i = 0; i < razones.length; i++) {
+              var item = {
+                text: razones[i].REASON_PROMPT,
+                value: razones[i].REASON_VALUE
+              };
+              listaRazones.push(item);
+            }
+
+            var configOptions = {
+              title: "¿Por qué finaliza la tarea sin venta?: ",
+              items: listaRazones,
+              doneButtonLabel: "ACEPTAR",
+              cancelButtonLabel: "CANCELAR"
+            };
+
+            window.plugins.listpicker.showPicker(configOptions, function(item) {
+              var reglaServicio = new ReglaServicio();
+              reglaServicio.obtenerRegla(
+                "NuevaTareaConBaseEnTareaSinGestion",
+                regla => {
+                  if (
+                    regla.rows.length > 0 &&
+                    regla.rows.item(0).ENABLED.toUpperCase() === "SI"
+                  ) {
+                    navigator.notification.confirm(
+                      "¿Desea crear una nueva tarea?",
+                      buttonIndex => {
+                        switch (buttonIndex) {
+                          case 1:
+                            // InteraccionConUsuarioServicio.bloquearPantalla();
+                            actualizarEstadoDeTarea(
+                              gTaskId,
+                              TareaGeneroGestion.No,
+                              item,
+                              () => {
+                                onResume(() => {
+                                  EnviarData();
+                                  gTaskOnRoutePlan = 1;
+                                  $.mobile.changePage("#menu_page", {
+                                    transition: "pop",
+                                    reverse: true,
+                                    changeHash: true,
+                                    showLoadMsg: false
+                                  });
+                                });
+                              },
+                              TareaEstado.Completada
+                            );
+                            break;
+                          case 2:
+                            resumenDeTareaControlador.crearNuevaTarea();
+                            actualizarEstadoDeTarea(
+                              gTaskId,
+                              TareaGeneroGestion.No,
+                              item,
+                              () => {
+                                onResume(() => {
+                                  EnviarData();
+                                  gTaskOnRoutePlan = 1;
+                                });
+                              },
+                              TareaEstado.Completada
+                            );
+                            break;
+                          default:
+                            break;
+                        }
+                      },
+                      "Sonda® SD " + SondaVersion,
+                      ["No", "Si"]
+                    );
+                  } else {
+                    actualizarEstadoDeTarea(
+                      gTaskId,
+                      TareaGeneroGestion.No,
+                      item,
+                      () => {
+                        onResume(() => {
+                          EnviarData();
+                          gTaskOnRoutePlan = 1;
+                          $.mobile.changePage("#menu_page", {
+                            transition: "pop",
+                            reverse: true,
+                            changeHash: true,
+                            showLoadMsg: false
+                          });
+                        });
+                      },
+                      TareaEstado.Completada
+                    );
+                  }
+                }
+              );
+            });
+          } else {
+            notify(
+              "Lo sentimos, no se han encontrado razones de No Facturación, por favor, intente nuevamente."
+            );
+          }
+        },
+        function(error) {
+          notify(error);
+        }
+      );
+    }
+  }
+}
+
+function ShowDeliveryNoteConfirmationPage() {
+  $.mobile.changePage("#summary_page", {
+    transition: "flow",
+    reverse: true,
+    changeHash: true,
+    showLoadMsg: false
+  });
+}
+
+function ShorSummaryPage() {
+  try {
+    LimpiarDatosConsignacion();
+
+    var pNit = vieneDeListadoDeDocumentosDeEntrega ? gNit : $("#txtNIT").val();
+    var pCustName = vieneDeListadoDeDocumentosDeEntrega
+      ? gClientName
+      : $("#txtNombre").val();
+
+    $("#lblClientName_summ").text(pNit + "-" + pCustName);
+    $("#lblClientName_summ").attr("taxid", pNit);
+    $("#lblClientName_summ").attr("clientid", pNit);
+    estaEnConfirmacionDeFacturacion = false;
+
+    $.mobile.changePage("#summary_page", {
+      transition: "flow",
+      reverse: true,
+      changeHash: true,
+      showLoadMsg: false
+    });
+  } catch (e) {
+    notify(e.message);
+  }
+}
+function ShowViewPicture() {
+  $("#popupPic").popup("open", { positionTo: "window", transtion: "slideup" });
+}
+function showInvoiceActions(
+  pInvoiceId,
+  pAmount,
+  pClientName,
+  isPaidConsignment,
+  telephoneNumber,
+  isFromDeliveryNote,
+  isContingencyDocument,
+  taskId,
+  isSigned = 0
+) {
+  try {
+    gTaskId = taskId;
+    var opcionesAMostrar = [
+      { text: "Re-imprimir", value: "reprint" },
+      { text: "Ver Detalle", value: "detail" }
+    ];
+    if (localStorage.getItem("IMPLEMENTS_FEL") === "true") {
+      if (isSigned === 0) {
+        if (isContingencyDocument === 1) {
+          opcionesAMostrar.push({ text: "Solicitar firma", value: "sign" });
+        }
+      }
+    } else {
+      opcionesAMostrar.push({ text: "Anular", value: "void" });
+    }
+    var callback = function(opciones) {
+      var config = {
+        title: "Opciones",
+        items: opciones,
+        doneButtonLabel: "Ok",
+        cancelButtonLabel: "Cancelar"
+      };
+
+      // Show the picker
+      window.plugins.listpicker.showPicker(config, function(item) {
+        gInvoiceNUM = pInvoiceId;
+        switch (item) {
+          case "reprint":
+            printinvoice(gInvoiceNUM, "*** RE-IMPRESO ***", function() {
+              //...
+            });
+            break;
+          case "void":
+            if (gIsOnline == EstaEnLinea.Si) {
+              if (isFromDeliveryNote === SiNo.Si) {
+                navigator.notification.confirm(
+                  "¿El producto facturado se encuentra en buen estado?",
+                  function(buttonIndex) {
+                    guardarInventarioDeFacturaCancelada = buttonIndex === 2;
+                    showVoidOptions(pInvoiceId, isPaidConsignment);
+                  },
+                  "Sonda® SD " + SondaVersion,
+                  ["No", "Si"]
+                );
+              } else {
+                showVoidOptions(pInvoiceId, isPaidConsignment);
+              }
+            } else {
+              notify(
+                "No tiene conexión al Servidor, por favor intente más tarde"
+              );
+            }
+            break;
+          case "detail":
+            viewinvoice(gInvoiceNUM, pClientName, pAmount, telephoneNumber);
+            break;
+          case "asignTelephoneNumberToInvoice":
+            $.mobile.changePage("#UiPagetoAssociatePhoneNumerWithInvoice", {
+              transition: "flow",
+              reverse: true,
+              changeHash: true,
+              showLoadMsg: false
+            });
+            break;
+          case "sign":
+            confirmacionControlador.usuarioDeseaSolicitarFirmaElectronica(1);
+            break;
+        }
+      });
+    };
+
+    var reglaServicio = new ReglaServicio();
+    reglaServicio.obtenerRegla(
+      "AsociarNumeroTelefonicoAFactura",
+      function(regla) {
+        if (regla.rows.length > 0) {
+          if (
+            regla.rows.item(0).ENABLED === "Si" ||
+            regla.rows.item(0).ENABLED === "SI"
+          ) {
+            opcionesAMostrar.push({
+              text: "Asignar Número",
+              value: "asignTelephoneNumberToInvoice"
+            });
+            callback(opcionesAMostrar);
+            reglaServicio = null;
+          } else {
+            callback(opcionesAMostrar);
+            reglaServicio = null;
+          }
+        } else {
+          callback(opcionesAMostrar);
+          reglaServicio = null;
+        }
+      },
+      function(err) {
+        callback(opcionesAMostrar);
+        reglaServicio = null;
+        notify(err);
+      }
+    );
+  } catch (e) {
+    notify("showInvoiceActions: " + e.message);
+  }
+}
+function showVoidOptions(pInvoiceID, isPaidConsignment) {
   SONDA_DB_Session.transaction(
     function(tx) {
       var pDoc = "";
       var pImg = "";
 
       var psql = "SELECT * FROM VOID_REASONS ";
-      console.log(psql);
+
       tx.executeSql(
         psql,
         [],
         function(tx, results) {
           var xskus_len = results.rows.length - 1;
           gVoidReasons = [];
-          for (i = 0; i <= xskus_len; i++) {
+          for (var i = 0; i <= xskus_len; i++) {
             try {
               gVoidReasons.push({
                 text: results.rows.item(i).REASON_DESCRIPTION,
@@ -3706,9 +8560,9 @@ function showVoidOptions(pInvoiceID) {
               notiy(e.message);
             }
           }
-          console.log(gVoidReasons);
+
           var config_options = {
-            title: "Motivos de anulaciÃ³n",
+            title: "Motivos de anulación",
             items: gVoidReasons,
             doneButtonLabel: "Ok",
             cancelButtonLabel: "Cancelar"
@@ -3716,1279 +8570,121 @@ function showVoidOptions(pInvoiceID) {
 
           window.plugins.listpicker.showPicker(config_options, function(item) {
             navigator.notification.confirm(
-              "Confirma Anulacion?", // message
+              "Confirma Anulacion?",
               function(buttonIndex) {
-                if (buttonIndex === 2) {
+                if (buttonIndex == 2) {
                   my_dialog("Anulando factura", "Procesando...", "close");
-                  ProcessVoidInvoice(pInvoiceID, item, item);
-                  my_dialog("", "", "close");
-                }
-              }, // callback to invoke with index of button pressed
-              "SondaÂ® Ruta " + SondaVersion, // title
-              "No,Si" // buttonLabels
-            );
-          });
-          my_dialog("", "", "close");
-        },
-        function(err) {
-          my_dialog("", "", "close");
-          if (err.code !== 0) {
-            notify("(12)Error processing SQL: " + err.code);
-          }
-        }
-      );
-    },
-    function(tx, err) {
-      notify("(13)Error processing SQL: " + err.message);
-    }
-  );
-}
-function ShowNewOrder() {
-  $.mobile.changePage("#taskpickupguide_page", {
-    transition: "flow",
-    reverse: true,
-    showLoadMsg: false
-  });
-}
-function GetClientBranches() {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-
-        var psql =
-          "SELECT * FROM BRANCHES where CLIENT_CODE = '" + gClientID + "'";
-        console.log(psql);
-
-        tx.executeSql(
-          psql,
-          [],
-          function(tx, results) {
-            var xskus_len = results.rows.length - 1;
-            gBranches = [];
-
-            gBranches.push({
-              text: "NINGUNA",
-              value: "NINGUNA"
-            });
-
-            for (i = 0; i <= xskus_len; i++) {
-              try {
-                gBranches.push({
-                  text: results.rows.item(i).BRANCH_NAME,
-                  value: results.rows.item(i).BRANCH_CODE
-                });
-              } catch (e) {
-                notiy(e.message);
-              }
-            }
-            console.log(gBranches);
-            var config_options = {
-              title: "Agencias del cliente",
-              items: gBranches,
-              doneButtonLabel: "Ok",
-              cancelButtonLabel: "Cancelar"
-            };
-
-            window.plugins.listpicker.showPicker(config_options, function(
-              item
-            ) {
-              SONDA_DB_Session.transaction(
-                function(tx) {
-                  if (item === "NINGUNA") {
-                    $("#btnBranchID").text("NINGUNA");
-
-                    $("#txtAddressInputed").text("");
-
-                    $("#txtPDE").text("0");
-                    $("#txtPDE").attr("readonly", true);
-
-                    $("#txtAddressInputed").css("visibility", "visible");
-                    $("#lblBranchAddress").css("visibility", "visible");
-                    //$("#txtPDE").css("visibility","hidden");
-
-                    $("#lblBranchAddress").text("");
-                    $("#btnGEORoute").text("");
-                    $("#txtAddressInputed").focus();
-                  } else {
-                    var psql1 =
-                      "SELECT * FROM BRANCHES where BRANCH_CODE = '" +
-                      item +
-                      "'";
-                    console.log(psql1);
-                    tx.executeSql(
-                      psql1,
-                      [],
-                      function(tx, results) {
-                        $("#btnBranchName").text(
-                          results.rows.item(0).BRANCH_NAME
-                        );
-                        $("#btnBranchID").text(
-                          results.rows.item(0).BRANCH_CODE
-                        );
-                        $("#lblBranchAddress").text(
-                          results.rows.item(0).BRANCH_ADDRESS
-                        );
-                        $("#txtAddressInputed").css("visibility", "hidden");
-
-                        $("#txtPDE").css("visibility", "visible");
-                        $("#txtPDE").attr("readonly", true);
-                        $("#txtPDE").val(results.rows.item(0).BRANCH_PDE);
-
-                        $("#btnGEORoute").text(results.rows.item(0).GEO_ROUTE);
-
-                        my_dialog("", "", "close");
-                      },
-                      function(err) {
-                        my_dialog("", "", "close");
-                        if (err.code !== 0) {
-                          notify("(15)Error processing SQL: " + err.code);
-                        }
-                      }
-                    );
-                  }
-                },
-                function(err) {
-                  if (err.code !== 0) {
-                    notify("(16)Error processing SQL: " + err.code);
-                  }
-                }
-              );
-            });
-
-            console.log("picker called");
-            my_dialog("", "", "close");
-          },
-          function(err) {
-            notify(" error pickier ");
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(12)Error processing SQL: " + err.code);
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(13)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    console.log("GetClientBranches:" + e.message);
-    notify("GetClientBranches:" + e.message);
-  }
-}
-
-function GetAvailablePackageTypes() {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-
-        var psql =
-          "SELECT * FROM SKUS WHERE SKU_ID NOT IN (SELECT SKU_ID FROM SKUS_X_ORDER WHERE ORDER_ID = '-9999') ";
-        console.log(psql);
-        tx.executeSql(
-          psql,
-          [],
-          function(tx, results) {
-            var xskus_len = results.rows.length - 1;
-            gBranches = [];
-
-            for (var i = 0; i <= xskus_len; i++) {
-              try {
-                gBranches.push({
-                  text:
-                    results.rows.item(i).SKU_DESCRIPTION +
-                    "\n Q" +
-                    format_number(results.rows.item(i).PRICE_LIST, 2),
-                  value: results.rows.item(i).SKU_ID
-                });
-              } catch (e) {
-                notiy(e.message);
-              }
-            }
-            console.log(gBranches);
-            var config_options = {
-              title: "Listado de productos",
-              items: gBranches,
-              doneButtonLabel: "Ok",
-              cancelButtonLabel: "Cancelar"
-            };
-
-            window.plugins.listpicker.showPicker(config_options, function(
-              item
-            ) {
-              SONDA_DB_Session.transaction(
-                function(tx) {
-                  var pUMDesc = GetUMDesc(item);
-                },
-                function(err) {
-                  if (err.code !== 0) {
-                    notify("(16)Error processing SQL: " + err.code);
-                  }
-                }
-              );
-            });
-
-            console.log("picker called");
-            my_dialog("", "", "close");
-          },
-          function(tx, err) {
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(12)Error processing SQL: " + err.code);
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(13)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    console.log("GetClientBranches:" + e.message);
-    notify("GetClientBranches:" + e.message);
-  }
-}
-
-function GetNoVisitDesc(item) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pSQL = "SELECT * FROM NO_VISIT WHERE PARAM_NAME = '" + item + "'";
-        var pUM = "";
-
-        console.log(pSQL);
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            if (results.rows.length >= 1) {
-              socket.emit("process_novisit", {
-                taskid: gtaskid,
-                reason: results.rows.item(0).PARAM_NAME
-              });
-            } else {
-              return "N/F";
-            }
-          },
-          function(err) {
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("(GetNoVisitDesc.0)Error processing SQL: " + err.code);
-              return "ERROR";
-            }
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(GetNoVisitDesc.1)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    notify("GetNoVisitDesc: " + e.message);
-  }
-}
-
-function GetUMDesc(pUM) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pSQL = "SELECT * FROM SKUS WHERE SKU_ID = '" + pUM + "'";
-
-        console.log(pSQL);
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            if (results.rows.length >= 1) {
-              setpackage(
-                pUM,
-                results.rows.item(0).SKU_DESCRIPTION,
-                results.rows.item(0).PRICE_LIST
-              );
-            } else {
-              return "N/F";
-            }
-          },
-          function(tx, err) {
-            my_dialog("", "", "close");
-
-            notify("(GetUMDesc.0)Error processing SQL: " + err.message);
-            return "ERROR";
-          }
-        );
-      },
-      function(err) {
-        if (err.code !== 0) {
-          notify("(GetUMDesc.1)Error processing SQL: " + err.code);
-        }
-      }
-    );
-  } catch (e) {
-    notify("GetUMDesc: " + e.message);
-  }
-}
-
-function AcceptTask() {
-  try {
-    $("#lblRemitenteName").text(gClientName);
-
-    if (gIsOnline === 1) {
-      var conn_option = {
-        taskid: gtaskid,
-        dbuser: gdbuser,
-        dbuserpass: gdbuserpass,
-        gps: ""
-      };
-
-      navigator.geolocation.getCurrentPosition(
-        function(position) {
-          gCurrentGPS =
-            position.coords.latitude + "," + position.coords.longitude;
-          gLastGPS = gCurrentGPS;
-
-          conn_option.gps = gCurrentGPS;
-          $(".gpsclass").text(
-            position.coords.latitude + "," + position.coords.longitude
-          );
-
-          socket.emit("task_accepted", conn_option);
-        },
-        function() {
-          gCurrentGPS = gLastGPS;
-          conn_option.gps = gCurrentGPS;
-          socket.emit("task_accepted", conn_option);
-        },
-        { maximumAge: 30000, timeout: 15000, enableHighAccuracy: true }
-      );
-    }
-    //cambio
-    switch (gTaskType) {
-      case TareaTipo.Entrega:
-        gotomyDelivery();
-        break;
-      case TareaTipo.Preventa:
-        ValidarSaldoCliente(
-          gClientID,
-          0,
-          "",
-          0,
-          OpcionValidarSaldoCliente.EjecutarTarea,
-          OrdenDeVentaTipo.Credito,
-          function() {
-            SeguirTareaPreventa();
-          },
-          function(err) {
-            notify(err.message);
-          }
-        );
-
-        break;
-      case TareaTipo.Venta:
-        EjecutarTareaDeVenta(gClientID);
-        break;
-      case TareaTipo.Obsoleto:
-        EjecutarTareaDeVenta(gClientID);
-        break;
-    }
-  } catch (e) {
-    notify("AcceptTask:" + e.message);
-  }
-}
-
-function refreshguidelist() {
-  /*
-    <li>
-		<span class="middle"><strong>#251050</strong></span><p></p>
-        <span class="small-roboto"><strong>FARMACIA SIMAN #1, LA LIMA.</strong></span><p></p>
-        <span class="small-roboto">Direccion del remitente</span><p></p>
-        <span class="small-roboto">PDE-GeoRuta</span><p></p>
-        <span class="ui-li-count">7</span>
-    </li>
-    */
-}
-
-function SavePrinter() {
-  try {
-    gPrintAddress = $("input[name=itemDev]:checked").val();
-
-    localStorage.setItem("PRINTER_ADDRESS", gPrintAddress);
-
-    ConectarImpresora(gPrintAddress, function() {
-      ToastThis("Impresora sincronizada correctamente");
-      window.history.back();
-    });
-  } catch (e) {
-    notify("Error al sincronizar impresora: " + e.message);
-  }
-}
-
-function ConectarImpresora(impresora, callback) {
-  try {
-    if (impresora !== "") {
-      gPrintAddress = impresora;
-
-      bluetoothSerial.isConnected(
-        function() {
-          $(".printerclass").buttonMarkup({ icon: "print" });
-          callback();
-        },
-        function() {
-          bluetoothSerial.connectInsecure(
-            gPrintAddress,
-            function() {
-              $(".printerclass").buttonMarkup({ icon: "print" });
-              gTimeout = setTimeout(callback(), 2500);
-              clearTimeout(gTimeout);
-            },
-            function() {
-              $(".printerclass").buttonMarkup({ icon: "delete" });
-              callback();
-            }
-          );
-        }
-      );
-    } else {
-      callback();
-    }
-  } catch (e) {
-    callback();
-  }
-}
-
-function DesconectarImpresora(resolve, reject) {
-  VerificarEstado(
-    0,
-    function() {
-      bluetoothSerial.disconnect(
-        function() {
-          sleep(function() {
-            console.log("Disconnected");
-            resolve(true);
-          }, 5000);
-        },
-        function(reason) {
-          reject(LanzarExcepcionDesconexion(reason));
-        }
-      );
-    },
-    reject
-  );
-}
-
-function sleep(resolve, time) {
-  setTimeout(resolve, time);
-}
-
-function VerificarEstado(currentTry, resolve, reject) {
-  return bluetoothSerial.read(
-    function(result) {
-      if (result != "")
-        //yay printer ready!!!
-        resolve(true);
-      else {
-        if (currentTry < 20)
-          sleep(function() {
-            VerificarEstado(currentTry + 1, resolve, reject);
-          }, 1000);
-        else reject(LanzarExcepcionDesconexion(new Error("Tiempo agotado")));
-      }
-    },
-    function(e) {
-      reject(LanzarExcepcionDesconexion(e));
-    }
-  );
-}
-
-function LanzarExcepcionDesconexion(e) {
-  notify("Error al desconectar impresora: " + e.message);
-
-  return e;
-}
-
-function exploredevices() {
-  try {
-    //my_dialog("Obteniendo dispositivos", "Espere...", "open");
-    try {
-      bluetoothSerial.list(
-        function(devices) {
-          devices.forEach(function(device) {
-            xdevname = device.name;
-
-            if (xdevname.substring(1, 2) === "X") {
-              var xxitem = $("#item-" + device.name);
-
-              if (xxitem.length <= 0) {
-                var pHtml = "";
-                if (device.address === gPrintAddress) {
-                  pHtml =
-                    pHtml +
-                    "<input type='radio' name='itemDev' id='item-" +
-                    device.name +
-                    "' value='" +
-                    device.address +
-                    "' checked='checked'>";
-                } else {
-                  pHtml =
-                    pHtml +
-                    "<input type='radio' name='itemDev' id='item-" +
-                    device.name +
-                    "' value='" +
-                    device.address +
-                    "'>";
-                }
-
-                pHtml =
-                  pHtml +
-                  "<label class='medium' for='item-" +
-                  device.name +
-                  "'>" +
-                  device.name +
-                  " " +
-                  device.address +
-                  "</label>";
-
-                $("#cmbDevices").append(pHtml);
-                $("#item-" + device.name)
-                  .checkboxradio()
-                  .checkboxradio("refresh");
-              }
-            }
-          });
-          $("#cmbDevices")
-            .controlgroup()
-            .controlgroup("refresh");
-        },
-        function(err) {
-          console.log(err);
-        }
-      );
-    } catch (e) {
-      notify(e.message);
-    }
-    my_dialog("", "", "close");
-  } catch (e) {
-    my_dialog("", "", "close");
-    notify("cannot print " + e.message);
-  }
-}
-
-function ProcessPresaleTask(pIsCheckingOffline) {
-  try {
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        if (pIsCheckingOffline === 0) {
-          //SIGNATURE, IMAGE
-          pSQL =
-            "UPDATE ORDERS SET SIGNATURE = '" +
-            pSignature +
-            "', TAKEN_IMAGE = '" +
-            gpicture +
-            "' WHERE SOURCE_TASK = " +
-            gtaskid;
-          console.log(pSQL);
-
-          tx.executeSql(pSQL);
-        }
-      },
-      function(tx, err) {
-        my_dialog("", "", "close");
-        notify("ProcessPresaleTask.catch:" + err.message);
-      },
-      function() {
-        console.log(".....");
-      }
-    );
-
-    SONDA_DB_Session.transaction(
-      function(tx) {
-        var pDoc = "";
-        var pImg = "";
-        var pSQL = "";
-        var pOrderResults = Array();
-        var pPacksResults = Array();
-        var dataemit;
-
-        pSQL = "SELECT * FROM ORDERS WHERE SOURCE_TASK = " + gtaskid;
-
-        console.log("ProcessPresaleTask:" + pSQL);
-
-        tx.executeSql(
-          pSQL,
-          [],
-          function(tx, results) {
-            var ORDER_JSON = {};
-
-            for (var i = 0; i <= results.rows.length - 1; i++) {
-              ORDER_JSON = {
-                ORDER_ID: results.rows.item(i).ORDER_ID,
-                CREATED_DATESTAMP: results.rows.item(i).CREATED_DATESTAMP,
-                PRESALE_ROUTE: gCurrentRoute,
-                DELIVERY_POINT: results.rows.item(i).DELIVERY_BRANCH_PDE,
-                CLIENT_CODE: results.rows.item(i).CLIENT_CODE,
-                CLIENT_NAME: results.rows.item(i).CLIENT_NAME,
-
-                DELIVERY_BRANCH_NAME: results.rows.item(i).DELIVERY_BRANCH_NAME,
-                DELIVERY_BRANCH_ADDRESS: results.rows.item(i).DELIVERY_ADDRESS,
-                TOTAL_AMOUNT: results.rows.item(i).TOTAL_AMOUNT,
-                SOURCE_TASK: results.rows.item(i).SOURCE_TASK,
-
-                STATUS: results.rows.item(i).STATUS,
-
-                SIGNATURE: results.rows.item(i).SIGNATURE,
-                IMAGE: results.rows.item(i).TAKEN_IMAGE
-              };
-
-              pOrderResults.push(ORDER_JSON);
-            }
-            console.log(pOrderResults);
-
-            SONDA_DB_Session.transaction(
-              function(tx) {
-                var pSQL = "";
-
-                pSQL =
-                  "SELECT * FROM SKUS_X_ORDER WHERE SOURCE_TASK = " + gtaskid;
-                //console.clear();
-                //console.log(pSQL);
-
-                tx.executeSql(
-                  pSQL,
-                  [],
-                  function(tx, results) {
-                    var SKUS_X_ORDER = {};
-                    var x = 0;
-                    console.log(
-                      "results.SKUS_X_ORDER.length:" + results.rows.length
-                    );
-
-                    for (x = 0; x <= results.rows.length - 1; x++) {
-                      SKUS_X_ORDER = {
-                        ORDER_ID: results.rows.item(x).ORDER_ID,
-                        SKU_ID: results.rows.item(x).SKU_ID,
-                        SKU_DESCRIPTION: results.rows.item(x).SKU_DESCRIPTION,
-                        QTY: results.rows.item(x).QTY,
-                        UNIT_PRICE: results.rows.item(x).UNIT_PRICE,
-                        TOTAL_PRICE: results.rows.item(x).TOTAL_PRICE
-                      };
-
-                      pPacksResults.push(SKUS_X_ORDER);
-                    }
-                    console.log(pPacksResults);
-
-                    var xandroiddate = getDateTime();
-                    var porder_string = "";
-                    var pskus_string = "";
-
-                    porder_string = JSON.stringify(pOrderResults);
-
-                    pskus_string = JSON.stringify(pPacksResults);
-
-                    var datatoemit = {
-                      data_order: porder_string,
-                      data_skus: pskus_string,
-                      loginid: gLoggedUser,
-
-                      battery: gBatteryLevel,
-                      gps: gCurrentGPS,
-                      task: gtaskid,
-                      created: xandroiddate
-                    };
-
-                    console.log("datatoemit:" + datatoemit.data_skus);
-
-                    ActualizarTareaEstado(
-                      gtaskid,
-                      TareaEstado.Completada,
-                      function() {
-                        if (gIsOnline === 1) {
-                          var conn_option = {
-                            data: datatoemit,
-                            dbuser: gdbuser,
-                            dbuserpass: gdbuserpass
-                          };
-                          socket.emit("post_order", conn_option);
-                        }
-                      },
-                      function(err) {
-                        my_dialog("", "", "close");
-                        notify(err.message);
-                      }
-                    );
-                  },
-                  function(tx, err) {
-                    console.log(err.message);
-
-                    my_dialog("", "", "close");
-                    notify("post_presale: " + err.message);
-                  }
-                );
-                my_dialog("", "", "close");
-              },
-              function(err) {
-                my_dialog("", "", "close");
-                if (err.code !== 0) {
-                  notify("Error processing SQL: " + err.code);
-                }
-              }
-            );
-          },
-          function(err) {
-            console.log(err.message);
-
-            my_dialog("", "", "close");
-            if (err.code !== 0) {
-              notify("Error processing SQL: " + err.code);
-            }
-          }
-        );
-        my_dialog("", "", "close");
-      },
-      function(tx, err) {
-        my_dialog("", "", "close");
-        notify("Error processing SQL: " + err.message);
-      }
-    );
-  } catch (e) {
-    notify("ProcessPresaleTask:" + e.message);
-  }
-}
-
-function cleanupuide() {
-  $("#btnGEORoute").text("");
-  $("#lblBranchAddress").text("");
-  $("#listview_packs_detail")
-    .children()
-    .remove("li");
-  $("#btnBranchName").text("Destino");
-  $("#lblTotalOrder").text("0.00");
-}
-
-function CompletePreSaleTask() {
-  try {
-    var pCreatedOrders = $("#guides_listing li:visible").length;
-
-    navigator.notification.confirm(
-      "Finalizar Preventa con " + pCreatedOrders + " pedido(s) creado(s) ?", // message
-      function(buttonIndex) {
-        if (buttonIndex === 2) {
-          if (pCreatedOrders <= 0) {
-            try {
-              SONDA_DB_Session.transaction(
-                function(tx) {
-                  var pDoc = "";
-                  var pImg = "";
-
-                  var psql = "SELECT * FROM NO_VISIT";
-
-                  console.log(psql);
-                  tx.executeSql(
-                    psql,
-                    [],
-                    function(tx, results) {
-                      var xskus_len = results.rows.length - 1;
-                      gBranches = [];
-
-                      for (var i = 0; i <= xskus_len; i++) {
-                        try {
-                          gBranches.push({
-                            value: results.rows.item(i).PARAM_NAME,
-                            text: results.rows.item(i).PARAM_CAPTION
-                          });
-                        } catch (e) {
-                          notiy(e.message);
-                        }
-                      }
-                      console.log(gBranches);
-                      var config_options = {
-                        title: "Motivo de no gestion",
-                        items: gBranches,
-                        doneButtonLabel: "Ok",
-                        cancelButtonLabel: "Cancelar"
-                      };
-
-                      window.plugins.listpicker.showPicker(
-                        config_options,
-                        function(item) {
-                          SONDA_DB_Session.transaction(
-                            function(tx) {
-                              var gNoVisitDesc = GetNoVisitDesc(item);
-                            },
-                            function(err) {
-                              notify(
-                                "(21)Error processing SQL: " + err.message
+                  if (isPaidConsignment === 1) {
+                    navigator.notification.confirm(
+                      "Desea tomar fotografía del comprobante de anulacion?",
+                      function(opcion) {
+                        if (opcion === 2) {
+                          checkInvoiceIsPosted(
+                            pInvoiceID,
+                            function() {
+                              capturarImagenDeConsignacion(
+                                function(imagen) {
+                                  ProcessVoidInvoice(
+                                    pInvoiceID,
+                                    item,
+                                    item,
+                                    isPaidConsignment,
+                                    imagen,
+                                    1
+                                  );
+                                },
+                                function(error) {
+                                  notify(error);
+                                  my_dialog("", "", "close");
+                                }
                               );
+                            },
+                            function(error) {
+                              notify(error);
+                              my_dialog("", "", "close");
+                            }
+                          );
+                        } else {
+                          checkInvoiceIsPosted(
+                            pInvoiceID,
+                            function() {
+                              ProcessVoidInvoice(
+                                pInvoiceID,
+                                item,
+                                item,
+                                isPaidConsignment,
+                                null,
+                                1
+                              );
+                            },
+                            function(error) {
+                              notify(error);
+                              my_dialog("", "", "close");
                             }
                           );
                         }
-                      );
-
-                      console.log("picker called");
-                      my_dialog("", "", "close");
-                    },
-                    function(err) {
-                      notify(" error picker ");
-                      my_dialog("", "", "close");
-                      if (err.code !== 0) {
-                        notify("(12)Error processing SQL: " + err.code);
+                      },
+                      "Sonda® SD " + SondaVersion,
+                      ["No", "Si"]
+                    );
+                  } else {
+                    checkInvoiceIsPosted(
+                      pInvoiceID,
+                      function() {
+                        ProcessVoidInvoice(
+                          pInvoiceID,
+                          item,
+                          item,
+                          isPaidConsignment,
+                          null,
+                          1
+                        );
+                      },
+                      function(error) {
+                        notify(error);
+                        my_dialog("", "", "close");
                       }
-                    }
-                  );
-                },
-                function(err) {
-                  if (err.code !== 0) {
-                    notify("(13)Error processing SQL: " + err.code);
+                    );
                   }
                 }
-              );
-            } catch (e) {
-              console.log("GetNoVisitReasons:" + e.message);
-              notify(e.message);
-            }
-          } else {
-            if (gSignated) {
-              my_dialog("Enviando Pedido(s)", "Procesando...", "close");
-              navigator.geolocation.getCurrentPosition(
-                function(position) {
-                  gCurrentGPS =
-                    position.coords.latitude + "," + position.coords.longitude;
-                  gLastGPS = gCurrentGPS;
-
-                  $(".gpsclass").text(
-                    position.coords.latitude + "," + position.coords.longitude
-                  );
-                  ProcessPresaleTask(0);
-                },
-                function() {
-                  gCurrentGPS = gLastGPS;
-
-                  ProcessPresaleTask(0);
-                },
-                { maximumAge: 30000, timeout: 15000, enableHighAccuracy: true }
-              );
-
-              my_dialog("", "", "close");
-
-              //RefreshMyRoutePlan();
-
-              $.mobile.changePage("#pickupplan_page", {
-                transition: "flow",
-                reverse: true,
-
-                showLoadMsg: false
-              });
-            } else {
-              notify("Debe firmar el cliente.");
-              SignAndPhoto("pickup");
-            }
+              },
+              "Sonda® SD " + SondaVersion,
+              ["No", "Si"]
+            );
+          });
+          my_dialog("", "", "close");
+        },
+        function(err) {
+          my_dialog("", "", "close");
+          if (err.code != 0) {
+            alert("Error processing SQL: " + err.code);
           }
         }
-      }, // callback to invoke with index of button pressed
-      "SondaÂ® Ruta " + SondaVersion, // title
-      "No,Si" // buttonLabels
-    );
-  } catch (e) {
-    notify(e.message);
-  }
-}
-
-function clearsignaturepad() {
-  signaturePad.clear();
-}
-function SignAndPhoto(pType) {
-  switch (pType) {
-    case "pickup":
-      canvas = document.querySelector("canvas");
-
-      signaturePad = new SignaturePad(canvas, {
-        minWidth: 1,
-        maxWidth: 2,
-        penColor: "rgb(64, 64, 64)"
-      });
-
-      $.mobile.changePage("#pickupsignature_page", "flow", true, true);
-      break;
-    case "delivery":
-      canvas = document.querySelector("canvas[delivery]");
-
-      signaturePad = new SignaturePad(canvas, {
-        minWidth: 1,
-        maxWidth: 2,
-        penColor: "rgb(64, 64, 64)"
-      });
-
-      $.mobile.changePage("#deliverysignature_page", "flow", true, true);
-      break;
-  }
-}
-
-function SetPrinterRole(pPrinterAddress) {
-  try {
-    var config_options = {
-      title: "Tipo Impresora",
-
-      items: [
-        { text: "Asignar Impresora", value: "GUIAS" },
-        { text: "Test Impresora", value: "TEST" }
-      ],
-      doneButtonLabel: "Ok",
-      cancelButtonLabel: "Cancelar"
-    };
-
-    window.plugins.listpicker.showPicker(config_options, function(item) {
-      $(".printerclass").buttonMarkup({ icon: "delete" });
-
-      bluetoothSerial.connectInsecure(
-        pPrinterAddress,
-        function() {
-          $(".printerclass").buttonMarkup({ icon: "print" });
-        },
-        function() {
-          $(".printerclass").buttonMarkup({ icon: "delete" });
-        }
       );
-
-      switch (item) {
-        case "TEST":
-          printtest(pPrinterAddress, "");
-          break;
-        default:
-          navigator.notification.confirm(
-            "Confirma seleccionar printer para " + item + "?", // message
-            function(buttonIndex) {
-              if (buttonIndex === 2) {
-                localStorage.setItem("PRINTER_" + item, pPrinterAddress);
-                $(".printerclass").buttonMarkup({ icon: "print" });
-                exploredevices();
-              }
-            }, // callback to invoke with index of button pressed
-            "Sonda® Ruta " + SondaVersion, // title
-            "No,Si" // buttonLabels
-          );
-          break;
-      }
-    });
-  } catch (e) {
-    notify(e.message);
-  }
-}
-
-function PruebaImpresion() {
-  printtest("AC:3F:A4:70:AA:AD", "");
-}
-
-function savesignature(ptype) {
-  try {
-    if (signaturePad.isEmpty()) {
-      notify("ERROR, Por favor procesada a firmar.");
-      if (ptype === "pickup") {
-        gSignated = false;
-      } else {
-        gSignatedDelivery = false;
-      }
-    } else {
-      if (ptype === "pickup") {
-        pSignature = signaturePad.toDataURL();
-        console.log(pSignature);
-        gSignated = true;
-      } else {
-        pSignature = signaturePad.toDataURL();
-        console.log(pSignature);
-        gSignatedDelivery = true;
-      }
-
-      window.history.back();
-    }
-  } catch (e) {
-    notify(e.message);
-  }
-}
-
-function CleanUpDeliveryImage() {
-  try {
-    $("#imgDelivery").attr("src", "img/camera.png");
-  } catch (e) {
-    notify(e.message);
-  }
-}
-
-function take_picture_pickup(ptype) {
-  navigator.camera.getPicture(
-    function(imageURI) {
-      if (ptype === "pickup") {
-        $("#imgPickup").attr("src", "data:image/jpeg;base64," + imageURI);
-        $("#divPickupPicture").css("visibility", "visible");
-      } else {
-        $("#imgDelivery").attr("src", "data:image/jpeg;base64," + imageURI);
-      }
-      gpicture = imageURI;
     },
-    function(message) {
-      //notify("ERROR," + message);
-    },
-    {
-      quality: 90,
-      targetWidth: 350,
-      targetHeight: 350,
-      saveToPhotoAlbum: false,
-      sourceType: navigator.camera.PictureSourceType.CAMERA,
-      correctOrientation: true,
-      destinationType: Camera.DestinationType.DATA_URL
+    function(err) {
+      if (err.code != 0) {
+        alert("Error processing SQL: " + err.code);
+      }
     }
   );
 }
 
-function finishroute() {
+function GetRoutePlan() {
   try {
-    if (gIsOnline === 1) {
-      navigator.notification.confirm(
-        "Confirma FinalizaciÃ³n?", // message
-        function(buttonIndex) {
-          if (buttonIndex === 2) {
-            var conn_option = {
-              courierid: gLoggedUser,
-              gps: gCurrentGPS,
-              batt: gBatteryLevel,
-              dbuser: gdbuser,
-              dbuserpass: gdbuserpass
-            };
+    my_dialog("Plan de ruta", "Procesando...", "close");
+    setTimeout(function() {
+      SocketControlador.socketIo.emit("get_sales_route", {
+        default_warehouse: gDefaultWhs,
+        routeid: gCurrentRoute,
 
-            my_dialog("Fin de ruta", "cerrando ruta espere...", "open");
-            navigator.geolocation.getCurrentPosition(
-              function(position) {
-                gCurrentGPS =
-                  position.coords.latitude + "," + position.coords.longitude;
-                $(".gpsclass").text(
-                  position.coords.latitude + "," + position.coords.longitude
-                );
-
-                gLastGPS = gCurrentGPS;
-
-                socket.emit("finishroute", conn_option);
-              },
-              function() {
-                gCurrentGPS = gLastGPS;
-                socket.emit("finishroute", conn_option);
-              },
-              { maximumAge: 30000, timeout: 15000, enableHighAccuracy: true }
-            );
-          }
-        }, // callback to invoke with index of button pressed
-        "SondaÂ® Ruta " + SondaVersion, // title
-        "No,Si" // buttonLabels
-      );
-    }
-  } catch (e) {
-    notify("finishroute.catch:" + e.message);
-  }
-}
-
-function navigateto() {
-  /*notify(gtaskgps);*/
-  try {
-    var pUrl = gtaskgps.split(",");
-
-    //launchnavigator.navigateByLatLon(pUrl[0], pUrl[1], function(){}, function(err){});
-    var pGPS = `https://www.waze.com/ul?ll=${gtaskgps}&navigate=yes`;
-    
-    window.open(encodeURI(pGPS), '_blank', 'location=yes')
-  } catch (e) {
-    notify(e.message);
-  }
-}
-function ProcessAcceptManifest() {
-  try {
-    if (gIsOnline === 1) {
-      socket.emit("manifest_accepted", {
-        manifestid: gManifestID,
-        batt: gBatteryLevel,
-        courierid: gUserCode,
-        gps: gCurrentGPS,
+        loginid: gLastLogin,
         dbuser: gdbuser,
         dbuserpass: gdbuserpass
       });
-    } else {
-      notify(
-        "ERROR, Necesita estar conectado al servidor, para aceptar el manifiesto"
-      );
-    }
+    }, 2000);
   } catch (e) {
     notify(e.message);
-    console.log(e.message);
-  }
-}
-
-function printdelivery() {
-  try {
-    var xdate = getDateTime();
-
-    lheader = "! 0 50 50 620 1\r\n";
-    lheader +=
-      "! U1 LMARGIN 10\r\n! U\r\n! U1 PAGE-WIDTH 1400\r\nON-FEED IGNORE\r\n";
-    lheader += "CENTER 570 T 0 3 0 10 MOBILITY SCM\r\n";
-    lheader += "B QR 200 60 M 2 U 8 \r\n";
-    lheader += "M0A," + gGuideToDeliver + "\r\n";
-    lheader += "ENDQR \r\n";
-    lheader += "L 5 240 570 240 1\r\n";
-    lheader +=
-      "CENTER 570 T 0 3 0 270 ENTREGA DE GUIA: " + gGuideToDeliver + "\r\n";
-    lheader +=
-      "LEFT 5 T 0 2 0 300 EMPAQUES     : " + gPACKAGES_ToDeliver + "\r\n";
-    lheader +=
-      "LEFT 5 T 0 2 0 330 REMITENTE    : " +
-      gRELATED_CLIENT_NAME_ToDeliver +
-      "\r\n";
-    lheader +=
-      "LEFT 5 T 0 2 0 360 DESTINATARIO : " +
-      gDESTINATION_CLIENTNAME_ToDeliver +
-      "\r\n";
-    lheader +=
-      "LEFT 5 T 0 2 0 420 COURIER      : " +
-      gUserCode +
-      " " +
-      gLoggedUser +
-      "\r\n";
-    lheader += "LEFT 5 T 0 2 0 450 FECHA Y HORA : " + xdate + "\r\n";
-    lheader += "L 5 500 570 500 1\r\n";
-    lheader += "CENTER 600 T 0 1 1 600 www.mobilityscm.com\r\n";
-
-    lheader += "\r\nPRINT\r\n";
-
-    $("#btnDeliveryFinish").removeClass("ui-disabled");
-
-    try {
-      bluetoothSerial.isConnected(
-        function() {
-          try {
-            $(".printerclass").buttonMarkup({ icon: "print" });
-            bluetoothSerial.write(
-              lheader,
-              function() {
-                console.log("Done...");
-              },
-              function() {
-                notify("unable to write to printer");
-              }
-            );
-          } catch (e) {
-            console.log(e.message);
-          }
-        },
-        function() {
-          $(".printerclass").buttonMarkup({ icon: "print" });
-          bluetoothSerial.connect(
-            gPrintAddress,
-            function() {
-              $(".printerclass").buttonMarkup({ icon: "print" });
-              try {
-                bluetoothSerial.write(
-                  lheader,
-                  function() {
-                    console.log("Done...");
-                  },
-                  function() {
-                    notify("unable to write to printer");
-                  }
-                );
-              } catch (e) {
-                console.log(e.message);
-              }
-            },
-            function() {
-              $(".printerclass").buttonMarkup({ icon: "delete" });
-            }
-          );
-          ToastThis("Conectado a " + gPrintAddress);
-        }
-      );
-    } catch (e) {
-      notify("print.guide.catch:" + e.message);
-    }
-
-    my_dialog("", "", "close");
-  } catch (e) {
-    notify("print.delivery_guide.catch:" + e.message);
-  }
-}
-
-function BloquearPantalla() {
-  var imagenCarga = $("#imgCargandoInicioDeRuta");
-  var anchura = $(window).width() / 2;
-
-  imagenCarga.height(anchura / 2);
-  imagenCarga.width(anchura / 2);
-
-  var margenIzquiero = $(window).width() / 2;
-  var margenSuperior = $(window).height() / 2;
-
-  if (imagenCarga.attr("id") !== undefined) {
-    window.objetoImagen = imagenCarga;
-  }
-
-  $.blockUI({
-    message: window.objetoImagen,
-    css: {
-      top: margenSuperior - anchura / 2 / 2 + "px",
-      left: margenIzquiero - anchura / 2 / 2 + "px",
-      width: anchura / 2 + "px",
-      height: anchura / 2 + "px"
-    }
-  });
-  document.removeEventListener("menubutton", onMenuKeyDown, true);
-  document.removeEventListener("backbutton", onBackKeyDown, true);
-  imagenCarga = null;
-}
-
-function DesBloquearPantalla() {
-  $.unblockUI();
-  document.addEventListener("menubutton", onMenuKeyDown, true);
-  document.addEventListener("backbutton", onBackKeyDown, true);
-
-  var appIsReady = localStorage.getItem("APP_IS_READY");
-  if (appIsReady === "1") {
-    localStorage.setItem("LOGIN_STATUS", "OPEN");
-    localStorage.setItem("POS_STATUS", "OPEN");
-    localStorage.setItem("POS_DATE", getDateTime());
-  }
-}
-
-function seleccionoOpcionEnBonificacionPorCombo(nombreDeObjeto) {
-  try {
-    console.log("OpcionSeleccionada: " + nombreDeObjeto);
-    var objeto = $("#" + nombreDeObjeto);
-    var valor = objeto.val();
-    objeto.trigger("keyup");
-    objeto.focus();
-    objeto.val("");
-    objeto.val(valor);
-    objeto = null;
-    return false;
-  } catch (e) {
-    notify("Error al seleccionar una opcion: " + e.message);
-  }
-}
-
-function obtenerValorDeObjeto(nombreDeObjeto) {
-  try {
-    console.log("OpcionSeleccionada: " + nombreDeObjeto);
-    var objeto = $("#" + nombreDeObjeto);
-    var valor = objeto.val();
-    objeto = null;
-
-    return valor;
-  } catch (e) {
-    notify("Error al obtener el valor de una opcion: " + e.message);
   }
 }
 
@@ -5042,5 +8738,818 @@ function obtenerCuentasDeBancos(callback, errCallback) {
       code: -1,
       message: "1-Error al obtener las cuentas de bancos: " + e.message
     });
+  }
+}
+
+function showBankAccounts() {
+  try {
+    obtenerCuentasDeBancos(
+      function(cuentaDeBanco) {
+        var items = [];
+        for (var i = 0; i < cuentaDeBanco.length; i++) {
+          var item = {
+            text:
+              cuentaDeBanco[i].banco + " - " + cuentaDeBanco[i].numeroDeCuenta,
+            value: cuentaDeBanco[i].numeroDeCuenta
+          };
+          items.push(item);
+        }
+
+        var config_options = {
+          title: "Cuentas habilitadas",
+          items: items,
+          doneButtonLabel: "Ok",
+          cancelButtonLabel: "Cancelar"
+        };
+
+        window.plugins.listpicker.showPicker(config_options, function(item) {
+          gSelectedAccount = item;
+          $("#lblBankAccount").text(gSelectedAccount.value);
+          $("#lblBankName").text(gSelectedAccount.text);
+          $("#UiEtiquetaCuentaBancaria").text(gSelectedAccount);
+        });
+      },
+      function(err) {
+        notify(err.message);
+      }
+    );
+  } catch (e) {}
+}
+
+function AddToTask(data) {
+  var pSql = "";
+  SONDA_DB_Session.transaction(
+    function(tx) {
+      pSql = "DELETE FROM TASK WHERE TASK_ID = " + data.row.TASK_ID;
+      tx.executeSql(pSql);
+
+      pSql = " INSERT INTO TASK(";
+      pSql += "TASK_ID";
+      pSql += ", TASK_TYPE";
+      pSql += ", TASK_DATE";
+      pSql += ", SCHEDULE_FOR";
+      pSql += ", CREATED_STAMP";
+      pSql += ", ASSIGEND_TO";
+      pSql += ", ASSIGNED_BY";
+      pSql += ", ACCEPTED_STAMP";
+      pSql += ", COMPLETED_STAMP";
+      pSql += ", EXPECTED_GPS";
+      pSql += ", POSTED_GPS";
+      pSql += ", TASK_COMMENTS";
+      pSql += ", TASK_SEQ";
+      pSql += ", TASK_ADDRESS";
+      pSql += ", RELATED_CLIENT_CODE";
+      pSql += ", RELATED_CLIENT_NAME";
+      pSql += ", TASK_STATUS";
+      pSql += ", IS_POSTED";
+      pSql += ", TASK_BO_ID";
+      pSql += ", RGA_CODE";
+      pSql += ", NIT";
+      pSql += ", PHONE_CUSTOMER";
+      pSql += ", CODE_PRICE_LIST";
+      pSql += ", IN_PLAN_ROUTE";
+      pSql += ", DEPARTMENT";
+      pSql += ", MUNICIPALITY";
+      pSql += " ) VALUES (";
+      pSql += data.row.TASK_ID;
+      pSql += ",'" + data.row.TASK_TYPE + "'";
+      pSql += ",'" + data.row.TASK_DATE + "'";
+      pSql += ",'" + data.row.SCHEDULE_FOR + "'";
+      pSql += ",'" + data.row.TASK_DATE + "'";
+      pSql += ",'" + data.row.ASSIGEND_TO + "'";
+      pSql += ",'" + data.row.ASSIGNED_BY + "'";
+      pSql += ",NULL";
+      pSql += ",NULL";
+      pSql += ",'" + data.row.EXPECTED_GPS + "'";
+      pSql += ",NULL";
+      pSql += ",'" + data.row.TASK_COMMENTS + "'";
+      pSql += "," + data.row.TASK_SEQ;
+      pSql += ",'" + data.row.TASK_ADDRESS + "'";
+      pSql += ",'" + data.row.RELATED_CLIENT_CODE + "'";
+      pSql += ",'" + data.row.RELATED_CLIENT_NAME + "'";
+      pSql += ",'" + data.row.TASK_STATUS + "'";
+      pSql += ",3";
+      pSql += "," + data.row.TASK_ID;
+      pSql += ",'" + data.row.RGA_CODE + "'";
+      pSql += ",'" + data.row.NIT + "'";
+      pSql += ",'" + data.row.PHONE_CUSTOMER + "'";
+      pSql += ",'" + data.row.CODE_PRICE_LIST + "'";
+      pSql += ",'" + data.row.IN_PLAN_ROUTE + "'";
+      pSql += ",'" + data.row.DEPARTAMENT + "'";
+      pSql += ",'" + data.row.MUNICIPALITY + "'";
+      pSql += ")";
+
+      tx.executeSql(pSql);
+    },
+    function(err) {
+      my_dialog("", "", "close");
+      notify("A2T.CATCH:" + err.message);
+    }
+  );
+}
+
+function PopulateSalesTasks(estadoTarea) {
+  try {
+    var listaTareas = $("#skus_listview_sales_route");
+
+    SONDA_DB_Session.transaction(
+      function(tx) {
+        var pDoc = "";
+        var pImg = "";
+
+        var psql =
+          "SELECT * FROM TASK AS T  WHERE T.TASK_STATUS ='" +
+          estadoTarea +
+          "' ORDER BY T.TASK_SEQ";
+
+        tx.executeSql(
+          psql,
+          [],
+          function(tx, results) {
+            listaTareas.children().remove("li");
+            for (var i = 0; i < results.rows.length; i++) {
+              var vLI = "";
+              var xonclick1 = "";
+
+              if (results.rows.item(i).EXPECTED_GPS === "0,0") {
+                xonclick1 = "notify('No hay punto GPS');";
+                vLI =
+                  '<li data-mini="true" class="ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-forbidden">';
+              } else {
+                xonclick1 =
+                  "TaskNavigateTo('" +
+                  results.rows.item(i).EXPECTED_GPS +
+                  "','" +
+                  results.rows.item(i).RELATED_CLIENT_NAME +
+                  "')";
+                vLI =
+                  '<li data-mini="true" class="ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-navigation">';
+              }
+
+              var xonclick2 =
+                "InvoiceThisTask(" +
+                results.rows.item(i).TASK_ID +
+                ",'" +
+                results.rows.item(i).RELATED_CLIENT_CODE +
+                "','" +
+                results.rows.item(i).RELATED_CLIENT_NAME +
+                "','" +
+                results.rows.item(i).NIT +
+                "','" +
+                results.rows.item(i).TASK_TYPE +
+                "','" +
+                results.rows.item(i).TASK_STATUS +
+                "')";
+
+              vLI += '<a href="#" onclick="' + xonclick2 + '">';
+              vLI += "<h2>";
+              vLI += '<span class="small-roboto">';
+              vLI += i + ")</span>&nbsp";
+              vLI +=
+                '<span class="small-roboto">' +
+                results.rows.item(i).RELATED_CLIENT_NAME +
+                "</span>";
+              vLI += "</h2>";
+              vLI += "<p>" + results.rows.item(i).TASK_ADDRESS + "</p>";
+              vLI += "</a>";
+              vLI += '<a href="#" onclick="' + xonclick1 + '">';
+              vLI += "</a>";
+              vLI += "</li>";
+
+              listaTareas.append(vLI);
+              listaTareas.listview("refresh");
+
+              vLI = null;
+              xonclick1 = null;
+              xonclick2 = null;
+            }
+            var clientscount = $("#skus_listview_sales_route li").size();
+
+            document.getElementById("lblClientsToVisit").innerText =
+              "Plan de ruta (" + clientscount + ")";
+            clientscount = null;
+          },
+          function(tx, err) {
+            if (err.code !== 0) {
+              notify(
+                "No se ha podido crear el listado de tareas debido a: " +
+                  err.message
+              );
+            }
+          }
+        );
+      },
+      function(err) {
+        if (err.code !== 0) {
+          notify(
+            "No se ha podido crear el listado de tareas debido a: " +
+              err.message
+          );
+        }
+      }
+    );
+  } catch (e) {
+    notify(e.message);
+  }
+}
+
+function TaskNavigateTo(gps, clientname) {
+  try {
+    var pUrl = gps.split(",");
+
+    var pGPS = "waze://?ll=" + pUrl[0] + "," + pUrl[1] + "&navigate=yes";
+
+    WazeLink.open(pGPS);
+  } catch (e) {
+    notify(e.message);
+  }
+}
+
+function ObtenerCodigoNit(nitCliente, parametroParaNitPorDefecto) {
+  return nitCliente == "NULL" ||
+    nitCliente == "null" ||
+    nitCliente == null ||
+    nitCliente == "Cf" ||
+    nitCliente == "..."
+    ? parametroParaNitPorDefecto.Value
+    : nitCliente;
+}
+
+function InvoiceThisTask(
+  taskid,
+  client_code,
+  client_name,
+  client_nit,
+  taskType,
+  taskStatus
+) {
+  try {
+    gTaskId = taskid;
+    gTaskType = taskType;
+    gClientCode = client_code;
+    gClientName = client_name;
+    esEntregaParcial = false;
+    gClientID = client_code;
+
+    if (taskType === "DELIVERY_SD") {
+      var tarea = new Tarea();
+      tarea.taskId = taskid;
+      tarea.taskType = taskType;
+      PublicarTareaDeEntrega(tarea);
+
+      ParametroServicio.ObtenerParametro(
+        "INVOICE",
+        "DEFAULT_NIT_VALUE",
+        function(parametroDeNitDefault) {
+          gNit = ObtenerCodigoNit(client_nit, parametroDeNitDefault);
+          ShowDeliveryPage();
+        },
+        function(error) {
+          gNit = ObtenerCodigoNit(client_nit, { Value: "C/F" });
+          ShowDeliveryPage();
+        }
+      );
+    } else {
+      if (taskStatus === "COMPLETED") {
+        $.mobile.changePage("#UiTaskResumePage", {
+          reverse: false,
+          changeHash: true,
+          showLoadMsg: false
+        });
+      } else {
+        vieneDeListadoDeDocumentosDeEntrega = false;
+        ClearUpInvoice();
+        PagoConsignacionesServicio.LimpiarTablasTemporales();
+        PagoConsignacionesControlador.EstaEnPagoDeConsignacion = false;
+        PagoConsignacionesControlador.EstaEnDetalle = false;
+        PagoConsignacionesControlador.EstaEnIngresoDeCantidadSku = false;
+
+        var consignmentsClient = 0;
+        var totalConsignacion = 0;
+
+        var procesarTareaParaFactura = function(parametroDeNit) {
+          if (gClientCode === "C000000") {
+            $("#lblClientCode").text(client_code);
+            $("#txtNIT").val(parametroDeNit.Value);
+            $("#txtNIT").attr("taskid", taskid);
+
+            $("#txtNombre").val(client_name);
+
+            ShowClientPage();
+          } else {
+            window.ObtenerConsignaciones(
+              function(consignaciones) {
+                gNit =
+                  client_nit == "NULL" ||
+                  client_nit == "null" ||
+                  client_nit == null ||
+                  client_nit == "Cf" ||
+                  client_nit == "..."
+                    ? parametroDeNit.Value
+                    : client_nit;
+                if (consignaciones.length > 0) {
+                  for (var i = 0; i < consignaciones.length; i++) {
+                    var consignacion = consignaciones[i];
+                    if (
+                      consignacion.CustomerId === gClientCode &&
+                      (consignacion.Status === ConsignmentStatus.Activa ||
+                        consignacion.Status === ConsignmentStatus.Vencida)
+                    ) {
+                      consignmentsClient++;
+                      totalConsignacion += consignacion.TotalAmount;
+                    }
+                  }
+
+                  if (totalConsignacion > 0) {
+                    document
+                      .getElementById("UiClientHasConsignment")
+                      .setAttribute(
+                        "CONSIGNMENTS",
+                        consignmentsClient.toString()
+                      );
+                    document.getElementById(
+                      "UiClientHasConsignment"
+                    ).style.display = "block";
+                    document.getElementById("UiLblTotalConsignment").innerText =
+                      currencySymbol +
+                      ". " +
+                      format_number(totalConsignacion, 2);
+                    document.getElementById(
+                      "UiBtnTotalEnProcesoDeConsignacion"
+                    ).innerText =
+                      currencySymbol +
+                      ". " +
+                      format_number(totalConsignacion, 2);
+                    document.getElementById("UiTotalCash").innerText =
+                      currencySymbol + ". " + "0.00";
+                    document.getElementById("UiTotalConsignacion").innerText =
+                      currencySymbol + ". " + "0.00";
+                    document.getElementById("UiTotalRecogido").innerText =
+                      currencySymbol + ". " + "0.00";
+
+                    var listaConsignaciones = $("#UiListaConsignacionesAPagar");
+                    listaConsignaciones.children().remove("li");
+                    listaConsignaciones = null;
+
+                    var objetoListaDetalleDeConsignacion = $(
+                      "#UiListaDetalleDeConsignacionAPagar"
+                    );
+                    objetoListaDetalleDeConsignacion.children().remove("li");
+                    objetoListaDetalleDeConsignacion = null;
+
+                    $("#lblClientCode").text(client_code);
+                    $("#txtNIT").val(gNit);
+                    $("#txtNIT").attr("taskid", taskid);
+
+                    $("#txtNombre").val(client_name);
+
+                    ShowClientPage();
+                  } else {
+                    document
+                      .getElementById("UiClientHasConsignment")
+                      .setAttribute(
+                        "CONSIGNMENTS",
+                        consignmentsClient.toString()
+                      );
+                    document.getElementById(
+                      "UiClientHasConsignment"
+                    ).style.display = "none";
+                    document.getElementById("UiLblTotalConsignment").innerText =
+                      currencySymbol +
+                      ". " +
+                      format_number(totalConsignacion, 2);
+
+                    $("#lblClientCode").text(client_code);
+                    $("#txtNIT").val(gNit);
+                    $("#txtNIT").attr("taskid", taskid);
+
+                    $("#txtNombre").val(client_name);
+
+                    ShowClientPage();
+                  }
+                } else {
+                  document
+                    .getElementById("UiClientHasConsignment")
+                    .setAttribute(
+                      "CONSIGNMENTS",
+                      consignmentsClient.toString()
+                    );
+                  document.getElementById(
+                    "UiClientHasConsignment"
+                  ).style.display = "none";
+                  document.getElementById("UiLblTotalConsignment").innerText =
+                    currencySymbol + ". " + format_number(totalConsignacion, 2);
+
+                  $("#lblClientCode").text(client_code);
+                  $("#txtNIT").val(gNit);
+                  $("#txtNIT").attr("taskid", taskid);
+
+                  $("#txtNombre").val(client_name);
+
+                  ShowClientPage();
+                }
+              },
+              function(error) {
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                notify(error.message);
+              }
+            );
+          }
+        };
+
+        ParametroServicio.ObtenerParametro(
+          "INVOICE",
+          "DEFAULT_NIT_VALUE",
+          function(parametroDeNitDefault) {
+            procesarTareaParaFactura(parametroDeNitDefault);
+          },
+          function(error) {
+            procesarTareaParaFactura({ Value: "C/F" });
+          }
+        );
+      }
+    }
+  } catch (e) {
+    InteraccionConUsuarioServicio.desbloquearPantalla();
+    notify(e.message);
+  }
+}
+
+function ShowDeliveryPage() {
+  try {
+    $.mobile.changePage("#UiDeliveryPage", {
+      transition: "none",
+      reverse: true,
+      changeHash: true,
+      showLoadMsg: false
+    });
+  } catch (e) {
+    notify(e.message);
+  }
+}
+
+function ShowClientPage() {
+  try {
+    vieneDeListadoDeDocumentosDeEntrega = false;
+    $.mobile.changePage("#pos_client_page", {
+      transition: "none",
+      reverse: true,
+      changeHash: true,
+      showLoadMsg: false
+    });
+  } catch (e) {
+    notify(e.message);
+  }
+}
+
+function GetPriceLists() {
+  var data = {
+    default_warehouse: gDefaultWhs,
+    routeid: gCurrentRoute,
+    loginid: gLastLogin,
+    dbuser: gdbuser,
+    dbuserpass: gdbuserpass
+  };
+
+  SocketControlador.socketIo.emit("GetPriceLists", data);
+}
+
+function validarDetalleOrdenDeVenta(callBack, errcallBack) {
+  try {
+    var contadorSkusPendientesDeSerie = 0;
+    var listadoDeSkusOrdenDeVenta = document.querySelectorAll(
+      "#pos_skus_page_listview li"
+    );
+    for (var i = 0; i < listadoDeSkusOrdenDeVenta.length; i++) {
+      var objetoSku = listadoDeSkusOrdenDeVenta[i];
+      var serieSku = objetoSku.attributes["skuserie"].nodeValue;
+      var requiereSerie = objetoSku.attributes["requiereserie"].nodeValue;
+
+      if (serieSku === "0" && parseInt(requiereSerie) === 1) {
+        contadorSkusPendientesDeSerie++;
+      }
+      objetoSku = null;
+      serieSku = null;
+    }
+    callBack(contadorSkusPendientesDeSerie);
+    listadoDeSkusOrdenDeVenta = null;
+  } catch (e) {
+    errcallBack(e);
+  }
+}
+
+function GetNexSequence(sequenceName, callback, errCallback) {
+  SONDA_DB_Session.transaction(
+    function(tx) {
+      var sql =
+        "SELECT COUNT(SEQUENCE_NAME) CNT FROM SWIFT_SEQUENCES WHERE SEQUENCE_NAME = '" +
+        sequenceName +
+        "'";
+      tx.executeSql(
+        sql,
+        [],
+        function(tx, results) {
+          if (results.rows.item(0).CNT === 0) {
+            sql =
+              "INSERT INTO SWIFT_SEQUENCES(SEQUENCE_NAME,CURRENT_NUMBER) VALUES ('" +
+              sequenceName +
+              "',1) ";
+            tx.executeSql(sql);
+          }
+          sql =
+            "SELECT (CURRENT_NUMBER+1) NEXT_NUMBER FROM SWIFT_SEQUENCES WHERE SEQUENCE_NAME='" +
+            sequenceName +
+            "'";
+          tx.executeSql(
+            sql,
+            [],
+            function(tx, results) {
+              sql =
+                "UPDATE SWIFT_SEQUENCES SET CURRENT_NUMBER=" +
+                results.rows.item(0).NEXT_NUMBER;
+              sql += " WHERE SEQUENCE_NAME='" + sequenceName + "'";
+              tx.executeSql(sql);
+              callback(new Number(results.rows.item(0).NEXT_NUMBER) * -1);
+            },
+            function(tx, err) {
+              if (err.code !== 0) {
+                errCallback(err);
+              }
+            }
+          );
+        },
+        function(tx, err) {
+          if (err.code != 0) {
+            errCallback(err);
+          }
+        }
+      );
+    },
+    function(err) {
+      errCallback(err);
+    }
+  );
+}
+
+function AddSeriesForSku(sku, skuName, precioSku) {
+  if (vieneDeListadoDeDocumentosDeEntrega) {
+    return;
+  }
+  try {
+    var labelSku = $("#UiLblSkuSerie");
+    labelSku.attr("SKU", sku);
+    labelSku.attr("SKU_NAME", skuName);
+    labelSku.attr("SKU_PRICE", precioSku);
+
+    var serieControlador = new SerieControlador();
+    serieControlador.MostrarPantallaDeSeries();
+    serieControlador = null;
+    labelSku = null;
+  } catch (e) {
+    notify(e.message);
+  }
+}
+
+function PublicarTareaDeEntrega(_tarea) {
+  try {
+    var msg = new TareaMensaje(this);
+    msg.tarea = _tarea;
+    mensajero.publish(msg, getType(TareaMensaje));
+  } catch (e) {
+    notify("Error, PublicarTareaDeEntrega: " + e.message);
+  }
+}
+
+function getType(sender) {
+  var tp = sender.name;
+  return tp;
+}
+
+function DelegarGlobalUtils(messengerLocal) {
+  _globalUtils.tokenListaDeDetalleDeDemandaDeDespachoConsolidado = messengerLocal.subscribe(
+    listaDeDetalleConsolidadoEntregado,
+    getType(ListaDeDetalleDeDemandaDeDespachoConsolidadoMensaje),
+    _globalUtils
+  );
+}
+
+function listaDeDetalleConsolidadoEntregado(message, subscriber) {
+  subscriber.listaDeDetalleDeDemandaDeDespachoParaProcesoDeEntrega =
+    message.listaDeDetalleDeDemandaDeDespachoConsolidado;
+}
+
+function lanzarEventoDePerdidaDeConexionAlServidor() {
+  // Creamos el evento.
+  var event = document.createEvent("Event");
+
+  /* Definimos el nombre del evento que es 'build'.*/
+  // ReSharper disable once Html.EventNotResolved
+  event.initEvent("server-connection-lost", true, true);
+
+  //disparamos el evento
+  document.dispatchEvent(event);
+
+  event = null;
+}
+
+function delegarSocketsDeObjetosJs(socketIo) {
+  var transferenciaDetalleControlador = new TransferenciaDetalleControlador(),
+    notificacionControlador = new NotificacionControlador();
+
+  transferenciaDetalleControlador.delegarSockets(socketIo);
+  notificacionControlador.delegarSockets(socketIo);
+}
+
+function habilitarOpcionesDeFacturacionConCredito(cliente) {
+  var uiColLblChashAmount = $("#UiColLblChashAmount");
+  var uiColLblCreditAmount = $("#UiColLblCreditAmount");
+  var uiColTxtCashAmount = $("#UiColTxtCashAmount");
+  var uiColLblCreditAmountTotal = $("#UiColLblCreditAmountTotal");
+  var liInvoiceDueDate = $("#UiLiInvoiceDueDate");
+  var uiLblInvoiceDueDate = $("#UiLblInvoiceDueDate");
+  var uiRowBtnConsignment = $("#UiRowBtnConsignment");
+  var uiLblInvoiceDueDateInfo = $("#UiLblInvoiceDueDateInfo");
+
+  if (cliente.canBuyOnCredit) {
+    uiColLblCreditAmountTotal.css("display", "block");
+    uiColLblCreditAmount.css("display", "block");
+    liInvoiceDueDate.css("display", "block");
+
+    uiLblInvoiceDueDate.text(cliente.invoiceDueDate.split(" ")[0]);
+    uiLblInvoiceDueDateInfo.text(
+      "Fecha de Vencimiento: (" +
+        cliente.currentAccountingInformation.extraDays +
+        " Días)"
+    );
+
+    uiColLblChashAmount.css("width", "50%");
+    uiColLblCreditAmount.css("width", "50%");
+    uiColTxtCashAmount.css("width", "50%");
+    uiColLblCreditAmountTotal.css("width", "50%");
+    uiRowBtnConsignment.css("display", "none");
+  } else {
+    uiLblInvoiceDueDateInfo.text("");
+    uiColLblCreditAmount.css("display", "none");
+    liInvoiceDueDate.css("display", "none");
+    uiColLblChashAmount.css("width", "100%");
+
+    uiColTxtCashAmount.css("width", "100%");
+    uiColLblCreditAmountTotal.css("display", "none");
+  }
+
+  uiLblInvoiceDueDateInfo = null;
+  uiColLblChashAmount = null;
+  uiColLblCreditAmount = null;
+  uiColTxtCashAmount = null;
+  uiColLblCreditAmountTotal = null;
+  liInvoiceDueDate = null;
+  uiLblInvoiceDueDate = null;
+  uiRowBtnConsignment = null;
+}
+
+function dividirMontoDeFacturaEntreEfectivoYCreditoDisponibleDeCliente(
+  cliente,
+  callback
+) {
+  if (
+    cliente.canBuyOnCredit &&
+    cliente.currentAccountingInformation.outstandingBalance > 0
+  ) {
+    if (
+      gInvocingTotal <= cliente.currentAccountingInformation.outstandingBalance
+    ) {
+      cliente.totalInvoicedIsOnCredit = true;
+      cliente.creditAmount = gInvocingTotal;
+      cliente.cashAmount = 0;
+      gPagado = 1;
+    } else {
+      cliente.cashAmount =
+        gInvocingTotal -
+        cliente.currentAccountingInformation.outstandingBalance;
+      cliente.creditAmount =
+        cliente.currentAccountingInformation.outstandingBalance;
+      gPagado = gInvocingTotal === cliente.cashAmount + cliente.creditAmount;
+    }
+
+    cliente.invoiceHasCredit = true;
+
+    callback(cliente);
+  } else {
+    cliente.cashAmount = gInvocingTotal;
+    cliente.creditAmount = 0;
+    cliente.totalInvoicedIsOnCredit = false;
+    cliente.invoiceHasCredit = false;
+    callback(cliente);
+  }
+}
+
+function actualizarConfiguracionDeFormatoDeCantidades(
+  currencySymbol,
+  decimalPlaces
+) {
+  window.accounting.settings = {
+    currency: {
+      symbol: currencySymbol + ".", // default currency symbol is 'Q.'
+      format: "%s%v", // controls output: %s = symbol, %v = value/number (can be object: see below)
+      decimal: ".", // decimal point separator
+      thousand: ",", // thousands separator
+      precision: decimalPlaces // decimal places
+    },
+    number: {
+      precision: decimalPlaces, // default precision on numbers is 0
+      thousand: ",",
+      decimal: "."
+    }
+  };
+}
+
+function publicarClienteParaProcesoDeCobroDeFacturasVencidas(callback) {
+  var cliente = new Cliente();
+  var clienteMensaje = new ClienteMensaje(this);
+
+  cliente.clientId = gClientCode;
+  cliente.clientName = gClientName;
+  cliente.clientTaxId = gNit;
+
+  clienteMensaje.cliente = cliente;
+  clienteMensaje.vistaCargandosePorPrimeraVez = true;
+  clienteMensaje.tipoDePagoAProcesar = TipoDePagoDeFactura.FacturaVencida;
+
+  mensajero.publish(clienteMensaje, getType(ClienteMensaje));
+
+  callback();
+}
+
+function rellenarPalabra(
+  cantidadDeCaracteresCorrectos,
+  caracterDeRelleno,
+  palabraARellenar
+) {
+  if (palabraARellenar.length < cantidadDeCaracteresCorrectos) {
+    palabraARellenar = caracterDeRelleno + palabraARellenar;
+    return rellenarPalabra(
+      cantidadDeCaracteresCorrectos,
+      caracterDeRelleno,
+      palabraARellenar
+    );
+  } else {
+    return palabraARellenar.toString();
+  }
+}
+
+function cortarLineaDeTexto(texto, maximoDeCaracteres) {
+  var objetoARetornar = [];
+  var palabras = texto.split(/\b/);
+
+  var lineaActual = "";
+  var ultimoEspacio = "";
+  palabras.forEach(function(d) {
+    var anterior = lineaActual;
+    lineaActual += ultimoEspacio + d;
+
+    var longitud = lineaActual.length;
+
+    if (longitud > maximoDeCaracteres) {
+      objetoARetornar.push(anterior.trim());
+      lineaActual = d;
+      ultimoEspacio = "";
+    } else {
+      var aplica = lineaActual.match(/(.*)(\s+)$/);
+      ultimoEspacio = (aplica && aplica.length === 3 && aplica[2]) || "";
+      lineaActual = (aplica && aplica.length === 3 && aplica[1]) || lineaActual;
+    }
+  });
+
+  if (lineaActual) {
+    objetoARetornar.push(lineaActual.trim());
+  }
+
+  return objetoARetornar;
+}
+
+function goHome(
+  transition,
+  reverse = false,
+  changeHash = false,
+  showLoadMsg = false
+) {
+  $.mobile.changePage("#menu_page", {
+    transition,
+    reverse,
+    changeHash,
+    showLoadMsg
+  });
+}
+
+function verificarDatosDeFacturacion(callback) {
+  var nit = $("#txtNIT").val();
+  var nombreFacturacion = $("#txtNombre").val();
+
+  if (!nit || !nombreFacturacion) {
+    notify(
+      "Los datos de facturación no debn estar vacíos, por favor verifique y vuelva a intentar."
+    );
+  } else {
+    callback(nit, nombreFacturacion);
   }
 }

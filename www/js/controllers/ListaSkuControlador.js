@@ -55,8 +55,6 @@ var ListaSkuControlador = (function () {
         });
         $("#skus_list_page").on("pageshow", function () {
             var criterioDeBusquedaSku = $("#uiTxtFilterListSkusPage");
-            criterioDeBusquedaSku.val("");
-            criterioDeBusquedaSku.trigger("click");
             criterioDeBusquedaSku.focus();
             criterioDeBusquedaSku = null;
             if (este.configuracionDecimales == undefined ||
@@ -80,6 +78,15 @@ var ListaSkuControlador = (function () {
                     notify(resultado.mensaje);
                 });
             }
+
+            setTimeout(() => {
+                var criterioDeBusquedaSku = $("#uiTxtFilterListSkusPage");
+                if (criterioDeBusquedaSku.val() != "") {
+                    var e = $.Event('keypress');
+                    e.keyCode = 13; // Intr
+                    criterioDeBusquedaSku.trigger(e)
+                }
+            }, 1500);
         });
         document.addEventListener("backbutton", function () {
             este.volverAPantallaAnterior();
@@ -122,7 +129,12 @@ var ListaSkuControlador = (function () {
                 function (error) {
                     alert("Fallo escán: " + error);
                 }
-             );
+            );
+            console.log(skusFiltrados.length);
+            _this_1.listaSku = skusFiltrados;
+            _this_1.cargarListaSku(skusFiltrados.slice(0, _this_1.pivotLimit), _this_1.configuracionDecimales);
+            _this_1.lastLowLimit = 0;
+            _this_1.currentLimit = _this_1.pivotLimit;
         });
         $(document).on("click", "#form-search-skus .ui-input-clear", function () {
             _this_1.listaSku = _this_1.listaSkuOriginal;

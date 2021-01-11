@@ -239,19 +239,23 @@ var DocumentoVentaControlador = (function () {
                 this.finalizarTareaSinGestion(function () { });
             }
             else {
-                if (this.cliente.cuentaCorriente.limiteDeCredito > 0 &&
-                    this.aplicaReglaDeValidacionDeLimiteDeCredito) {
+                /*
+                if (this.cliente.cuentaCorriente.limiteDeCredito > 0) {
                     var totalDeVenta = this.obtenerTotalDeOrdenDeVenta(this.cliente.appliedDiscount, this.listaDeSkuOrdenDeVenta);
                     if (this.cliente.outStandingBalance < totalDeVenta) {
                         notify("ERROR, No tiene credito sufiente para esta venta, disponible: " +
                             DarFormatoAlMonto(format_number(this.cliente.outStandingBalance, this.configuracionDecimales.defaultDisplayDecimals)));
                         return;
                     }
-                }
+                }*/
                 this.validarConfiguracionDeBonificacionPorCombos(function () {
                     var uiComentarioDeOrdenDeVenta = $("#UiComentarioDeOrdenDeVenta");
                     _this_1.cliente.salesComment = uiComentarioDeOrdenDeVenta.val();
                     uiComentarioDeOrdenDeVenta = null;
+                    var uiNumeroDeOrdenDeCompraDeOrdenDeVenta = $("#UiNumeroDeOrdenDeCompraDeOrdenDeVenta");
+                    _this_1.cliente.purchaseOrderNumber = uiNumeroDeOrdenDeCompraDeOrdenDeVenta.val();
+                    _this_1.cliente.purchaseOrderNumber.trim();
+                    uiNumeroDeOrdenDeCompraDeOrdenDeVenta = null;
                     _this_1.esPrimerMensajeDeDescuento = true;
                     _this_1.calcularDescuento(_this_1, function () {
                         _this_1.tareaServicio.obtenerRegla("AplicarReglasComerciales", function (listaDeReglasAplicarReglasComerciales) {
@@ -418,6 +422,12 @@ var DocumentoVentaControlador = (function () {
         EstaGpsDesavilitado(function () {
             BloquearPantalla();
             _this_1.limpiarListaDeSku(function () {
+                let des = localStorage.getItem('des') ? JSON.parse(localStorage.getItem('des')) : []
+                let ordenes = localStorage.getItem('ordenes') ? JSON.parse(localStorage.getItem('ordenes')) : []
+                des.push(_this_1.descuentoPorMontoGeneral)
+                ordenes.push(_this_1.descuentoPorMontoGeneral)
+                localStorage.setItem('descuentos', JSON.stringify(des))
+                localStorage.setItem('ordenDeVenta', JSON.stringify(ordenes))
                 if (_this_1.descuentoPorMontoGeneral.apply) {
                     var promo = new Promo();
                     promo.promoId = _this_1.descuentoPorMontoGeneral.promoId;
@@ -469,6 +479,9 @@ var DocumentoVentaControlador = (function () {
                         listaDeOrdenAplicarDescuentos: _this_1.listaDeOrdenAplicarDescuentos
                     }
                 });
+                var uiNumeroDeOrdenDeCompraDeOrdenDeVenta = $("#UiNumeroDeOrdenDeCompraDeOrdenDeVenta");
+                uiNumeroDeOrdenDeCompraDeOrdenDeVenta.val("");
+                uiNumeroDeOrdenDeCompraDeOrdenDeVenta = null;
             }, function (resultado) {
                 notify(resultado.mensaje);
             });
@@ -2055,7 +2068,7 @@ var DocumentoVentaControlador = (function () {
         catch (ex) {
             errCallback({
                 codigo: -1,
-                mensaje: "Error al obtener historico de promociones: " + ex.message
+                mensaje: "Error al cargar bonificaciones por monto general: " + ex.message
             });
         }
     };

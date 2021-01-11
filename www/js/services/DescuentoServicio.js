@@ -66,7 +66,7 @@ var DescuentoServicio = (function () {
                     descuento.promoName = descuentoSql.PROMO_NAME;
                     descuento.promoType = descuentoSql.PROMO_TYPE;
                     descuento.frequency = descuentoSql.FREQUENCY;
-                    descuento.isUnique = descuentoSql.IS_UNIQUE === 1;
+                    descuento.isUnique = (descuentoSql.IS_UNIQUE === 1);
                     listaDeDescuentos.push(descuento);
                     descuento = null;
                     descuentoSql = null;
@@ -162,8 +162,7 @@ var DescuentoServicio = (function () {
         }, function (err) {
             callbackError({
                 codigo: -1,
-                mensaje: "Error al obtener los descuentos por monto general y familia: " +
-                    err.message
+                mensaje: "Error al obtener los descuentos por monto general y familia: " + err.message
             });
         });
     };
@@ -252,8 +251,7 @@ var DescuentoServicio = (function () {
         }, function (err) {
             callbackError({
                 codigo: -1,
-                mensaje: "Error al obtener los descuentos por familia y tipo pago: " +
-                    err.message
+                mensaje: "Error al obtener los descuentos por familia y tipo pago: " + err.message
             });
         });
     };
@@ -431,8 +429,7 @@ var DescuentoServicio = (function () {
         }, function (err) {
             callbackError({
                 codigo: -1,
-                mensaje: "Error al obtener los descuentos por familia y tipo de pago: " +
-                    err.message
+                mensaje: "Error al obtener los descuentos por familia y tipo de pago: " + err.message
             });
         });
     };
@@ -459,8 +456,7 @@ var DescuentoServicio = (function () {
         }, function (err) {
             callbackError({
                 codigo: -1,
-                mensaje: "Error al obtener los el orden para aplicar los descuentos: " +
-                    err.message
+                mensaje: "Error al obtener los el orden para aplicar los descuentos: " + err.message
             });
         });
     };
@@ -503,8 +499,7 @@ var DescuentoServicio = (function () {
                 if (descuentoPorMontoGeneralYFamilia) {
                     switch (descuentoPorMontoGeneralYFamilia.discountType) {
                         case TiposDeDescuento.Porcentaje.toString():
-                            descutnoPorPorcentaje +=
-                                descuentoPorMontoGeneralYFamilia.discount;
+                            descutnoPorPorcentaje += descuentoPorMontoGeneralYFamilia.discount;
                             break;
                         case TiposDeDescuento.Monetario.toString():
                             descutnoMonetario += descuentoPorMontoGeneralYFamilia.discount;
@@ -514,8 +509,7 @@ var DescuentoServicio = (function () {
                 if (listaDescuentoPorFamiliaYTipoPago) {
                     switch (listaDescuentoPorFamiliaYTipoPago.discountType) {
                         case TiposDeDescuento.Porcentaje.toString():
-                            descutnoPorPorcentaje +=
-                                listaDescuentoPorFamiliaYTipoPago.discount;
+                            descutnoPorPorcentaje += listaDescuentoPorFamiliaYTipoPago.discount;
                             break;
                         case TiposDeDescuento.Monetario.toString():
                             descutnoMonetario += listaDescuentoPorFamiliaYTipoPago.discount;
@@ -562,8 +556,7 @@ var DescuentoServicio = (function () {
                 }
                 else {
                     if (!paquete.isUniqueDiscountScale) {
-                        resultadoFamilia.isUniqueDiscountScale =
-                            paquete.isUniqueDiscountScale;
+                        resultadoFamilia.isUniqueDiscountScale = paquete.isUniqueDiscountScale;
                     }
                 }
             });
@@ -579,9 +572,11 @@ var DescuentoServicio = (function () {
                         listaDeSkuOrdenDeVenta.map(function (sku) {
                             if (sku.discount > 0) {
                                 var resultadoPaquetes = listaDePaquetes.find(function (paquete) {
-                                    return (paquete.codeSku === sku.sku &&
+                                    return (
+                                        paquete.codeSku === sku.sku &&
                                         paquete.codePackUnit === sku.codePackUnit &&
-                                        paquete.codeFamily === sku.codeFamilySku);
+                                        paquete.codeFamily === sku.codeFamilySku
+                                    );
                                 });
                                 if (!resultadoPaquetes) {
                                     descuntoParaAplicar = sku.discount;
@@ -617,9 +612,11 @@ var DescuentoServicio = (function () {
                             if (listaDeSoloTotalesYFamilias[0].total === 0) {
                                 listaDeSkuOrdenDeVenta.map(function (sku) {
                                     var resultadoPaquetes = listaDePaquetes.find(function (paquete) {
-                                        return (paquete.codeSku === sku.sku &&
+                                        return (
+                                            paquete.codeSku === sku.sku &&
                                             paquete.codePackUnit === sku.codePackUnit &&
-                                            paquete.codeFamily === sku.codeFamilySku);
+                                            paquete.codeFamily === sku.codeFamilySku
+                                        );
                                     });
                                     if (!resultadoPaquetes) {
                                         var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
@@ -668,9 +665,11 @@ var DescuentoServicio = (function () {
                             if (listaDeSoloTotalesYFamilias[0].total === 0) {
                                 listaDeSkuOrdenDeVenta.map(function (sku) {
                                     var resultadoPaquetes = listaDePaquetes.find(function (paquete) {
-                                        return (paquete.codeSku === sku.sku &&
+                                        return (
+                                            paquete.codeSku === sku.sku &&
                                             paquete.codePackUnit === sku.codePackUnit &&
-                                            paquete.codeFamily === sku.codeFamilySku);
+                                            paquete.codeFamily === sku.codeFamilySku
+                                        );
                                     });
                                     if (!resultadoPaquetes) {
                                         var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
@@ -723,9 +722,11 @@ var DescuentoServicio = (function () {
                 listaDeSkuOrdenDeVenta.map(function (sku) {
                     if (sku.discount > 0) {
                         var resultadoPaquetes = listaDePaquetes.find(function (paquete) {
-                            return (paquete.codeSku === sku.sku &&
+                            return (
+                                paquete.codeSku === sku.sku &&
                                 paquete.codePackUnit === sku.codePackUnit &&
-                                paquete.codeFamily === sku.codeFamilySku);
+                                paquete.codeFamily === sku.codeFamilySku
+                            );
                         });
                         if (!resultadoPaquetes) {
                             descuntoParaAplicar_1 = 0;
@@ -758,9 +759,11 @@ var DescuentoServicio = (function () {
                     if (listaDeSoloTotalesYFamilias[0].total === 0) {
                         listaDeSkuOrdenDeVenta.map(function (sku) {
                             var resultadoPaquetes = listaDePaquetes.find(function (paquete) {
-                                return (paquete.codeSku === sku.sku &&
+                                return (
+                                    paquete.codeSku === sku.sku &&
                                     paquete.codePackUnit === sku.codePackUnit &&
-                                    paquete.codeFamily === sku.codeFamilySku);
+                                    paquete.codeFamily === sku.codeFamilySku
+                                );
                             });
                             if (!resultadoPaquetes) {
                                 var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
@@ -806,9 +809,11 @@ var DescuentoServicio = (function () {
                     if (listaDeSoloTotalesYFamilias[0].total === 0) {
                         listaDeSkuOrdenDeVenta.map(function (sku) {
                             var resultadoPaquetes = listaDePaquetes.find(function (paquete) {
-                                return (paquete.codeSku === sku.sku &&
+                                return (
+                                    paquete.codeSku === sku.sku &&
                                     paquete.codePackUnit === sku.codePackUnit &&
-                                    paquete.codeFamily === sku.codeFamilySku);
+                                    paquete.codeFamily === sku.codeFamilySku
+                                );
                             });
                             if (!resultadoPaquetes) {
                                 var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {

@@ -3,7 +3,8 @@ Sonda Mobile para Pre-ventas y distribución de rutas
 
 ## Dependencias
 - Cordova 7.0.0
-- Node 9.5.0
+- Node 12.14.1
+- Android Studio
 
 ## Uso
 1. Instalar Cordova, versión 7.0.0
@@ -16,11 +17,7 @@ cordova platform add android@6.2.3
 ```
 A veces es necesario correr esto dos veces, puede tomar unos cuantos minutos.
 
-3. Compilar el código Typescript
-```bash
-tsc
-```
-4. Construir aplicación Android
+3. Construir aplicación Android
 ```bash
 cordova build android
 ```

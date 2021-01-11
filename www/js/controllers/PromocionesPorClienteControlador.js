@@ -544,7 +544,7 @@ var PromocionesPorClienteControlador = (function () {
                             "Min"
                         : "") + "-" + (bonificacion.isBonusByCombo === 1 ? "Completo" : ""));
                     listaAcordion_8.push("<td class=\"filaPromo\">");
-                    listaAcordion_8.push(format_number(bonificacion.skusPorCombo[0].qty, _this.configuracionDeDecimales.defaultDisplayDecimals) + " " + bonificacion.skusPorCombo[0].codePackUnit + " " + bonificacion.skusPorCombo[0].codeSku);
+                    listaAcordion_8.push(format_number(bonificacion.skusPorCombo.length ? bonificacion.skusPorCombo[0].qty : 0, _this.configuracionDeDecimales.defaultDisplayDecimals) + " " + (bonificacion.skusPorCombo.length ? bonificacion.skusPorCombo[0].codePackUnit : "N/A") + " " + (bonificacion.skusPorCombo.length ? bonificacion.skusPorCombo[0].codeSku : "N/A"));
                     listaAcordion_8.push("</td>");
                     listaAcordion_8.push("</td>");
                     listaAcordion_8.push("</tr>");

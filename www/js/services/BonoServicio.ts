@@ -24,7 +24,7 @@
                 sql += " ,BLS.FREQUENCY";
                 sql += " FROM BONUS_LIST_BY_SKU BLS";
                 sql += " INNER JOIN SKU_PRESALE SP ";
-                sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+                sql += " ON (SP.SKU = BLS.CODE_SKU)";
                 sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;
                 sql += " AND BLS.CODE_SKU = '" + sku.sku + "'";
                 sql += " ORDER BY BLS.LOW_LIMIT";
@@ -213,7 +213,7 @@
                 sql += " ,BLS.FREQUENCY";
                 sql += " FROM BONUS_LIST_BY_SKU_MULTIPLE BLS";
                 sql += " INNER JOIN SKU_PRESALE SP ";
-                sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+                sql += " ON (SP.SKU = BLS.CODE_SKU)";
                 sql += ` WHERE BLS.BONUS_LIST_ID = ${cliente.bonusListId}`;
                 sql += ` AND BLS.CODE_SKU = '${sku.sku}'`;
                 sql += " ORDER BY BLS.MULTIPLE";
@@ -726,7 +726,11 @@
                 sql += " ,BLS.FREQUENCY";
                 sql += " FROM BONUS_LIST_BY_SKU BLS";
                 sql += " INNER JOIN SKU_PRESALE SP ";
+<<<<<<< HEAD
                 sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+=======
+                sql += " ON (SP.SKU = BLS.CODE_SKU)";
+>>>>>>> master
                 sql += " WHERE BLS.BONUS_LIST_ID = " + cliente.bonusListId;                
                 sql += " ORDER BY BLS.LOW_LIMIT";
 
@@ -785,7 +789,11 @@
                 sql += " ,BLS.FREQUENCY";
                 sql += " FROM BONUS_LIST_BY_SKU_MULTIPLE BLS";
                 sql += " INNER JOIN SKU_PRESALE SP ";
+<<<<<<< HEAD
                 sql += " ON (SP.SKU = BLS.CODE_SKU_BONUS)";
+=======
+                sql += " ON (SP.SKU = BLS.CODE_SKU)";
+>>>>>>> master
                 sql += ` WHERE BLS.BONUS_LIST_ID = ${cliente.bonusListId}`;                
                 sql += " ORDER BY BLS.MULTIPLE";
 

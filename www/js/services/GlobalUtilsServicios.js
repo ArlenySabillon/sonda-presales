@@ -1214,6 +1214,9 @@ var GlobalUtilsServicio = (function () {
                             _this.imagenDeSkuServicio.almacenarImagenesDeProducto(data.row);
                         }
                         break;
+                    case "get_minimum_amount_order":
+                        localStorage.setItem('MINIMUM_ORDER_AMOUNT', data.row.MINIMUM_ORDER || "0");
+                        break;
                 }
             });
             socketIo.on("auth_not_found", function (data) {

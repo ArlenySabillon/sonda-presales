@@ -1,4 +1,10 @@
-﻿function GetrouteInvCompleted(data) {
+﻿/**
+ * Hay un monton de lineas comentadas que borran filas
+ * en el WebSQL es un misterio pq están así ya que no dejaron comenterios
+ * pero así funciona en PACASA entonces no las voy a descomentar
+ */
+
+function GetrouteInvCompleted(data) {
   if (data.pResult !== "OK") {
     my_dialog("", "", "close");
     notify(data.pResult);
@@ -125,11 +131,9 @@ function GetInitialRouteCompleted(data) {
       window.gInsertsInitialRoute.length = 0;
       localStorage.setItem("APP_IS_READY", "1");
       //cargarListaDeTareas();
-      var to = setTimeout(function() {
+      setTimeout(function() {
         clearInterval(intervalo);
-        clearTimeout(to);
         validarDesbloqueoDePantalla();
-
       }, 5000);
     },
     function(err) {
@@ -166,9 +170,8 @@ function InsertarRegistrosBDCompleta(callBack, errorCallBack) {
         console.log("Error al procesar instruccion SQL de inicio de ruta =>");
         console.log({
           "Ejecucion No.": iterationNumber,
-          Instruccion: window.gInsertsInitialRoute[iterationNumber]
+          Instruccion: lastQuery
         });
-        console.error(error)
         errorCallBack(error.message);
       }
     );
@@ -931,6 +934,7 @@ function MostarSecuenciaDeDocumentos(data) {
 
 function MostarResumenDeTareas(data) {
   if (!data) {
+    console.error('No `data` in function `MostrarResumenDeTareas(data)')
     return;
   }
   var vLI = "";

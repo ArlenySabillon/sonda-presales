@@ -10,6 +10,7 @@ var Cliente = (function () {
         this.spcialPriceListId = 0;
         this.lastPurchaseDate = null;
         this.discountByFamilyAndPaymentTypeListId = null;
+        this.purchaseOrderNumber = "";
         this.overdueInvoices = [];
         this.totalAmountPayedOfOverdueInvoices = 0;
         this.totalAmountOfOpenInvoices = 0;
