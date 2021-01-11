@@ -19,6 +19,10 @@ var ControlDeFinDeRutaControlador = (function () {
             este.enviarTodosLosDocumentosPendientesDeEnvioHaciaElServidor();
         });
         $("#BotonFinalizarRutaYMostrarResumenDeFinDeRuta").on("click", function () {
+            
+            if(gIsOnline === 0){
+                gIsOnline = DeviceIsOnline();
+            }
             if (gIsOnline === SiNo.Si) {
                 navigator.notification.confirm("¿Está seguro de finalizar ruta?", function (buttonIndex) {
                     if (buttonIndex === 2) {
@@ -37,7 +41,7 @@ var ControlDeFinDeRutaControlador = (function () {
                 }, "Sonda\u00AE Ruta " + SondaVersion, ["No", "Si"]);
             }
             else {
-                notify("Debe tener conexión al servidor para poder finalizar ruta.");
+                notify("Conectanto al servidor, vuelva a intentarlo.");
             }
         });
     };
