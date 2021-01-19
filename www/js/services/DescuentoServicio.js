@@ -728,7 +728,7 @@ var DescuentoServicio = (function () {
                 });
                 listaDePaquetes.map(function (paquete) {
                     if (paquete.qty !== 0) {
-                        var total = _this.obtenerTotalConDescueto(paquete.price * paquete.qty, 0, paquete.discountType);
+                        var total = _this.obtenerTotalConDescueto(paquete.qty, 0, paquete.discountType);
                         var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
                             return familia.codeFamilySku === paquete.codeFamily;
                         });

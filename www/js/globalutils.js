@@ -94,7 +94,7 @@ var default_image;
 var SondaServerURL = "";
 
 var currentBranch = "cendalzaRoute";
-var SondaVersion = "2020.11.10";
+var SondaVersion = "2021.1.18";
 var SondaServerOptions = {
   reconnect: true,
   "max reconnection attempts": 60000
