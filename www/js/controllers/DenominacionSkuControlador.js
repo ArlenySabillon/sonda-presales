@@ -1754,7 +1754,8 @@ var DenominacionSkuControlador = (function () {
         try {
             this.descuentoPorMontoGeneralYFamilia = new DescuentoPorMontoGeneralYFamilia();
             this.descuentoPorFamiliaYTipoPago = new DescuentoPorFamiliaYTipoPago();
-            this.descuentoServicio.obtenerDescuentos(this.paquetes, this.listaDeSkuOrdenDeVenta, this.cliente, this.listaHistoricoDePromos, function (listaDescuentoPorMontoGeneralYFamilia, listaDescuentoPorFamiliaYTipoPago) {
+            this.descuentoPorEscalaYFamilia = new DescuentoPorEscalaYFamilia();
+            this.descuentoServicio.obtenerDescuentos(this.paquetes, this.listaDeSkuOrdenDeVenta, this.cliente, this.listaHistoricoDePromos, function (listaDescuentoPorMontoGeneralYFamilia, listaDescuentoPorEscalaYFamilia ,listaDescuentoPorFamiliaYTipoPago) {
                 _this.obtenerPaqueteSeleccionado(function (paquete) {
                     var aplicarDescuentos = true;
                     if (paquete) {
@@ -1774,6 +1775,16 @@ var DenominacionSkuControlador = (function () {
                         aplicarDescuentos) {
                         _this.descuentoPorMontoGeneralYFamilia = resultadoDescuentoMontoGeneralYFamilia;
                     }
+
+                    var resultadoDescuentoEscalaYFamilia = listaDescuentoPorEscalaYFamilia.find(function (descuento) {
+                        return _this.sku.codeFamilySku === descuento.codeFamily;
+                    });
+                    if (resultadoDescuentoEscalaYFamilia &&
+                        !esDescuentoUnicoDeEscala &&
+                        aplicarDescuentos) {
+                        _this.descuentoPorEscalaYFamilia = resultadoDescuentoEscalaYFamilia;
+                    }
+
                     var resultadoDescuentoPorFamiliaYTipoPago = listaDescuentoPorFamiliaYTipoPago.find(function (descuento) {
                         return _this.sku.codeFamilySku === descuento.codeFamily;
                     });
@@ -1784,6 +1795,8 @@ var DenominacionSkuControlador = (function () {
                     }
                     var descuentoPorFamilia = _this
                         .descuentoPorMontoGeneralYFamilia.discount;
+                    var descuentoPorEscalaYFamilia = _this
+                        .descuentoPorEscalaYFamilia.discount;
                     var descuentoPorTipoPago = _this
                         .descuentoPorFamiliaYTipoPago.discount;
                     var uiLiDescuentoPorFamilia = $("#UiLiDescuentoPorFamilia");
@@ -1792,6 +1805,13 @@ var DenominacionSkuControlador = (function () {
                     var uiEtiquetaDescuentoPorFamiliaMaximo = $("#UiEtiquetaDescuentoPorFamiliaMaximo");
                     uiEtiquetaDescuentoPorFamiliaMaximo.css("display", "none");
                     uiEtiquetaDescuentoPorFamiliaMaximo = null;
+
+                    var uiEtiquetaDescuentoPorEscalaYFamiliaMaximo = $("#UiEtiquetaDescuentoPorEscalaYFamiliaMaximo");
+                    uiEtiquetaDescuentoPorEscalaYFamiliaMaximo.css("display", "none");
+                    uiEtiquetaDescuentoPorEscalaYFamiliaMaximo = null;
+
+
+
                     var uiEtiquetaDescuentoPorTipoPagoMaximo = $("#UiEtiquetaDescuentoPorTipoPagoMaximo");
                     uiEtiquetaDescuentoPorTipoPagoMaximo.css("display", "none");
                     uiEtiquetaDescuentoPorTipoPagoMaximo = null;
@@ -1813,6 +1833,20 @@ var DenominacionSkuControlador = (function () {
                         }
                         uiEtiquetaDescuentoPorFamiliaMaximo_1 = null;
                     }
+                    if (descuentoPorEscalaYFamilia > 0) {
+                        var uiEtiquetaDescuentoPorEscalaYFamiliaMaximo_1 = $("#UiEtiquetaDescuentoPorEscalaYFamiliaMaximo");
+                        uiEtiquetaDescuentoPorEscalaYFamiliaMaximo_1.css("display", "block");
+                        switch (_this.descuentoPorMontoGeneralYFamilia.discountType) {
+                            case TiposDeDescuento.Porcentaje.toString():
+                                uiEtiquetaDescuentoPorEscalaYFamiliaMaximo_1.text("Descuento por monto escala y familia: " + format_number(descuentoPorFamilia, _this.configuracionDeDecimales.defaultDisplayDecimals) + "%");
+                                break;
+                            case TiposDeDescuento.Monetario.toString():
+                                uiEtiquetaDescuentoPorEscalaYFamiliaMaximo_1.text("Descuento por monto escala y familia: " + DarFormatoAlMonto(format_number(descuentoPorFamilia, _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                                break;
+                        }
+                        uiEtiquetaDescuentoPorEscalaYFamiliaMaximo_1 = null;
+                    }
+                    
                     if (descuentoPorTipoPago > 0) {
                         var uiEtiquetaDescuentoPorTipoPagoMaximo_1 = $("#UiEtiquetaDescuentoPorTipoPagoMaximo");
                         uiEtiquetaDescuentoPorTipoPagoMaximo_1.css("display", "block");

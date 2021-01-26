@@ -54,13 +54,17 @@ var PromocionesPorClienteControlador = (function () {
             this.obtenerHistoricodePromo(function () {
                 _this.generarAcordionDePromoDescuentosPorEscala(function () {
                     _this.generarAcordionDePromoDescuentosPorMontoGeneral(function () {
-                        _this.generarAcordionDePromoDescuentosPorMontoYFamilia(function () {
-                            _this.generarAcordionDePromoDescuentosPorFamiliaYTipoPago(function () {
-                                _this.generarAcordionDePromoBonificacionPorMontoGeneral(function () {
-                                    _this.generarAcordionDePromoBonificacionesPorEscala(function () {
-                                        _this.generarAcordionDePromoBonificacionesPorMultiplo(function () {
-                                            _this.generarAcordionDePromoBonificacionesPorCombo(function () {
-                                                callback();
+                        _this.generarAcordionDePromoDescuentosPorEscalaYFamilia(function() {
+                            _this.generarAcordionDePromoDescuentosPorMontoYFamilia(function () {
+                                _this.generarAcordionDePromoDescuentosPorFamiliaYTipoPago(function () {
+                                    _this.generarAcordionDePromoBonificacionPorMontoGeneral(function () {
+                                        _this.generarAcordionDePromoBonificacionesPorEscala(function () {
+                                            _this.generarAcordionDePromoBonificacionesPorMultiplo(function () {
+                                                _this.generarAcordionDePromoBonificacionesPorCombo(function () {
+                                                    callback();
+                                                }, function (resultado) {
+                                                    errCallback(resultado);
+                                                });
                                             }, function (resultado) {
                                                 errCallback(resultado);
                                             });
@@ -76,12 +80,15 @@ var PromocionesPorClienteControlador = (function () {
                             }, function (resultado) {
                                 errCallback(resultado);
                             });
+                        
                         }, function (resultado) {
                             errCallback(resultado);
                         });
-                    }, function (resultado) {
-                        errCallback(resultado);
+
+                    }, function(resultado){
+                        errCallback(resultado)
                     });
+                    
                 }, function (resultado) {
                     errCallback(resultado);
                 });
@@ -212,7 +219,7 @@ var PromocionesPorClienteControlador = (function () {
                         var uiContenedorDePromociones = $("#UiContenedorDePromociones");
                         uiContenedorDePromociones.collapsibleset().trigger('create');
                         var listaAcordion_3 = [];
-                        listaAcordion_3.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorMontoYFamilia\">");
+                        listaAcordion_3.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorEscalaYFamilia\">");
                         listaAcordion_3.push("<h5>DMF<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaDescuento.length + "</span></h5>");
                         listaAcordion_3.push("<table class=\"tablePromo\" style=\"width: 100%\">");
                         listaAcordion_3.push("<tr class=\"filaCambioDeColor\">");
@@ -264,6 +271,70 @@ var PromocionesPorClienteControlador = (function () {
             errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
         }
     };
+
+    PromocionesPorClienteControlador.prototype.generarAcordionDePromoDescuentosPorEscalaYFamilia = function (callback, errCallback) {
+        var _this = this;
+        try {
+            this.descuentoServicio.obtener(this.cliente, function (listaDeDescuentos) {
+                _this.validarSiAplicaElDescuentoPorEscalaYFamilia(listaDeDescuentos, 0, function (listaDeDescuentosDisponibles) {
+                    var listaDescuento = listaDeDescuentosDisponibles;
+                    if (listaDescuento.length > 0) {
+                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
+                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var listaAcordion_3 = [];
+                        listaAcordion_3.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorEscalaYFamilia\">");
+                        listaAcordion_3.push("<h5>DMF<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaDescuento.length + "</span></h5>");
+                        listaAcordion_3.push("<table class=\"tablePromo\" style=\"width: 100%\">");
+                        listaAcordion_3.push("<tr class=\"filaCambioDeColor\">");
+                        listaAcordion_3.push("<th class=\"filaPromo\">Familia</th>");
+                        listaAcordion_3.push("<th class=\"filaPromo\">LI</th>");
+                        listaAcordion_3.push("<th class=\"filaPromo\">LS</th>");
+                        listaAcordion_3.push("<th class=\"filaPromo\">Descuento</th>");
+                        listaAcordion_3.push("</tr>");
+                        listaDescuento.map(function (descuento) {
+                            listaAcordion_3.push("<tr class=\"filaCambioDeColor\">");
+                            listaAcordion_3.push("<td class=\"filaPromo\">");
+                            listaAcordion_3.push("" + descuento.descriptionFamilySku);
+                            listaAcordion_3.push("</td>");
+                            listaAcordion_3.push("<td class=\"filaPromo\">");
+                            listaAcordion_3.push("" + DarFormatoAlMonto(format_number(descuento.lowAmount, _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                            listaAcordion_3.push("</td>");
+                            listaAcordion_3.push("<td class=\"filaPromo\">");
+                            listaAcordion_3.push("" + DarFormatoAlMonto(format_number(descuento.highAmount, _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                            listaAcordion_3.push("</td>");
+                            listaAcordion_3.push("<td class=\"filaPromo\">");
+                            switch (descuento.discountType) {
+                                case TiposDeDescuento.Porcentaje.toString():
+                                    listaAcordion_3.push(format_number(descuento.discount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "%");
+                                    break;
+                                case TiposDeDescuento.Monetario.toString():
+                                    listaAcordion_3.push("" + DarFormatoAlMonto(format_number(descuento.discount, _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                                    break;
+                            }
+                            listaAcordion_3.push("</td>");
+                            listaAcordion_3.push("</tr>");
+                        });
+                        listaAcordion_3.push("</table>");
+                        listaAcordion_3.push("</div>");
+                        uiContenedorDePromociones.append(listaAcordion_3.join('')).collapsibleset('refresh');
+                        uiContenedorDePromociones.trigger('create');
+                        callback();
+                    }
+                    else {
+                        callback();
+                    }
+                }, function (resultado) {
+                    errCallback(resultado);
+                });
+            }, function (resultado) {
+                errCallback(resultado);
+            });
+        }
+        catch (ex) {
+            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+        }
+    };
+
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoDescuentosPorFamiliaYTipoPago = function (callback, errCallback) {
         var _this = this;
         try {
