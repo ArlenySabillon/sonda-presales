@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="201601315" id="mobility.sonda.route" version="2020.11.10" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="201601315" id="mobility.sonda.route" version="2021.02.25" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SondaRoute</name>
     <description>
         Sales and Operations Network Digital Assitant
@@ -9,7 +9,7 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <icon src="res/icon.png" />
+    <icon src="res/SONDA.png" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
