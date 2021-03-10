@@ -533,6 +533,7 @@ var DescuentoServicio = (function () {
                     skuAAgregar.codeFamilySku = sku.codeFamilySku;
                     skuAAgregar.total = 0;
                     skuAAgregar.isUniqueDiscountScale = sku.isUniqueDiscountScale;
+                    skuAAgregar.qty = 0;
                     listaDeSoloTotalesYFamilias.push(skuAAgregar);
                 }
                 else {
@@ -749,6 +750,7 @@ var DescuentoServicio = (function () {
                                 });
                                 if (resultadoFamilia) {
                                     resultadoFamilia.total += sku.total;
+                                    resultadoFamilia.qty += sku.qty;
                                 }
                             }
                         });
@@ -768,6 +770,11 @@ var DescuentoServicio = (function () {
                 listaDeSoloTotalesYFamilias.map(function (familia) {
                     if (!familia.isUniqueDiscountScale) {
                         var descuentoPorMontoGeneralYFamilia_2 = listaDescuentoPorMontoGeneralYFamilia.find(function (descuento) {
+                            if (familia.qty !== 0) {
+                                return (descuento.codeFamily === familia.codeFamilySku &&
+                                    descuento.lowAmount <= familia.qty &&
+                                    descuento.highAmount >= familia.qty);
+                            }
                             return (descuento.codeFamily === familia.codeFamilySku &&
                                 descuento.lowAmount <= familia.total &&
                                 descuento.highAmount >= familia.total);
