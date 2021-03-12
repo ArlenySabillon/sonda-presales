@@ -748,7 +748,7 @@ var DescuentoServicio = (function () {
                                 var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
                                     return familia.codeFamilySku === sku.codeFamilySku;
                                 });
-                                if (resultadoFamilia) {
+                                if (resultadoFamilia && listaDePaquetes.length == 0) {
                                     resultadoFamilia.total += sku.total;
                                     resultadoFamilia.qty += sku.qty;
                                 }
@@ -760,7 +760,7 @@ var DescuentoServicio = (function () {
                                 var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
                                     return familia.codeFamilySku === paquete.codeFamily;
                                 });
-                                if (resultadoFamilia) {
+                                if (resultadoFamilia && !paquete) {
                                     resultadoFamilia.total += total;
                                 }
                             }
@@ -780,12 +780,10 @@ var DescuentoServicio = (function () {
                                 descuento.highAmount >= familia.total);
                         });
                         if (descuentoPorMontoGeneralYFamilia_2) {
-                            var resultadoDescuento = listaDescuentoPorMontoGeneralYFamiliaARetornar.find(function (descuento) {
-                                return (descuento.promoId ===
-                                    descuentoPorMontoGeneralYFamilia_2.promoId);
-                            });
-                            if (!resultadoDescuento) {
-                                listaDescuentoPorMontoGeneralYFamiliaARetornar.push(descuentoPorMontoGeneralYFamilia_2);
+                            listaDescuentoPorMontoGeneralYFamiliaARetornar.push(descuentoPorMontoGeneralYFamilia_2);
+
+                            if (listaDescuentoPorMontoGeneralYFamiliaARetornar.length == listaDeSoloTotalesYFamilias.length) {
+                                return (descuentoPorMontoGeneralYFamilia_2.promoId);
                             }
                         }
                     }

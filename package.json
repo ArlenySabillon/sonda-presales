@@ -1,6 +1,6 @@
 {
     "name": "mobility.sonda.route",
-    "version": "2021.02.25",
+    "version": "2021.03.10",
     "displayName": "SondaRoute",
     "cordova": {
         "platforms": [
