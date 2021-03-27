@@ -291,65 +291,6 @@ var SkuServicio = (function () {
             });
         });
     };
-    SkuServicio.prototype.obtenerCatalogoDeProductos = function (cliente, sku, configuracionDecimales, callback, errorCallBack, opcionDeOrdenamiento, tipoDeOrdenamiento) {
-        SONDA_DB_Session.transaction(function (tx) {
-            var sql = [];
-            sql.push(" SELECT DISTINCT");
-            sql.push(" SP.SKU");
-            sql.push(" ,SP.SKU_NAME");
-            sql.push(" ,SP.ON_HAND");
-            sql.push(" ,IFNULL(PLS.PRICE,0) AS COST");
-            sql.push(" ,SP.CODE_FAMILY_SKU");
-            sql.push(" ,FS.DESCRIPTION_FAMILY_SKU");
-            sql.push(" ,SP.ON_HAND - SP.IS_COMITED AVAILABLE");
-            sql.push(" FROM SKU_PRESALE SP");
-            sql.push(" LEFT JOIN FAMILY_SKU FS ON (FS.CODE_FAMILY_SKU = SP.CODE_FAMILY_SKU)");
-            sql.push(" INNER JOIN PRICE_LIST_BY_SKU_PACK_SCALE PLS ON (PLS.CODE_SKU = SP.SKU)");
-            sql.push(" INNER JOIN PACK_CONVERSION PC ON (PC.CODE_SKU = PLS.CODE_SKU AND PC.CODE_PACK_UNIT_FROM = PLS.CODE_PACK_UNIT)");
-            sql.push(" WHERE PLS.CODE_PRICE_LIST = '" + cliente.priceListId + "'");
-            sql.push(" AND SP.WAREHOUSE = '" + localStorage.getItem("PRESALE_WHS") + "'");
-            sql.push(" AND PLS.PRIORITY = 0 AND LOW_LIMIT = 1 AND PC.[ORDER] = 1");
-            if (sku.codeFamilySku !== "ALL") {
-                sql.push(" AND SP.CODE_FAMILY_SKU = '" + sku.codeFamilySku + "'");
-            }
-            if (opcionDeOrdenamiento && tipoDeOrdenamiento) {
-                sql.push(" ORDER BY " + opcionDeOrdenamiento + " " + tipoDeOrdenamiento);
-            }
-            else {
-                sql.push(" ORDER BY SP.SKU_NAME ASC ");
-            }
-            tx.executeSql(sql.join(""), [], function (_tx1, results) {
-                if (results.rows.length >= 1) {
-                    var listaTemporalDeProductos = [];
-                    for (var i = 0; i < results.rows.length; i++) {
-                        var productoTemporal = results.rows.item(i);
-                        var producto = new Sku();
-                        producto.sku = productoTemporal.SKU;
-                        producto.skuName = productoTemporal.SKU_NAME;
-                        producto.cost = trunc_number(productoTemporal.COST, configuracionDecimales.defaultCalculationsDecimals);
-                        producto.onHand = trunc_number(productoTemporal.ON_HAND, configuracionDecimales.defaultCalculationsDecimals);
-                        producto.available = trunc_number(productoTemporal.AVAILABLE, configuracionDecimales.defaultCalculationsDecimals);
-                        producto.codeFamilySku = productoTemporal.CODE_FAMILY_SKU;
-                        producto.descriptionFamilySku = productoTemporal.DESCRIPTION_FAMILY_SKU;
-                        listaTemporalDeProductos.push(producto);
-                    }
-                    callback(listaTemporalDeProductos);
-                }
-                else {
-                    var operacion = new Operacion();
-                    operacion.resultado = ResultadoOperacionTipo.Error;
-                    operacion.codigo = 0;
-                    operacion.mensaje = "No se encontraron productos en el catálogo.";
-                    errorCallBack(operacion);
-                }
-            });
-        }, function (err) {
-            errorCallBack({
-                codigo: -1,
-                mensaje: "Error al obtener el catálogo de productos debido a: " + err.message
-            });
-        });
-    };
     return SkuServicio;
 }());
 //# sourceMappingURL=SkuServicio.js.map

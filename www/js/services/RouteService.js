@@ -123,7 +123,6 @@ function GetInitialRouteCompleted(data) {
   InsertarRegistrosBDCompleta(
     function() {
       window.gInsertsInitialRoute.length = 0;
-      localStorage.setItem("APP_IS_READY", "1");
       //cargarListaDeTareas();
       setTimeout(function() {
         clearInterval(intervalo);
@@ -303,9 +302,7 @@ function AddToCustomer(data) {
   pSql += " , '" + data.row.CODE_CHANNEL + "'";
   pSql += " , " + data.row.GROUP_NUM;
   pSql += " , " + data.row.OUTSTANDING_BALANCE;
-  pSql += data.row.LAST_PURCHASE_DATE
-    ? " , '" + data.row.LAST_PURCHASE_DATE + "'"
-    : ", NULL";
+  pSql += data.row.LAST_PURCHASE_DATE ? (" , '" + data.row.LAST_PURCHASE_DATE + "'") : ", NULL";
   pSql += " )";
   window.gInsertsInitialRoute.push(pSql);
 }

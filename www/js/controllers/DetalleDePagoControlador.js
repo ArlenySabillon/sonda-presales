@@ -29,7 +29,7 @@ var DetalleDePagoControlador = (function () {
         etiquetaDeInformacionDeCliente.text(this.documentoDePago.codeCustomer + " - " + this.documentoDePago.nameCustomer);
         etiquetaDeInformacionDeCliente = null;
         var etiquetaDeInformacionDelPago = $("#UiLblPaymentAmountInfo");
-        etiquetaDeInformacionDelPago.text("Recibo No. " + this.documentoDePago.docNum + " (" + this.configuracionDeDecimales.currencySymbol + ". " + format_number(this.documentoDePago.paymentAmount, this.configuracionDeDecimales.defaultDisplayDecimals) + ")");
+        etiquetaDeInformacionDelPago.text("Recibo No. " + this.documentoDePago.docNum + " (" + this.simboloDeMoneda + ". " + format_number(this.documentoDePago.paymentAmount, this.configuracionDeDecimales.defaultDisplayDecimals) + ")");
         etiquetaDeInformacionDelPago = null;
         this.construirVisualizacionDeDetalleDeFacturasCanceladas(this.documentoDePago, function () {
             InteraccionConUsuarioServicio.desbloquearPantalla();
@@ -47,8 +47,8 @@ var DetalleDePagoControlador = (function () {
                 cadenaHtmlDeDetalleDocumentosDePago_1.push(" <label>No. " + detalle.invoiceId + " </label>");
                 cadenaHtmlDeDetalleDocumentosDePago_1.push(" <label>Vencimiento: " + detalle.dueDate.toString().split(" ")[0] + " </label>");
                 cadenaHtmlDeDetalleDocumentosDePago_1.push(" <label>Emisi\u00F3n: " + detalle.createdDate.toString().split(" ")[0] + " </label>");
-                cadenaHtmlDeDetalleDocumentosDePago_1.push(" <label>Saldo: " + _this.configuracionDeDecimales.currencySymbol + ". " + format_number(detalle.pendingToPaid, _this.configuracionDeDecimales.defaultDisplayDecimals) + " </label>");
-                cadenaHtmlDeDetalleDocumentosDePago_1.push(" <span class=\"ui-li-count\">" + _this.configuracionDeDecimales.currencySymbol + ". " + format_number(detalle.payedAmount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "</span>");
+                cadenaHtmlDeDetalleDocumentosDePago_1.push(" <label>Saldo: " + _this.simboloDeMoneda + ". " + format_number(detalle.pendingToPaid, _this.configuracionDeDecimales.defaultDisplayDecimals) + " </label>");
+                cadenaHtmlDeDetalleDocumentosDePago_1.push(" <span class=\"ui-li-count\">" + _this.simboloDeMoneda + ". " + format_number(detalle.payedAmount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "</span>");
                 cadenaHtmlDeDetalleDocumentosDePago_1.push(" </a>");
                 cadenaHtmlDeDetalleDocumentosDePago_1.push(" </li>");
             });

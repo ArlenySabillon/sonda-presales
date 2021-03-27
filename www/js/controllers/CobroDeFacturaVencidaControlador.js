@@ -266,31 +266,13 @@ var CobroDeFacturaVencidaControlador = (function () {
             }
         }, "Sonda\u00AE " + SondaVersion, ["No", "Si"]);
     };
-    CobroDeFacturaVencidaControlador.prototype.obtenerAutorizacionDeUsuarioParaContinuarPedido = function (callback) {
-        InteraccionConUsuarioServicio.desbloquearPantalla();
-        navigator.notification.confirm("El monto de pago es cero. ¿Desea continuar el proceso de venta?", function (buttonIndex) {
-            if (buttonIndex === BotonSeleccionado.Si) {
-                InteraccionConUsuarioServicio.bloquearPantalla();
-                callback();
-            }
-        }, "Sonda\u00AE " + SondaVersion, ["No", "Si"]);
-    };
     CobroDeFacturaVencidaControlador.prototype.procesarCobroDeFacturas = function () {
         var _this = this;
         try {
             var montoDePago_1 = this.obtenerMontoIngresadoEnCampoDePago();
             if (montoDePago_1 === 0) {
-                if (this.valorDeParametroDePorcentajeMinimoDePagoDeFacturasVencidas <=
-                    0 &&
-                    this.aplicaPorcentajeMinimoDePagoDeFacturasVencidas) {
-                    this.obtenerAutorizacionDeUsuarioParaContinuarPedido(function () {
-                        _this.funcionDeRetornoAPocesoPrincipal();
-                    });
-                }
-                else {
-                    InteraccionConUsuarioServicio.desbloquearPantalla();
-                    notify("Por favor, ingrese un monto v\u00E1lido.");
-                }
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                notify("Por favor, ingrese un monto v\u00E1lido.");
             }
             else {
                 if (montoDePago_1 > this.sumatoriaTotalPendienteDePagoDeFacturasVencidas) {
@@ -372,10 +354,8 @@ var CobroDeFacturaVencidaControlador = (function () {
                         pagoDefacturaDetalle.invoiceId = facturaVencida.invoiceId;
                         pagoDefacturaDetalle.docEntry = facturaVencida.docEntry;
                         pagoDefacturaDetalle.payedAmount = facturaVencida.payedAmount;
-                        pagoDefacturaDetalle.amountToDate =
-                            facturaVencida.amountToDate;
-                        pagoDefacturaDetalle.pendingAmount =
-                            facturaVencida.pendingToPaid;
+                        pagoDefacturaDetalle.amountToDate = facturaVencida.amountToDate;
+                        pagoDefacturaDetalle.pendingAmount = facturaVencida.pendingToPaid;
                         documentoDePago.overdueInvoicePaymentDetail.push(pagoDefacturaDetalle);
                     });
                     _this.detalleDeTiposDePagoRealizadosEnElDocumentoAcutal.forEach(function (tipoDePago) {
@@ -418,8 +398,7 @@ var CobroDeFacturaVencidaControlador = (function () {
         return campoComentario.val() ? campoComentario.val() : "";
     };
     CobroDeFacturaVencidaControlador.prototype.verificarSiYaSeAlcanzoElPorcentajeMinimoDePagoDeFacturasVencidas = function () {
-        if (this.aplicaPorcentajeMinimoDePagoDeFacturasVencidas &&
-            this.valorDeParametroDePorcentajeMinimoDePagoDeFacturasVencidas > 0) {
+        if (this.aplicaPorcentajeMinimoDePagoDeFacturasVencidas) {
             if (this.porcentajeDePagoDeFacturasVencidasCubiertoPorElPagoActual >=
                 this.valorDeParametroDePorcentajeMinimoDePagoDeFacturasVencidas) {
                 if (this.cliente.paymentType === TipoDePagoDeFactura.FacturaVencida) {

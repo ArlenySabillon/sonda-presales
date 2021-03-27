@@ -75,26 +75,6 @@ var EstadisticaDeVentaControlador = (function () {
         }
         return porcentajeDeMetaCubierto;
     };
-    EstadisticaDeVentaControlador.prototype.mostrarUOcultarContenedorDeModuloDeMetas = function () {
-        var contenedorDeMetas = $("#UiGoalsContainer");
-        var contenerDeImagenPrincipal = $("#UiMainImageContainer");
-        var mostrarModuloDeMetas = localStorage.getItem("USE_GOAL_MODULE");
-        var debeMostrarModuloDeMetas = false;
-        if (mostrarModuloDeMetas && mostrarModuloDeMetas == "1") {
-            debeMostrarModuloDeMetas = true;
-        }
-        if (debeMostrarModuloDeMetas) {
-            contenedorDeMetas.css("display", "block");
-            contenerDeImagenPrincipal.css("display", "none");
-            this.obtenerInformacionDeEstadisticaDeVentaActual();
-        }
-        else {
-            contenedorDeMetas.css("display", "none");
-            contenerDeImagenPrincipal.css("display", "block");
-        }
-        contenedorDeMetas = null;
-        contenerDeImagenPrincipal = null;
-    };
     return EstadisticaDeVentaControlador;
 }());
 //# sourceMappingURL=EstadisticaDeVentaControlador.js.map

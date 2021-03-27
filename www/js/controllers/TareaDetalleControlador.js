@@ -441,18 +441,6 @@ var TareaDetalleControlador = (function () {
     };
     TareaDetalleControlador.prototype.usuarioDeseaVerOpcionesDeTipoDeOrdenesDeVenta = function (callback) {
         try {
-            if (this.tarea.hasDraft) {
-                gSalesOrderType = this.tarea.salesOrderType;
-                switch (gSalesOrderType) {
-                    case OrdenDeVentaTipo.Contado:
-                        ToastThis("Orden de Venta de Tipo: Contado");
-                        break;
-                    case OrdenDeVentaTipo.Credito:
-                        ToastThis("Orden de Venta de Tipo: Credito");
-                        break;
-                }
-                return callback();
-            }
             var config = {
                 title: "Tipo de Orden de Venta",
                 items: [
@@ -474,14 +462,6 @@ var TareaDetalleControlador = (function () {
                         ToastThis("Orden de Venta de Tipo: Credito");
                         callback();
                         break;
-                    default:
-                        InteraccionConUsuarioServicio.desbloquearPantalla();
-                        break;
-                }
-            }, function (error) {
-                InteraccionConUsuarioServicio.desbloquearPantalla();
-                if (error != "Error") {
-                    notify(error);
                 }
             });
         }
@@ -705,14 +685,12 @@ var TareaDetalleControlador = (function () {
         this.mensajero.publish(msg, getType(OrdenDeVentaDraftMensaje));
     };
     TareaDetalleControlador.prototype.obtenerOrdenDeVenta = function (cliente, callback) {
-        var _this_1 = this;
         try {
             this.ordenDeVentaServicio.obtenerOrdenDeVentaPorTarea(this.tarea, this.configuracionDecimales, function (ordenDeVenta) {
                 if (ordenDeVenta.ordenDeVentaDetalle.length >= 1) {
                     if (ordenDeVenta.isDraft === 1) {
                         cliente.deliveryDate = ordenDeVenta.deliveryDate;
                         cliente.totalAmout = ordenDeVenta.totalAmount;
-                        _this_1.tarea.salesOrderType = ordenDeVenta.salesOrderType;
                         callback(cliente, ordenDeVenta, true);
                     }
                     else {

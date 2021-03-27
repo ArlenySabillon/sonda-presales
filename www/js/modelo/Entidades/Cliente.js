@@ -9,7 +9,6 @@ var Cliente = (function () {
         this.deviceNetworkType = "";
         this.spcialPriceListId = 0;
         this.lastPurchaseDate = null;
-        this.purchaseOrderNumber = "";
         this.overdueInvoices = [];
         this.totalAmountPayedOfOverdueInvoices = 0;
         this.totalAmountOfOpenInvoices = 0;

@@ -196,8 +196,7 @@ var GrupoParametro;
 })(GrupoParametro || (GrupoParametro = {}));
 var TipoDeParametro;
 (function (TipoDeParametro) {
-    TipoDeParametro["PorcentajeMinimoDePagoDeFacturasVencidas"] = "MINIMUM_PERCENT_OF_PAID";
-    TipoDeParametro["FormatoDeImpresion"] = "PRINT_FORMAT";
+    TipoDeParametro[TipoDeParametro["PorcentajeMinimoDePagoDeFacturasVencidas"] = "MINIMUM_PERCENT_OF_PAID"] = "PorcentajeMinimoDePagoDeFacturasVencidas";
 })(TipoDeParametro || (TipoDeParametro = {}));
 var TipoDePagoDeFactura;
 (function (TipoDePagoDeFactura) {
@@ -209,7 +208,6 @@ var TipoDePagoFacturaVencida;
     TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Cheque"] = "BANK_CHECK"] = "Cheque";
     TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Deposito"] = "BANK_DEPOSIT"] = "Deposito";
     TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Efectivo"] = "CASH"] = "Efectivo";
-    TipoDePagoFacturaVencida[TipoDePagoFacturaVencida["Tarjeta"] = "CREDIT_OR_DEBIT_CARD"] = "Tarjeta";
 })(TipoDePagoFacturaVencida || (TipoDePagoFacturaVencida = {}));
 var BotonSeleccionado;
 (function (BotonSeleccionado) {
@@ -234,9 +232,4 @@ var ReglaTipo;
     ReglaTipo[ReglaTipo["VisualizarFacturasAbiertasOVencidas"] = ("VisualizarListadoDeFacturasVencidasOAbiertas")] = "VisualizarFacturasAbiertasOVencidas";
     ReglaTipo[ReglaTipo["OperadorPuedeModificarPrecioDeProducto"] = ("OperadorPuedeModificarPrecioDeProducto")] = "OperadorPuedeModificarPrecioDeProducto";
 })(ReglaTipo || (ReglaTipo = {}));
-var FormatoDeImpresion;
-(function (FormatoDeImpresion) {
-    FormatoDeImpresion["Estandar"] = "STANDARD";
-    FormatoDeImpresion["Pacasa"] = "PACASA-HN";
-})(FormatoDeImpresion || (FormatoDeImpresion = {}));
 //# sourceMappingURL=Tipos.js.map

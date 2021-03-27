@@ -186,6 +186,7 @@ var PagoDeFacturaVencidaServicio = (function () {
             var parametroPorcentajeMinimoDePago = localStorage.getItem("MINIMUM_PERCENTAGE_OF_PAYMENT");
             if (parametroPorcentajeMinimoDePago == null ||
                 parametroPorcentajeMinimoDePago === "null" ||
+                parametroPorcentajeMinimoDePago === "0" ||
                 isNaN(parseFloat(parametroPorcentajeMinimoDePago))) {
                 callback(false, 0);
             }

@@ -211,9 +211,6 @@ var ResumenDePedidoControlador = (function () {
             this.mostrarTipoDePago();
         }
         uiListaFormaDePago = null;
-        var uiLblReferenciaOrdenDeCompra = $("#UiLblReferenciaOrdenDeCompra");
-        uiLblReferenciaOrdenDeCompra.text(this.cliente.purchaseOrderNumber);
-        uiLblReferenciaOrdenDeCompra = null;
         callback();
     };
     ResumenDePedidoControlador.prototype.mostrarTipoDePago = function () {
@@ -376,7 +373,7 @@ var ResumenDePedidoControlador = (function () {
             notify("Error al generar la lista de orden de venta: " + err.message);
         }
     };
-    ResumenDePedidoControlador.prototype.obtenerTotalDeOrdenDeVenta = function (descuento, _listaDeSku) {
+    ResumenDePedidoControlador.prototype.obtenerTotalDeOrdenDeVenta = function (descuento, listaDeSku) {
         var total = 0;
         total = this.tarea.salesOrderTotal;
         total = descuento !== 0 ? total - (descuento * total) / 100 : total;
@@ -724,7 +721,6 @@ var ResumenDePedidoControlador = (function () {
                     ordenDeVenta.goalHeaderId = localStorage.getItem("GOAL_HEADER_ID")
                         ? parseInt(localStorage.getItem("GOAL_HEADER_ID"))
                         : null;
-                    ordenDeVenta.purchaseOrderNumber = controlador.cliente.purchaseOrderNumber;
                     var total = 0;
                     var lineSequence = 0;
                     var ordenDeVentaDetalle = new OrdenDeVentaDetalle();
@@ -967,8 +963,7 @@ var ResumenDePedidoControlador = (function () {
                     });
                     ordenDeVenta.detailQty = ordenDeVenta.ordenDeVentaDetalle.length;
                     ordenDeVenta.totalAmount = total;
-                    var to = setTimeout(function () {
-                        clearTimeout(to);
+                    setTimeout(function () {
                         callback(ordenDeVenta, listaDePromosAGuardar);
                     }, 2000);
                 });

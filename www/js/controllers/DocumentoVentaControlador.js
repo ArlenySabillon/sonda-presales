@@ -26,8 +26,7 @@ var DocumentoVentaControlador = (function () {
         this.listaDeDescuentoPorFamiliaYTipoPago = [];
         this.listaHistoricoDePromos = [];
         this.listaDeOrdenAplicarDescuentos = [];
-        this.draftServicio = new DraftServicio();
-        this.impresionServicio = new ImpresionServicio();
+        this.aplicaReglaDeValidacionDeLimiteDeCredito = false;
         this.obtenerConfiguracionDeDecimales();
         this.tokenSocketIo = mensajero.subscribe(this.socketIoEntregado, getType(SocketIoMensaje), this);
         this.tokenCliente = mensajero.subscribe(this.clienteEntregado, getType(ClienteMensaje), this);
@@ -69,7 +68,7 @@ var DocumentoVentaControlador = (function () {
                 este.esPrimerMensajeDeDescuento = true;
                 este.validarFotoYTareaSinGestion(este);
                 este.establecerTotalOrdenDeVenta(este);
-                InteraccionConUsuarioServicio.desbloquearPantalla();
+                este.prepararReglaDeValidacionDeLimiteDeCredito();
             }, function (resultado) {
                 este.usuarioPuedeModificarBonificacionDeCombo = false;
                 notify("Error al validar si puede modificar la bonificacion por combo: " +
@@ -237,23 +236,19 @@ var DocumentoVentaControlador = (function () {
                 this.finalizarTareaSinGestion(function () { });
             }
             else {
-                /*
-                if (this.cliente.cuentaCorriente.limiteDeCredito > 0) {
+                if (this.cliente.cuentaCorriente.limiteDeCredito > 0 &&
+                    this.aplicaReglaDeValidacionDeLimiteDeCredito) {
                     var totalDeVenta = this.obtenerTotalDeOrdenDeVenta(this.cliente.appliedDiscount, this.listaDeSkuOrdenDeVenta);
                     if (this.cliente.outStandingBalance < totalDeVenta) {
                         notify("ERROR, No tiene credito sufiente para esta venta, disponible: " +
                             DarFormatoAlMonto(format_number(this.cliente.outStandingBalance, this.configuracionDecimales.defaultDisplayDecimals)));
                         return;
                     }
-                }*/
+                }
                 this.validarConfiguracionDeBonificacionPorCombos(function () {
                     var uiComentarioDeOrdenDeVenta = $("#UiComentarioDeOrdenDeVenta");
                     _this_1.cliente.salesComment = uiComentarioDeOrdenDeVenta.val();
                     uiComentarioDeOrdenDeVenta = null;
-                    var uiNumeroDeOrdenDeCompraDeOrdenDeVenta = $("#UiNumeroDeOrdenDeCompraDeOrdenDeVenta");
-                    _this_1.cliente.purchaseOrderNumber = uiNumeroDeOrdenDeCompraDeOrdenDeVenta.val();
-                    _this_1.cliente.purchaseOrderNumber.trim();
-                    uiNumeroDeOrdenDeCompraDeOrdenDeVenta = null;
                     _this_1.esPrimerMensajeDeDescuento = true;
                     _this_1.calcularDescuento(_this_1, function () {
                         _this_1.tareaServicio.obtenerRegla("AplicarReglasComerciales", function (listaDeReglasAplicarReglasComerciales) {
@@ -320,18 +315,11 @@ var DocumentoVentaControlador = (function () {
         try {
             navigator.notification.confirm("Desea finalizar el documento?", function (buttonIndex) {
                 if (buttonIndex === 2) {
-                    var minimumAmount = parseInt(localStorage.getItem("MINIMUM_ORDER_AMOUNT"));
-                    var saleTotal = _this_1.obtenerTotalDeOrdenDeVenta(_this_1.cliente.appliedDiscount, _this_1.listaDeSkuOrdenDeVenta);
-                    if (saleTotal >= minimumAmount) {
-                        my_dialog("", "", "close");
-                        var uiFechaEntrega = $("#FechaEntrega");
-                        _this_1.cliente.deliveryDate = uiFechaEntrega.val();
-                        uiFechaEntrega = null;
-                        _this_1.mostarResumenDeOrdenDeVenta();
-                    }
-                    else {
-                        notify("No puede realizar venta porque no alcanza el monto m\u00EDnimo: " + minimumAmount);
-                    }
+                    my_dialog("", "", "close");
+                    var uiFechaEntrega = $("#FechaEntrega");
+                    _this_1.cliente.deliveryDate = uiFechaEntrega.val();
+                    uiFechaEntrega = null;
+                    _this_1.mostarResumenDeOrdenDeVenta();
                 }
             }, "Sonda® " + SondaVersion, "No,Si");
         }
@@ -427,12 +415,6 @@ var DocumentoVentaControlador = (function () {
         EstaGpsDesavilitado(function () {
             BloquearPantalla();
             _this_1.limpiarListaDeSku(function () {
-                let des = localStorage.getItem('des') ? JSON.parse(localStorage.getItem('des')) : []
-                let ordenes = localStorage.getItem('ordenes') ? JSON.parse(localStorage.getItem('ordenes')) : []
-                des.push(_this_1.descuentoPorMontoGeneral)
-                ordenes.push(_this_1.descuentoPorMontoGeneral)
-                localStorage.setItem('descuentos', JSON.stringify(des))
-                localStorage.setItem('ordenDeVenta', JSON.stringify(ordenes))
                 if (_this_1.descuentoPorMontoGeneral.apply) {
                     var promo = new Promo();
                     promo.promoId = _this_1.descuentoPorMontoGeneral.promoId;
@@ -484,9 +466,6 @@ var DocumentoVentaControlador = (function () {
                         listaDeOrdenAplicarDescuentos: _this_1.listaDeOrdenAplicarDescuentos
                     }
                 });
-                var uiNumeroDeOrdenDeCompraDeOrdenDeVenta = $("#UiNumeroDeOrdenDeCompraDeOrdenDeVenta");
-                uiNumeroDeOrdenDeCompraDeOrdenDeVenta.val("");
-                uiNumeroDeOrdenDeCompraDeOrdenDeVenta = null;
             }, function (resultado) {
                 notify(resultado.mensaje);
             });
@@ -1223,6 +1202,24 @@ var DocumentoVentaControlador = (function () {
                 ordenDeVenta.clientId = controlador.cliente.clientId;
                 ordenDeVenta.posTerminal = gCurrentRoute;
                 ordenDeVenta.gpsUrl = gCurrentGPS;
+                switch (_this_1.configuracionDecimales.displayDecimalsRoundType) {
+                    case "TRUNC":
+                        ordenDeVenta.totalAmount =
+                            controlador.cliente.totalAmout.toString().split(".")[0] * 1;
+                        break;
+                    case "ROUND":
+                        ordenDeVenta.totalAmount = Math.round(controlador.cliente.totalAmout);
+                        break;
+                    case "FLOOR":
+                        ordenDeVenta.totalAmount = Math.floor(controlador.cliente.totalAmout);
+                        break;
+                    case "CEILING":
+                        ordenDeVenta.totalAmount = Math.ceil(controlador.cliente.totalAmout);
+                        break;
+                    default:
+                        ordenDeVenta.totalAmount = trunc_number(controlador.cliente.totalAmout, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                        break;
+                }
                 ordenDeVenta.status = "0";
                 ordenDeVenta.postedBy = localStorage.getItem("LAST_LOGIN_ID");
                 ordenDeVenta.image1 = null;
@@ -1247,29 +1244,64 @@ var DocumentoVentaControlador = (function () {
                 ordenDeVenta.referenceId =
                     localStorage.getItem("LAST_LOGIN_ID") + getDateTime() + sequence;
                 ordenDeVenta.timesPrinted = 0;
-                ordenDeVenta.paymentTimesPrinted = 0;
                 ordenDeVenta.sinc = 0;
                 ordenDeVenta.isPostedVoid = 2;
                 ordenDeVenta.isVoid = false;
-                ordenDeVenta.salesOrderType = gSalesOrderType;
-                ordenDeVenta.discountByGeneralAmountApplied =
-                    controlador.cliente.appliedDiscount;
-                ordenDeVenta.discountApplied = controlador.cliente.discount;
+                ordenDeVenta.salesOrderType = controlador.tarea.salesOrderType;
+                ordenDeVenta.discount = trunc_number(controlador.cliente.appliedDiscount, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                ordenDeVenta.discountApplied = trunc_number(controlador.cliente.discount, _this_1.configuracionDecimales.defaultCalculationsDecimals);
                 ordenDeVenta.taskId = controlador.tarea.taskId;
                 ordenDeVenta.salesOrderIdBo = 0;
                 ordenDeVenta.isDraft = 1;
-                ordenDeVenta.isUpdated = 1;
-                ordenDeVenta.ordenDeVentaDetalle = [];
-                ordenDeVenta.comment = controlador.cliente.salesComment;
+                ordenDeVenta.isUpdated = 0;
+                ordenDeVenta.taskIdBo = 0;
+                ordenDeVenta.paymentTimesPrinted = null;
                 ordenDeVenta.paidToDate = 0;
                 ordenDeVenta.toBill = null;
-                ordenDeVenta.isPostedValidated = 0;
-                ordenDeVenta.totalAmountDisplay = _this_1.obtenerTotalDeOrdenDeVenta(_this_1.cliente.appliedDiscount, _this_1.listaDeSkuOrdenDeVenta);
-                ordenDeVenta.goalHeaderId = localStorage.getItem("GOAL_HEADER_ID")
-                    ? parseInt(localStorage.getItem("GOAL_HEADER_ID"))
-                    : null;
-                ordenDeVenta.authorized = false;
-                _this_1.prepararDetalleDeOrdenDeVentaDraft(ordenDeVenta, callback);
+                ordenDeVenta.ordenDeVentaDetalle = [];
+                controlador.listaDeSkuOrdenDeVenta.map(function (sku, index, array) {
+                    var ordenDeVentaDetalle = new OrdenDeVentaDetalle();
+                    ordenDeVentaDetalle.salesOrderId = ordenDeVenta.salesOrderId;
+                    ordenDeVentaDetalle.sku = sku.sku;
+                    ordenDeVentaDetalle.lineSeq = index + 1;
+                    ordenDeVentaDetalle.qty = trunc_number(sku.qty, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                    ordenDeVentaDetalle.price = trunc_number(sku.cost, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                    switch (_this_1.configuracionDecimales.displayDecimalsRoundType) {
+                        case "TRUNC":
+                            ordenDeVentaDetalle.totalLine = trunc_number(sku.total, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                            break;
+                        case "ROUND":
+                            ordenDeVentaDetalle.totalLine = Math.round(sku.total);
+                            break;
+                        case "FLOOR":
+                            ordenDeVentaDetalle.totalLine = Math.floor(sku.total);
+                            break;
+                        case "CEILING":
+                            ordenDeVentaDetalle.totalLine = Math.ceil(sku.total);
+                            break;
+                        default:
+                            ordenDeVentaDetalle.totalLine = trunc_number(sku.total, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                            break;
+                    }
+                    ordenDeVentaDetalle.postedDatetime = getDateTime();
+                    ordenDeVentaDetalle.serie = "0";
+                    ordenDeVentaDetalle.serie2 = "0";
+                    ordenDeVentaDetalle.requeriesSerie = false;
+                    ordenDeVentaDetalle.comboReference = sku.sku;
+                    ordenDeVentaDetalle.parentSeq = 1;
+                    ordenDeVentaDetalle.isActiveRoute = 1;
+                    ordenDeVentaDetalle.skuName = sku.skuName;
+                    ordenDeVentaDetalle.isPostedVoid = 2;
+                    ordenDeVentaDetalle.isVoid = false;
+                    ordenDeVentaDetalle.discount = 0;
+                    ordenDeVentaDetalle.codePackUnit = sku.codePackUnit;
+                    ordenDeVentaDetalle.docSerie = ordenDeVenta.docSerie;
+                    ordenDeVentaDetalle.docNum = ordenDeVenta.docNum;
+                    ordenDeVentaDetalle.isBonus = 0;
+                    ordenDeVentaDetalle.long = sku.dimension;
+                    ordenDeVenta.ordenDeVentaDetalle.push(ordenDeVentaDetalle);
+                });
+                callback(ordenDeVenta);
             });
         }
         catch (err) {
@@ -1277,12 +1309,30 @@ var DocumentoVentaControlador = (function () {
         }
     };
     DocumentoVentaControlador.prototype.prepararOrdenDeVentaParaActualizar = function (callback) {
+        var _this_1 = this;
         try {
             this.ordenDeVentaDraft.terms = null;
             this.ordenDeVentaDraft.postedDatetime = getDateTime();
             this.ordenDeVentaDraft.clientId = this.cliente.clientId;
             this.ordenDeVentaDraft.posTerminal = gCurrentRoute;
             this.ordenDeVentaDraft.gpsUrl = gCurrentGPS;
+            switch (this.configuracionDecimales.displayDecimalsRoundType) {
+                case "TRUNC":
+                    this.ordenDeVentaDraft.totalAmount = format_number(this.cliente.totalAmout, 0);
+                    break;
+                case "ROUND":
+                    this.ordenDeVentaDraft.totalAmount = Math.round(this.cliente.totalAmout);
+                    break;
+                case "FLOOR":
+                    this.ordenDeVentaDraft.totalAmount = Math.floor(this.cliente.totalAmout);
+                    break;
+                case "CEILING":
+                    this.ordenDeVentaDraft.totalAmount = Math.ceil(this.cliente.totalAmout);
+                    break;
+                default:
+                    this.ordenDeVentaDraft.totalAmount = trunc_number(this.cliente.totalAmout, this.configuracionDecimales.defaultCalculationsDecimals);
+                    break;
+            }
             this.ordenDeVentaDraft.status = "0";
             this.ordenDeVentaDraft.postedBy = localStorage.getItem("LAST_LOGIN_ID");
             this.ordenDeVentaDraft.image1 = null;
@@ -1300,125 +1350,68 @@ var DocumentoVentaControlador = (function () {
             this.ordenDeVentaDraft.datetime = null;
             this.ordenDeVentaDraft.isActiveRoute = 1;
             this.ordenDeVentaDraft.gpsExpected = this.cliente.gps;
-            this.ordenDeVentaDraft.salesOrderIdBo = null;
-            this.ordenDeVentaDraft.isPosted = 0;
+            this.ordenDeVentaDraft.isPosted = 2;
             this.ordenDeVentaDraft.deliveryDate = this.cliente.deliveryDate;
             this.ordenDeVentaDraft.isParent = true;
             this.ordenDeVentaDraft.timesPrinted = 0;
-            this.ordenDeVentaDraft.paymentTimesPrinted = 0;
             this.ordenDeVentaDraft.sinc = 0;
             this.ordenDeVentaDraft.isPostedVoid = 2;
             this.ordenDeVentaDraft.isVoid = false;
-            this.ordenDeVentaDraft.salesOrderType = gSalesOrderType;
-            this.ordenDeVentaDraft.discountByGeneralAmountApplied = this.cliente.appliedDiscount;
-            this.ordenDeVentaDraft.discountApplied = this.cliente.discount;
+            this.ordenDeVentaDraft.salesOrderType = this.tarea.salesOrderType;
+            this.ordenDeVentaDraft.discount = trunc_number(this.cliente.appliedDiscount, this.configuracionDecimales.defaultCalculationsDecimals);
+            this.ordenDeVentaDraft.discountApplied = trunc_number(this.cliente.discount, this.configuracionDecimales.defaultCalculationsDecimals);
             this.ordenDeVentaDraft.taskId = this.tarea.taskId;
-            this.ordenDeVentaDraft.salesOrderIdBo = 0;
             this.ordenDeVentaDraft.isDraft = 1;
-            this.ordenDeVentaDraft.isUpdated = 1;
-            this.ordenDeVentaDraft.ordenDeVentaDetalle = [];
-            this.ordenDeVentaDraft.comment = this.cliente.salesComment;
+            this.ordenDeVentaDraft.isUpdated = 0;
+            this.ordenDeVentaDraft.paymentTimesPrinted = null;
             this.ordenDeVentaDraft.paidToDate = 0;
             this.ordenDeVentaDraft.toBill = null;
-            this.ordenDeVentaDraft.isPostedValidated = 0;
-            this.ordenDeVentaDraft.totalAmountDisplay = this.obtenerTotalDeOrdenDeVenta(this.cliente.appliedDiscount, this.listaDeSkuOrdenDeVenta);
-            this.ordenDeVentaDraft.goalHeaderId = localStorage.getItem("GOAL_HEADER_ID")
-                ? parseInt(localStorage.getItem("GOAL_HEADER_ID"))
-                : null;
-            this.ordenDeVentaDraft.authorized = false;
             this.ordenDeVentaDraft.ordenDeVentaDetalle = [];
-            this.prepararDetalleDeOrdenDeVentaDraft(this.ordenDeVentaDraft, callback);
+            this.listaDeSkuOrdenDeVenta.map(function (sku, index, array) {
+                var ordenDeVentaDetalle = new OrdenDeVentaDetalle();
+                ordenDeVentaDetalle.salesOrderId = _this_1.ordenDeVentaDraft.salesOrderId;
+                ordenDeVentaDetalle.sku = sku.sku;
+                ordenDeVentaDetalle.lineSeq = index + 1;
+                ordenDeVentaDetalle.qty = trunc_number(sku.qty, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                ordenDeVentaDetalle.price = trunc_number(sku.cost, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                switch (_this_1.configuracionDecimales.displayDecimalsRoundType) {
+                    case "TRUNC":
+                        ordenDeVentaDetalle.totalLine = format_number(sku.total, 0);
+                        break;
+                    case "ROUND":
+                        ordenDeVentaDetalle.totalLine = Math.round(sku.total);
+                        break;
+                    case "FLOOR":
+                        ordenDeVentaDetalle.totalLine = Math.floor(sku.total);
+                        break;
+                    case "CEILING":
+                        ordenDeVentaDetalle.totalLine = Math.ceil(sku.total);
+                        break;
+                    default:
+                        ordenDeVentaDetalle.totalLine = trunc_number(sku.total, _this_1.configuracionDecimales.defaultCalculationsDecimals);
+                        break;
+                }
+                ordenDeVentaDetalle.postedDatetime = getDateTime();
+                ordenDeVentaDetalle.serie = "0";
+                ordenDeVentaDetalle.serie2 = "0";
+                ordenDeVentaDetalle.requeriesSerie = false;
+                ordenDeVentaDetalle.comboReference = sku.sku;
+                ordenDeVentaDetalle.parentSeq = 1;
+                ordenDeVentaDetalle.isActiveRoute = 1;
+                ordenDeVentaDetalle.skuName = sku.skuName;
+                ordenDeVentaDetalle.isPostedVoid = 2;
+                ordenDeVentaDetalle.isVoid = false;
+                ordenDeVentaDetalle.discount = 0;
+                ordenDeVentaDetalle.codePackUnit = sku.codePackUnit;
+                ordenDeVentaDetalle.docSerie = _this_1.ordenDeVentaDraft.docSerie;
+                ordenDeVentaDetalle.docNum = _this_1.ordenDeVentaDraft.docNum;
+                _this_1.ordenDeVentaDraft.ordenDeVentaDetalle.push(ordenDeVentaDetalle);
+            });
+            callback(this.ordenDeVentaDraft);
         }
         catch (err) {
             notify("Error al preparar ordenDeVenta: " + err.message);
         }
-    };
-    DocumentoVentaControlador.prototype.prepararDetalleDeOrdenDeVentaDraft = function (ordenDeVenta, callback) {
-        var _this_1 = this;
-        var total = 0;
-        this.listaDeSkuOrdenDeVenta.map(function (sku, lineSequence) {
-            var ordenDeVentaDetalle = new OrdenDeVentaDetalle();
-            var resultadoDescuentoPorMontoGeneralYFamilia = _this_1
-                .listaDeDescuentoPorMontoGeneralYFamilia.find(function (descuentoABuscar) {
-                return descuentoABuscar.codeFamily === sku.codeFamilySku;
-            });
-            var resultadoDescuentoPorFamiliaYTipoPago = _this_1
-                .listaDeDescuentoPorFamiliaYTipoPago.find(function (descuentoABuscar) {
-                return descuentoABuscar.codeFamily === sku.codeFamilySku;
-            });
-            ordenDeVentaDetalle.salesOrderId = ordenDeVenta.salesOrderId;
-            ordenDeVentaDetalle.sku = sku.sku;
-            ordenDeVentaDetalle.lineSeq = lineSequence + 1;
-            ordenDeVentaDetalle.qty = sku.qty;
-            ordenDeVentaDetalle.price = sku.cost;
-            ordenDeVentaDetalle.totalLine = sku.total;
-            ordenDeVentaDetalle.totalAmountDisplay = _this_1.descuentoServicio.aplicarLosDescuentos(sku, sku.isUniqueDiscountScale, _this_1.listaDeOrdenAplicarDescuentos, resultadoDescuentoPorMontoGeneralYFamilia, resultadoDescuentoPorFamiliaYTipoPago);
-            ordenDeVentaDetalle.postedDatetime = getDateTime();
-            ordenDeVentaDetalle.serie = "0";
-            ordenDeVentaDetalle.serie2 = "0";
-            ordenDeVentaDetalle.requeriesSerie = false;
-            ordenDeVentaDetalle.comboReference = sku.sku;
-            ordenDeVentaDetalle.parentSeq = lineSequence;
-            ordenDeVentaDetalle.isActiveRoute = 1;
-            ordenDeVentaDetalle.skuName = sku.skuName;
-            ordenDeVentaDetalle.isPostedVoid = 2;
-            ordenDeVentaDetalle.isVoid = false;
-            ordenDeVentaDetalle.discount = sku.appliedDiscount;
-            ordenDeVentaDetalle.codePackUnit = sku.codePackUnit;
-            ordenDeVentaDetalle.docSerie = ordenDeVenta.docSerie;
-            ordenDeVentaDetalle.docNum = ordenDeVenta.docNum;
-            ordenDeVentaDetalle.long = sku.dimension;
-            ordenDeVentaDetalle.isSaleByMultiple = sku.isSaleByMultiple;
-            ordenDeVentaDetalle.multipleSaleQty = sku.multipleSaleQty;
-            ordenDeVentaDetalle.owner = sku.owner;
-            ordenDeVentaDetalle.ownerId = sku.ownerId;
-            ordenDeVentaDetalle.discountType = sku.discountType;
-            ordenDeVentaDetalle.discountByFamily = !sku.specialPrice.applyDiscount
-                ? 0
-                : sku.isUniqueDiscountScale
-                    ? 0
-                    : resultadoDescuentoPorMontoGeneralYFamilia
-                        ? resultadoDescuentoPorMontoGeneralYFamilia.discount
-                        : 0;
-            ordenDeVentaDetalle.typeOfDiscountByFamily = !sku.specialPrice
-                .applyDiscount
-                ? ""
-                : sku.isUniqueDiscountScale
-                    ? ""
-                    : resultadoDescuentoPorMontoGeneralYFamilia
-                        ? resultadoDescuentoPorMontoGeneralYFamilia.discountType
-                        : "";
-            ordenDeVentaDetalle.discountByFamilyAndPaymentType = !sku.specialPrice
-                .applyDiscount
-                ? 0
-                : sku.isUniqueDiscountScale
-                    ? 0
-                    : resultadoDescuentoPorFamiliaYTipoPago
-                        ? resultadoDescuentoPorFamiliaYTipoPago.discount
-                        : 0;
-            ordenDeVentaDetalle.typeOfDiscountByFamilyAndPaymentType = !sku
-                .specialPrice.applyDiscount
-                ? ""
-                : sku.isUniqueDiscountScale
-                    ? ""
-                    : resultadoDescuentoPorFamiliaYTipoPago
-                        ? resultadoDescuentoPorFamiliaYTipoPago.discountType
-                        : "";
-            ordenDeVentaDetalle.codeFamilySku = sku.codeFamilySku;
-            ordenDeVentaDetalle.basePrice = sku.basePrice;
-            ordenDeVentaDetalle.uniqueDiscountByScaleAplied = sku.isUniqueDiscountScale
-                ? 1
-                : 0;
-            ordenDeVentaDetalle.applyDiscountBySpecialPrice = sku.specialPrice
-                .applyDiscount
-                ? 1
-                : 0;
-            ordenDeVenta.ordenDeVentaDetalle.push(ordenDeVentaDetalle);
-            total += ordenDeVentaDetalle.totalLine;
-        });
-        ordenDeVenta.detailQty = ordenDeVenta.ordenDeVentaDetalle.length || 0;
-        ordenDeVenta.totalAmount = total;
-        callback(ordenDeVenta);
     };
     DocumentoVentaControlador.prototype.usuarioDeseaCancelarDraft = function () {
         var _this_1 = this;
@@ -1493,8 +1486,8 @@ var DocumentoVentaControlador = (function () {
                                                 showLoadMsg: false
                                             });
                                             EnviarData();
-                                            InteraccionConUsuarioServicio.desbloquearPantalla();
                                         }, function (error) {
+                                            DesBloquearPantalla();
                                             notify(error.mensaje);
                                             my_dialog("", "", "close");
                                             RegresarAPaginaAnterior("pickupplan_page");
@@ -1516,23 +1509,12 @@ var DocumentoVentaControlador = (function () {
                                             showLoadMsg: false
                                         });
                                         EnviarData();
-                                        InteraccionConUsuarioServicio.desbloquearPantalla();
                                     }
                                 };
                                 if (_this_1.tarea.hasDraft) {
                                     _this_1.prepararOrdenDeVentaParaActualizar(function (ordenDeVenta) {
                                         _this_1.ordenDeVentaServicio.actualizarOrdenDeVentaDraft(ordenDeVenta, function () {
-                                            _this_1.confirmarImpresionDeDocumentoDraft(function (imprimirDraft) {
-                                                InteraccionConUsuarioServicio.bloquearPantalla();
-                                                if (imprimirDraft) {
-                                                    _this_1.usuarioDeseaImprimirDraft(ordenDeVenta, function () {
-                                                        finalizarProcesoDraft_1();
-                                                    });
-                                                }
-                                                else {
-                                                    finalizarProcesoDraft_1();
-                                                }
-                                            });
+                                            finalizarProcesoDraft_1();
                                         }, function (resultado) {
                                             notify(resultado.mensaje);
                                         });
@@ -1541,24 +1523,14 @@ var DocumentoVentaControlador = (function () {
                                 else {
                                     _this_1.prepararOrdenDeVentaParaInsertar(function (ordenDeVenta) {
                                         _this_1.ordenDeVentaServicio.insertarOrdenDeVentaDraft(ordenDeVenta, function () {
-                                            _this_1.confirmarImpresionDeDocumentoDraft(function (imprimirDraft) {
-                                                InteraccionConUsuarioServicio.bloquearPantalla();
-                                                if (imprimirDraft) {
-                                                    _this_1.usuarioDeseaImprimirDraft(ordenDeVenta, function () {
-                                                        finalizarProcesoDraft_1();
-                                                    });
-                                                }
-                                                else {
-                                                    finalizarProcesoDraft_1();
-                                                }
-                                            });
+                                            finalizarProcesoDraft_1();
                                         }, function (resultado) {
                                             notify(resultado.mensaje);
                                         });
                                     });
                                 }
                             }
-                        }, "Sonda® " + SondaVersion, ["No", "Si"]);
+                        }, "Sonda® " + SondaVersion, "No,Si");
                     }, function (resultado) {
                         notify(resultado.mensaje);
                     });
@@ -1582,21 +1554,11 @@ var DocumentoVentaControlador = (function () {
             var sku = new Sku();
             sku.sku = detalleOrdenDeVentaDetalle.sku;
             sku.skuName = detalleOrdenDeVentaDetalle.skuName;
-            sku.qty = detalleOrdenDeVentaDetalle.qty;
-            sku.total = detalleOrdenDeVentaDetalle.totalLine;
-            sku.cost = detalleOrdenDeVentaDetalle.price;
+            sku.qty = trunc_number(detalleOrdenDeVentaDetalle.qty, dvc.configuracionDecimales.defaultCalculationsDecimals);
+            sku.total = trunc_number(detalleOrdenDeVentaDetalle.totalLine, dvc.configuracionDecimales.defaultCalculationsDecimals);
+            sku.cost = trunc_number(detalleOrdenDeVentaDetalle.price, dvc.configuracionDecimales.defaultCalculationsDecimals);
             sku.codePackUnit = detalleOrdenDeVentaDetalle.codePackUnit;
-            sku.available = detalleOrdenDeVentaDetalle.available;
-            sku.appliedDiscount = detalleOrdenDeVentaDetalle.discount;
-            sku.dimension = detalleOrdenDeVentaDetalle.long;
-            sku.isSaleByMultiple = detalleOrdenDeVentaDetalle.isSaleByMultiple;
-            sku.multipleSaleQty = detalleOrdenDeVentaDetalle.multipleSaleQty;
-            sku.owner = detalleOrdenDeVentaDetalle.owner;
-            sku.ownerId = detalleOrdenDeVentaDetalle.ownerId;
-            sku.discountType = detalleOrdenDeVentaDetalle.discountType;
-            sku.codeFamilySku = detalleOrdenDeVentaDetalle.codeFamilySku;
-            sku.basePrice = detalleOrdenDeVentaDetalle.basePrice;
-            sku.totalCD = detalleOrdenDeVentaDetalle.totalAmountDisplay;
+            sku.available = trunc_number(detalleOrdenDeVentaDetalle.available, dvc.configuracionDecimales.defaultCalculationsDecimals);
             subcriber.listaDeSkuOrdenDeVenta.push(sku);
         }
     };
@@ -2089,29 +2051,20 @@ var DocumentoVentaControlador = (function () {
             });
         }
     };
-    DocumentoVentaControlador.prototype.confirmarImpresionDeDocumentoDraft = function (callback) {
-        navigator.notification.confirm("¿Desea imprimir el documento?", function (accionSeleccionada) {
-            callback(accionSeleccionada === 2);
-        }, "Imprimir Draft", ["No", "Si"]);
-    };
-    DocumentoVentaControlador.prototype.usuarioDeseaImprimirDraft = function (ordenDeVenta, callBack) {
+    DocumentoVentaControlador.prototype.prepararReglaDeValidacionDeLimiteDeCredito = function () {
         var _this_1 = this;
-        try {
-            this.draftServicio.obtenerFormatoDeImpresionDeBorradorDeOrdenDeVenta(this.cliente, ordenDeVenta, function (formatoDeImpresion) {
-                _this_1.impresionServicio.validarEstadosYImprimir(false, gPrintAddress, formatoDeImpresion, true, function (resultado) {
-                    if (resultado.resultado !== ResultadoOperacionTipo.Exitoso) {
-                        notify("Error al imprimir el documento debido a: " + resultado.mensaje);
-                    }
-                    callBack();
-                });
-            }, function (resultado) {
-                notify("Error al imprimir el documento debido a: " + resultado.mensaje);
-                callBack();
-            });
-        }
-        catch (error) {
-            notify("Error al imprimir el documento debido a: " + error.message);
-        }
+        ObtenerReglas("LimiteDeCreditoCero", function (reglas) {
+            if (reglas && reglas.length) {
+                var regla = reglas.item(0);
+                _this_1.aplicaReglaDeValidacionDeLimiteDeCredito =
+                    regla && regla.ENABLED && regla.ENABLED.toUpperCase() == "SI";
+            }
+            else {
+                _this_1.aplicaReglaDeValidacionDeLimiteDeCredito = false;
+            }
+        }, function (error) {
+            notify("Error al verificar si se aplica validaci\u00F3n de limite de cr\u00E9dito. " + error);
+        });
     };
     return DocumentoVentaControlador;
 }());

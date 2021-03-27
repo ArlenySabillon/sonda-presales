@@ -1,74 +1,22 @@
-var ValidacionDeLicenciaServicio = (function () {
-    function ValidacionDeLicenciaServicio() {
-    }
-    ValidacionDeLicenciaServicio.prototype.validarLicencia = function (pUserId, pPinCode, callback, callbackError) {
-        getConf((data) => {
-            console.log(data)
-            callback({CommunicationAddress: data.url});
-        })
+var ValidacionDeLicenciaServicio = (function() {
+    function ValidacionDeLicenciaServicio() {}
+    ValidacionDeLicenciaServicio.prototype.validarLicencia = function(pUserId, pPinCode, callback, callbackError) {
+        /*var request = {
+            requestUri: "http://mobilitywebapi.centralus.cloudapp.azure.com:1025/SecurityAPI/odata/ValidateCredentials(loginId='" + pUserId + "',password='" + pPinCode + "',codeApp='SondaCore',deviceId='" + device.uuid + "')",
+            method: "GET",
+            headers: { Accept: "application/json", "Content-Type": "application/json" }
+        };
+        odatajs.oData.request(request, function (data, response) {
+            callback(data);
+        }, function (err) {
+            var error = JSON.parse(err.response.body).error;
+            if (error == undefined) {
+                error = err;
+            }
+            callbackError(error);
+        });*/
+        callback({ CommunicationAddress: 'http://190.4.59.46:9095' });
     };
     return ValidacionDeLicenciaServicio;
 }());
-
-function writeLog(str) {
-	if(!logOb) return;
-	var log = str + '                           ';
-	console.log("going to log "+log);
-	logOb.createWriter(function(fileWriter) {
-		
-		//fileWriter.seek(fileWriter.length);
-		
-		var blob = new Blob([log], {type:'text/plain'});
-		fileWriter.write(blob);
-		console.log("ok, in theory i worked");
-	}, (err) => {
-        console.log("FileSystem Error");
-	    console.dir(err);
-    });
-}
-
-function justForTesting() {
-    if(!logOb) return;
-	logOb.file(function(file) {
-		var reader = new FileReader();
-
-		reader.onloadend = function(e) {
-			console.log(this.result);
-		};
-
-		reader.readAsText(file);
-	}, (err) => {
-        console.log("FileSystem Error");
-	    console.dir(err);
-    });
-}
-
-function getConf(callback) {
-    setTimeout(() => {
-        logOb.file(function(file) {
-            var reader = new FileReader();
-    
-            reader.onloadend = function(e) {
-                if (this.result == '') {
-                    writeLog(`{"url": "http://52.149.161.64:8085/"}`)
-                    callback({"url": "http://52.149.161.64:8085/"});
-                }else {
-                    callback(JSON.parse(this.result));
-                }
-            };
-    
-            reader.readAsText(file);
-        }, (err) => {
-            console.log("FileSystem Error");
-            console.dir(err);
-        });
-    }, 1000);
-}
-
-function writeConfig() {
-    let url = prompt('direcion servidor')
-    if (url != null) {
-        writeLog(`{"url": "${url}"}`)
-    }
-}
 //# sourceMappingURL=ValidacionDeLicenciaServicio.js.map

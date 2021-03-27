@@ -2,7 +2,6 @@ var GlobalUtilsServicio = (function () {
     function GlobalUtilsServicio() {
         this.estadisticaServicio = new EstadisticaDeVentaServicio();
         this.cuentaCorrienteServicio = new CuentaCorrienteServicio();
-        this.imagenDeSkuServicio = new ImagenDeSkuServicio();
     }
     GlobalUtilsServicio.prototype.delegarSockets = function (socketIo) {
         var _this = this;
@@ -1204,17 +1203,6 @@ var GlobalUtilsServicio = (function () {
                         break;
                     case "add_parameter_minimum_percentage_of_payment":
                         localStorage.setItem("MINIMUM_PERCENTAGE_OF_PAYMENT", data.row.Value || "0");
-                        break;
-                    case "add_parameter_use_goal_module":
-                        localStorage.setItem("USE_GOAL_MODULE", data.row.Value || "0");
-                        break;
-                    case "add_image_by_sku":
-                        if (data.row) {
-                            _this.imagenDeSkuServicio.almacenarImagenesDeProducto(data.row);
-                        }
-                        break;
-                    case "get_minimum_amount_order":
-                        localStorage.setItem('MINIMUM_ORDER_AMOUNT', data.row.MINIMUM_ORDER || "0");
                         break;
                 }
             });

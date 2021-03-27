@@ -4,8 +4,6 @@ var DraftControlador = (function () {
         this.draftServicio = new DraftServicio();
         this.clienteServicio = new ClienteServicio();
         this.tareaServicio = new TareaServcio();
-        this.impresionServicio = new ImpresionServicio();
-        this.manejoDeDecimalesServicio = new ManejoDeDecimalesServicio();
     }
     DraftControlador.prototype.delegarDraftControlador = function () {
         var _this = this;
@@ -77,40 +75,12 @@ var DraftControlador = (function () {
         }
         for (var i = 0; i < (esFactura ? facturas.length : ordenDeVenta.length); i++) {
             var li = "";
-            li +=
-                "<li data-icon='false' id='" +
-                    (esFactura
-                        ? "IV" + facturas[i].invoiceNum
-                        : "SO" + ordenDeVenta[i].salesOrderId) +
-                    "'>";
-            li +=
-                "<span class='title'>Documento No. " +
-                    (esFactura ? facturas[i].invoiceNum : ordenDeVenta[i].salesOrderId) +
-                    "</span>";
+            li += "<li data-icon='false' id='" + (esFactura ? ("IV" + facturas[i].invoiceNum) : ("SO" + ordenDeVenta[i].salesOrderId)) + "'>";
+            li += "<span class='title'>Documento No. " + (esFactura ? facturas[i].invoiceNum : ordenDeVenta[i].salesOrderId) + "</span>";
             li += "<p>";
-            li +=
-                "<span class='ui-content'>" +
-                    "<b>" +
-                    "CLIENTE: " +
-                    "</b>" +
-                    (esFactura ? facturas[i].clientName : ordenDeVenta[i].clientName) +
-                    "</span> <br>";
-            li +=
-                "<span class='ui-content'>" +
-                    "<b>" +
-                    "MONTO: " +
-                    "</b>" +
-                    DarFormatoAlMonto(esFactura ? facturas[i].totalAmount : ordenDeVenta[i].totalAmount) +
-                    "</span><br>";
-            li +=
-                "<span class='ui-content'>" +
-                    "<b>" +
-                    "CREADA EL: " +
-                    "</b>" +
-                    (esFactura
-                        ? facturas[i].postedDatetime
-                        : ordenDeVenta[i].postedDatetime) +
-                    "</span>";
+            li += "<span class='ui-content'>" + "<b>" + "CLIENTE: " + "</b>" + (esFactura ? facturas[i].clientName : ordenDeVenta[i].clientName) + "</span> <br>";
+            li += "<span class='ui-content'>" + "<b>" + "MONTO: " + "</b>" + DarFormatoAlMonto((esFactura ? facturas[i].totalAmount : ordenDeVenta[i].totalAmount)) + "</span><br>";
+            li += "<span class='ui-content'>" + "<b>" + "CREADA EL: " + "</b>" + (esFactura ? facturas[i].postedDatetime : ordenDeVenta[i].postedDatetime) + "</span>";
             li += "</p>";
             li += "</li>";
             objetoUl.append(li);
@@ -120,14 +90,11 @@ var DraftControlador = (function () {
         objetoUl = null;
     };
     DraftControlador.prototype.mostrarMsjDeVacio = function (mensaje, objeto) {
-        var objetoUl = objeto === "Facturas"
-            ? $("#UiListaFacturasDraft")
-            : $("#UiListaOrdenDeVentaDraft");
+        var objetoUl = objeto === "Facturas" ? $("#UiListaFacturasDraft") : $("#UiListaOrdenDeVentaDraft");
         objetoUl.children().remove("li");
         var li = "";
         li += "<li style='text-align:center'>";
-        li +=
-            "<span style='text-align:center;font-size:10px;'>" + mensaje + "</span>";
+        li += "<span style='text-align:center;font-size:10px;'>" + mensaje + "</span>";
         li += "</li>";
         objetoUl.append(li);
         objetoUl.listview("refresh");
@@ -137,72 +104,47 @@ var DraftControlador = (function () {
     DraftControlador.prototype.usuarioDeseaVerDocumentoDeDraft = function (id) {
         var _this = this;
         if (id !== undefined && id !== null) {
-            var esFactura = id.substring(0, 2) === "IV";
-            var listaDeDocumentos = esFactura
-                ? this.facturasDraft
-                : this.ordenesDeVentaDraft;
+            var esFactura = (id.substring(0, 2) === "IV");
+            var listaDeDocumentos = esFactura ? this.facturasDraft : this.ordenesDeVentaDraft;
             var idDoc = parseInt(id.substring(2));
-            var documentoSoDraft_1 = null;
-            if (esFactura) {
-                return;
-            }
-            else {
-                documentoSoDraft_1 = listaDeDocumentos.find(function (documento) {
-                    return documento.salesOrderId === idDoc;
-                });
-            }
-            if (!documentoSoDraft_1) {
-                return;
-            }
-            var verDetalleDeBorradorDeOrdenDeVenta_1 = function () {
-                gtaskid = documentoSoDraft_1.taskId === 0 ? 0 : documentoSoDraft_1.taskId;
-                gTaskType = TareaTipo.Preventa;
-                gClientID = documentoSoDraft_1.clientId;
-                if (gtaskid !== 0) {
-                    var tarea = new Tarea();
-                    tarea.taskId = gtaskid;
-                    _this.tareaServicio.obtenerTarea(tarea, function (tarea) {
-                        switch (tarea.taskStatus) {
-                            case TareaEstado.Aceptada:
-                                _this.publicarSolicitudDeMetodoCargarTarea(TipoTarea.Preventa);
-                                break;
-                            case TareaEstado.Asignada:
-                                $.mobile.changePage("#taskdetail_page", {
-                                    transition: "flow",
-                                    reverse: true,
-                                    showLoadMsg: false
-                                });
-                                break;
-                        }
-                    }, function (resultado) {
-                        notify(resultado.mensaje);
-                    });
+            for (var i = 0; i < listaDeDocumentos.length; i++) {
+                if (esFactura) {
+                    if (listaDeDocumentos[i].invoiceNum === idDoc) {
+                    }
                 }
                 else {
-                    _this.publicarSolicitudDeMetodoCargarTarea(TipoTarea.Preventa);
-                    _this.publicarOrdenDeVentaDraft(documentoSoDraft_1);
+                    if (listaDeDocumentos[i].salesOrderId === idDoc) {
+                        var documentoSoDraft = listaDeDocumentos[i];
+                        gtaskid = (documentoSoDraft.taskId === 0 ? 0 : documentoSoDraft.taskId);
+                        gTaskType = TareaTipo.Preventa;
+                        gClientID = documentoSoDraft.clientId;
+                        if (gtaskid !== 0) {
+                            var tarea = new Tarea();
+                            tarea.taskId = gtaskid;
+                            this.tareaServicio.obtenerTarea(tarea, function (tarea) {
+                                switch (tarea.taskStatus) {
+                                    case TareaEstado.Aceptada:
+                                        _this.publicarSolicitudDeMetodoCargarTarea(TipoTarea.Preventa);
+                                        break;
+                                    case TareaEstado.Asignada:
+                                        $.mobile.changePage("#taskdetail_page", {
+                                            transition: "flow",
+                                            reverse: true,
+                                            showLoadMsg: false
+                                        });
+                                        break;
+                                }
+                            }, function (resultado) {
+                                notify(resultado.mensaje);
+                            });
+                        }
+                        else {
+                            this.publicarSolicitudDeMetodoCargarTarea(TipoTarea.Preventa);
+                            this.publicarOrdenDeVentaDraft(documentoSoDraft);
+                        }
+                    }
                 }
-            };
-            var opcionesDeConfiguracion = {
-                title: "Seleccionar",
-                items: [
-                    { text: "Imprimir", value: "PRINT_DOCUMENT" },
-                    { text: "Continuar pedido", value: "CONTINUE_DOCUMENT" }
-                ],
-                doneButtonLabel: "Aceptar",
-                cancelButtonLabel: "Cancelar"
-            };
-            ShowListPicker(opcionesDeConfiguracion, function (opcionSelecionada) {
-                switch (opcionSelecionada) {
-                    case "PRINT_DOCUMENT":
-                        InteraccionConUsuarioServicio.bloquearPantalla();
-                        _this.imprimirBorradorDeOrdenDeVenta(documentoSoDraft_1);
-                        break;
-                    default:
-                        verDetalleDeBorradorDeOrdenDeVenta_1();
-                        break;
-                }
-            });
+            }
         }
     };
     DraftControlador.prototype.publicarOrdenDeVentaDraft = function (ordenDeVenta) {
@@ -215,34 +157,6 @@ var DraftControlador = (function () {
         var msg = new ProcesarTipoDeTareaMensaje(this);
         msg.tipoTarea = tipoTarea;
         this.mensajero.publish(msg, getType(ProcesarTipoDeTareaMensaje));
-    };
-    DraftControlador.prototype.imprimirBorradorDeOrdenDeVenta = function (ordenDeVenta) {
-        var _this = this;
-        try {
-            var cliente_1 = new Cliente();
-            cliente_1.clientId = ordenDeVenta.clientId;
-            this.manejoDeDecimalesServicio.obtenerInformacionDeManejoDeDecimales(function (configuracionDeDecimales) {
-                _this.clienteServicio.obtenerCliente(cliente_1, configuracionDeDecimales, function (clienteCompleto) {
-                    _this.draftServicio.obtenerFormatoDeImpresionDeBorradorDeOrdenDeVenta(clienteCompleto, ordenDeVenta, function (formatoDeImpresion) {
-                        _this.impresionServicio.validarEstadosYImprimir(false, gPrintAddress, formatoDeImpresion, true, function (resultado) {
-                            if (resultado.resultado !== ResultadoOperacionTipo.Exitoso) {
-                                notify("Error al imprimir el documento debido a: " + resultado.mensaje);
-                            }
-                            else {
-                                InteraccionConUsuarioServicio.desbloquearPantalla();
-                            }
-                        });
-                    }, function (resultado) {
-                        notify("Error al imprimir el documento debido a: " + resultado.mensaje);
-                    });
-                }, function (resultado) {
-                    notify(resultado.mensaje);
-                });
-            }, null);
-        }
-        catch (error) {
-            notify("Error al imprimir el documento debido a: " + error.message);
-        }
     };
     return DraftControlador;
 }());

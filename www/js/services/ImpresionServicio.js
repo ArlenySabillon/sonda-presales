@@ -196,20 +196,13 @@ var ImpresionServicio = (function () {
                 var pagosEnDeposito = documentoDePago.overdueInvoicePaymentTypeDetail.filter(function (pago) {
                     return pago.paymentType === TipoDePagoFacturaVencida.Deposito;
                 });
-                var pagosEnTarjeta = documentoDePago.overdueInvoicePaymentTypeDetail.filter(function (pago) {
-                    return pago.paymentType === TipoDePagoFacturaVencida.Tarjeta;
-                });
                 var totalDePagoEnDepositos = 0;
                 var totalDePagoEnCheques = 0;
-                var totalDePagoEnTarjetas = 0;
                 pagosEnDeposito.forEach(function (pago) {
                     totalDePagoEnDepositos += pago.amount;
                 });
                 pagosEnCheque.forEach(function (pago) {
                     totalDePagoEnCheques += pago.amount;
-                });
-                pagosEnTarjeta.forEach(function (pago) {
-                    totalDePagoEnTarjetas += pago.amount;
                 });
                 var posicionDeLinea = 10;
                 var formato = "";
@@ -386,38 +379,6 @@ var ImpresionServicio = (function () {
                             (configuracionDecimales.currencySymbol + " " + format_number(totalDePagoEnCheques, configuracionDecimales.defaultDisplayDecimals)) +
                             "\r\n";
                     pagosEnCheque.forEach(function (pago, numeroDeIteracion) {
-                        if (numeroDeIteracion === 0) {
-                            posicionDeLinea += 25;
-                        }
-                        else {
-                            posicionDeLinea += 20;
-                        }
-                        formato +=
-                            "LEFT 5 T 7 0 15 " +
-                                posicionDeLinea +
-                                " " +
-                                pago.bankName +
-                                " " +
-                                pago.documentNumber +
-                                "\r\n";
-                        formato +=
-                            "LEFT 5 T 7 0 300 " +
-                                posicionDeLinea +
-                                " " +
-                                (configuracionDecimales.currencySymbol + " " + format_number(pago.amount, configuracionDecimales.defaultDisplayDecimals)) +
-                                "\r\n";
-                    });
-                }
-                if (pagosEnTarjeta.length > 0) {
-                    posicionDeLinea += 30;
-                    formato += "LEFT 5 T 7 0 5 " + posicionDeLinea + " Tarjetas\r\n";
-                    formato +=
-                        "RIGHT 550 T 7 0 0 " +
-                            posicionDeLinea +
-                            " " +
-                            (configuracionDecimales.currencySymbol + " " + format_number(totalDePagoEnTarjetas, configuracionDecimales.defaultDisplayDecimals)) +
-                            "\r\n";
-                    pagosEnTarjeta.forEach(function (pago, numeroDeIteracion) {
                         if (numeroDeIteracion === 0) {
                             posicionDeLinea += 25;
                         }

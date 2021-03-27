@@ -8,7 +8,7 @@ function preparedb() {
     ); //20mg
 
     SONDA_DB_Session.transaction(
-      function (tx) {
+      function(tx) {
         try {
           tx.executeSql(
             "CREATE TABLE IF NOT EXISTS PRESALES_ROUTE (TASK_ID INTEGER, SCHEDULE_FOR, ASSIGNED_BY, ACCEPTED_STAMP, COMPLETED_STAMP, DOC_PARENT, EXPECTED_GPS, POSTED_GPS, TASK_COMMENTS, TASK_SEQ, TASK_ADDRESS, RELATED_CLIENT_PHONE_1, EMAIL_TO_CONFIRM, RELATED_CLIENT_CODE, RELATED_CLIENT_NAME, TASK_PRIORITY, TASK_STATUS, SYNCED, NO_PICKEDUP, NO_VISIT_REASON, IS_OFFLINE, DOC_NUM, TASK_TYPE, DOC_PRINTED, TARGET_DOC, IN_PLAN_ROUTE, CREATE_BY, PAYMENT_PRINTED, PRIMARY KEY(TASK_ID))"
@@ -135,7 +135,7 @@ function preparedb() {
           );
 
           tx.executeSql(
-            "CREATE TABLE IF NOT EXISTS SALES_ORDER_HEADER([SALES_ORDER_ID],[TERMS],[POSTED_DATETIME],[CLIENT_ID],[POS_TERMINAL],[GPS_URL],[TOTAL_AMOUNT],[STATUS],[POSTED_BY],[IMAGE_1],[IMAGE_2],[IMAGE_3],[DEVICE_BATTERY_FACTOR],[VOID_DATETIME],[VOID_REASON],[VOID_NOTES],[VOIDED],[CLOSED_ROUTE_DATETIME],[IS_ACTIVE_ROUTE],[GPS_EXPECTED],[SALES_ORDER_ID_BO],[IS_POSTED],[DELIVERY_DATE],[TASK_ID],[IS_PARENT],[REFERENCE_ID], TIMES_PRINTED, SINC, DOC_SERIE, DOC_NUM, IS_POSTED_VOID, IS_VOID, SALES_ORDER_TYPE, DISCOUNT, IS_DRAFT, TOTAL_AMOUNT_DISPLAY, IS_UPDATED, TASK_ID_BO, COMMENT, PAYMENT_TIMES_PRINTED, PAID_TO_DATE, TO_BILL, AUTHORIZED, DETAIL_QTY, IS_POSTED_VALIDATED,DISCOUNT_BY_GENERAL_AMOUNT, SERVER_POSTED_DATETIME, DEVICE_NETWORK_TYPE, IS_POSTED_OFFLINE, GOAL_HEADER_ID, PURCHASE_ORDER_NUMBER)"
+            "CREATE TABLE IF NOT EXISTS SALES_ORDER_HEADER([SALES_ORDER_ID],[TERMS],[POSTED_DATETIME],[CLIENT_ID],[POS_TERMINAL],[GPS_URL],[TOTAL_AMOUNT],[STATUS],[POSTED_BY],[IMAGE_1],[IMAGE_2],[IMAGE_3],[DEVICE_BATTERY_FACTOR],[VOID_DATETIME],[VOID_REASON],[VOID_NOTES],[VOIDED],[CLOSED_ROUTE_DATETIME],[IS_ACTIVE_ROUTE],[GPS_EXPECTED],[SALES_ORDER_ID_BO],[IS_POSTED],[DELIVERY_DATE],[TASK_ID],[IS_PARENT],[REFERENCE_ID], TIMES_PRINTED, SINC, DOC_SERIE, DOC_NUM, IS_POSTED_VOID, IS_VOID, SALES_ORDER_TYPE, DISCOUNT, IS_DRAFT, TOTAL_AMOUNT_DISPLAY, IS_UPDATED, TASK_ID_BO, COMMENT, PAYMENT_TIMES_PRINTED, PAID_TO_DATE, TO_BILL, AUTHORIZED, DETAIL_QTY, IS_POSTED_VALIDATED,DISCOUNT_BY_GENERAL_AMOUNT, SERVER_POSTED_DATETIME, DEVICE_NETWORK_TYPE, IS_POSTED_OFFLINE, GOAL_HEADER_ID)"
           );
 
           tx.executeSql(
@@ -313,7 +313,7 @@ function preparedb() {
           tx.executeSql(
             "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_PAYMENT_HEADER(ID,CODE_CUSTOMER,DOC_SERIE,DOC_NUM,CREATED_DATE,POSTED_DATE,CODE_ROUTE,LOGIN_ID,PAYMENT_AMOUNT,IS_POSTED, COMMENT, PAYMENT_APPLIED_TO)"
           );
-
+  
           tx.executeSql(
             "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_PAYMENT_DETAIL(ID,PAYMENT_HEADER_ID,INVOICE_ID,DOC_ENTRY,DOC_SERIE,DOC_NUM,PAYED_AMOUNT, AMOUNT_TO_DATE, PENDING_AMOUNT)"
           );
@@ -322,22 +322,18 @@ function preparedb() {
             "CREATE TABLE IF NOT EXISTS OVERDUE_INVOICE_PAYMENT_TYPE_DETAIL([PAYMENT_TYPE_ID],[PAYMENT_HEADER_ID],[PAYMENT_TYPE],[FRONT_IMAGE],[BACK_IMAGE],[DOCUMENT_NUMBER],[BANK_ACCOUNT],[BANK_NAME],[AMOUNT],[DOC_SERIE],[DOC_NUM])"
           );
 
-          tx.executeSql(
-            "CREATE TABLE IF NOT EXISTS IMAGE_BY_SKU([ID], [CODE_SKU], [IMAGE1], [IMAGE2], [IMAGE3], [IMAGE4], [IMAGE5])"
-          );
-
           AgregarColumnas();
         } catch (e) {
           notify("preparedb:" + e.message);
         }
       },
-      function (
+      function(
         err //Fail
       ) {
         //console.clear();
         notify("preparedb: " + err.message);
       },
-      function () //Success
+      function() //Success
       {
         my_dialog("", "", "close");
       }
@@ -360,15 +356,15 @@ function get_guide_options(pGuide) {
       cancelButtonLabel: "Cancelar"
     };
 
-    window.plugins.listpicker.showPicker(config_options, function (item) {
+    window.plugins.listpicker.showPicker(config_options, function(item) {
       switch (item) {
         case "DELETE_GUIDE":
           navigator.notification.confirm(
             "Confirma anular pedido ?", // message
-            function (buttonIndex) {
+            function(buttonIndex) {
               if (buttonIndex === 2) {
                 SONDA_DB_Session.transaction(
-                  function (tx) {
+                  function(tx) {
                     pSQL =
                       "DELETE FROM SKUS_X_ORDER WHERE ORDER_ID = '" +
                       pGuide +
@@ -379,11 +375,11 @@ function get_guide_options(pGuide) {
                       "DELETE FROM ORDERS WHERE ORDER_ID = '" + pGuide + "'";
                     tx.executeSql(pSQL);
                   },
-                  function (err) {
+                  function(err) {
                     my_dialog("", "", "close");
                     notify("get_guide_options.catch:" + err.message);
                   },
-                  function () {
+                  function() {
                     RefreshMyGuidesOnTask();
                   }
                 );
@@ -408,7 +404,7 @@ function get_guide_options(pGuide) {
 
 function scanpackage() {
   cordova.plugins.barcodeScanner.scan(
-    function (result) {
+    function(result) {
       $("#lblScannedData").text(result.text);
       //ojo
       var n = result.text.indexOf("-");
@@ -423,7 +419,7 @@ function scanpackage() {
 
       if (parseInt(pScannedGuide) === parseInt(gGuideToDeliver)) {
         SONDA_DB_Session.transaction(
-          function (tx) {
+          function(tx) {
             pSQL =
               "INSERT INTO TMP_SCANNED(GUIDE_ID, PACKAGE_ID) VALUES('" +
               gGuideToDeliver +
@@ -438,11 +434,11 @@ function scanpackage() {
               "'";
             tx.executeSql(pSQL);
           },
-          function (tx, err) {
+          function(tx, err) {
             notify("ERROR, " + result.text + " Paquete ya fue escaneado");
             pError = true;
           },
-          function () {
+          function() {
             pError = false;
             simulate_scanpackage();
           }
@@ -450,12 +446,12 @@ function scanpackage() {
       } else {
         notify(
           "ERROR, Paquete " +
-          result.text +
-          ", No corresponde a la guia en curso"
+            result.text +
+            ", No corresponde a la guia en curso"
         );
       }
     },
-    function (error) {
+    function(error) {
       alert("Scanning failed: " + error);
     }
   );
@@ -463,7 +459,7 @@ function scanpackage() {
 
 function RefreshScannedInfo() {
   SONDA_DB_Session.transaction(
-    function (tx) {
+    function(tx) {
       var pSQL =
         "SELECT * FROM MANIFEST_DETAIL WHERE GUIDE_ID = '" +
         gGuideToDeliver +
@@ -472,7 +468,7 @@ function RefreshScannedInfo() {
       tx.executeSql(
         pSQL,
         [],
-        function (tx, results) {
+        function(tx, results) {
           gGuideScannedPacks = results.rows.item(0).SCANNED_PACKS;
           $("#lblScannedPacks").text(gGuideScannedPacks);
 
@@ -493,7 +489,7 @@ function RefreshScannedInfo() {
                         */
           }
         },
-        function (err) {
+        function(err) {
           my_dialog("", "", "close");
           if (err.code !== 0) {
             alert("(RefreshScannedInfo)Error processing SQL: " + err.code);
@@ -501,7 +497,7 @@ function RefreshScannedInfo() {
         }
       );
     },
-    function (err) {
+    function(err) {
       if (err.code !== 0) {
         alert("(tx.func.04)Error processing SQL: " + err.code);
       }
@@ -515,7 +511,7 @@ function get_order_detail(guide, div_id) {
 
   try {
     SONDA_DB_Session.transaction(
-      function (tx) {
+      function(tx) {
         var pSQL1 =
           "SELECT * FROM SKUS_X_ORDER WHERE GUIDE_ID = '" + guide + "'";
         //var pSQL1 = "SELECT * FROM PACKAGES_X_GUIDE";
@@ -523,7 +519,7 @@ function get_order_detail(guide, div_id) {
         tx.executeSql(
           pSQL1,
           [],
-          function (tx, results1) {
+          function(tx, results1) {
             var gDetail = [];
 
             for (j = 0; j <= results1.rows.length - 1; j++) {
@@ -557,12 +553,12 @@ function get_order_detail(guide, div_id) {
                 cancelButtonLabel: "Cancelar"
               };
 
-              window.plugins.listpicker.showPicker(config_options, function (
+              window.plugins.listpicker.showPicker(config_options, function(
                 item
-              ) { });
+              ) {});
             }
           },
-          function (err) {
+          function(err) {
             my_dialog("", "", "close");
             if (err.code !== 0) {
               alert("(guide_detail)Error processing SQL: " + err.code);
@@ -570,7 +566,7 @@ function get_order_detail(guide, div_id) {
           }
         );
       },
-      function (err) {
+      function(err) {
         if (err.code !== 0) {
           alert("(tx.func.04)Error processing SQL: " + err.code);
         }
@@ -584,39 +580,39 @@ function get_order_detail(guide, div_id) {
 function CheckforOffline() {
   //check for pickup
   SONDA_DB_Session.transaction(
-    function (tx) {
+    function(tx) {
       pSQL = "SELECT * FROM ORDERS WHERE IS_OFFLINE = 1 AND STATUS = 'SIGNED'";
 
       tx.executeSql(
         pSQL,
         [],
-        function (tx, results) {
+        function(tx, results) {
           for (i = 0; i <= results.rows.length - 1; i++) {
             gtaskid = results.rows.item(i).SOURCE_TASK;
             ProcessPickupTask(1);
           }
         },
-        function (err) {
+        function(err) {
           my_dialog("", "", "close");
           alert("ShowHideOptions.0.Error processing SQL: " + err.message);
         }
       );
     },
-    function (err) {
+    function(err) {
       alert("CheckforOffline.1.Error processing SQL: " + err.message);
     }
   );
 
   //check for delivery
   SONDA_DB_Session.transaction(
-    function (tx) {
+    function(tx) {
       pSQL =
         "SELECT * FROM MANIFEST_DETAIL WHERE IS_OFFLINE = 1 AND INVOICE_STATUS = 'COMPLETED'";
 
       tx.executeSql(
         pSQL,
         [],
-        function (tx, results) {
+        function(tx, results) {
           if (results.rows.length >= 1) {
             for (var i = 0; i <= results.rows.length - 1; i++) {
               window.gtaskid = results.rows(i).SOURCE_TASK;
@@ -624,13 +620,13 @@ function CheckforOffline() {
             }
           }
         },
-        function (err) {
+        function(err) {
           my_dialog("", "", "close");
           alert("ShowHideOptions.0.Error processing SQL: " + err.message);
         }
       );
     },
-    function (err) {
+    function(err) {
       my_dialog("", "", "close");
       alert("ShowHideOptions.1.Error processing SQL: " + err.message);
     }
@@ -640,7 +636,7 @@ function CheckforOffline() {
 function create_task_offplan() {
   try {
     SONDA_DB_Session.transaction(
-      function (tx) {
+      function(tx) {
         var xdate = getDateTime();
         var pInputedAdress = "";
         var pInputedPhone = "";
@@ -694,10 +690,10 @@ function create_task_offplan() {
         gTaskOffPlanID += 1;
         localStorage.setItem("gTaskOffPlanID", gTaskOffPlanID);
       },
-      function (tx, err) {
+      function(tx, err) {
         my_dialog("", "", "close");
       },
-      function () {
+      function() {
         gTaskOffPlanID += 1;
         localStorage.setItem("gTaskOffPlanID", gTaskOffPlanID);
 

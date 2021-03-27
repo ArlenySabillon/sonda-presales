@@ -46,6 +46,7 @@ var ListaDePagoControlador = (function () {
     };
     ListaDePagoControlador.prototype.cargarDatosPrincipales = function () {
         var _this = this;
+        this.simboloDeMoneda = localStorage.getItem("CURRENCY_SYMBOL") || "Q";
         this.documentosDePago.length = 0;
         InteraccionConUsuarioServicio.bloquearPantalla();
         this.restablecerFiltroPrincipal();
@@ -80,7 +81,7 @@ var ListaDePagoControlador = (function () {
                 cadenaHtmlDeDocumentosDePago_1.push(" <label>No. " + pago.docNum + " </label>");
                 cadenaHtmlDeDocumentosDePago_1.push(" <label>" + pago.codeCustomer + " </label>");
                 cadenaHtmlDeDocumentosDePago_1.push(" <label>" + pago.nameCustomer + " </label>");
-                cadenaHtmlDeDocumentosDePago_1.push(" <span class=\"ui-li-count\">" + _this.configuracionDeDecimales.currencySymbol + ". " + format_number(pago.paymentAmount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "</span>");
+                cadenaHtmlDeDocumentosDePago_1.push(" <span class=\"ui-li-count\">" + _this.simboloDeMoneda + ". " + format_number(pago.paymentAmount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "</span>");
                 cadenaHtmlDeDocumentosDePago_1.push(" </a>");
                 cadenaHtmlDeDocumentosDePago_1.push(" </li>");
             });
@@ -89,7 +90,7 @@ var ListaDePagoControlador = (function () {
                 contenedorDeListadoDeDocumentosDePago.append(listadoDePagos);
                 contenedorDeListadoDeDocumentosDePago.listview("refresh");
             }
-            etiquetaDeMontoTotalEnPagos.text(this.configuracionDeDecimales.currencySymbol + " " + format_number(montoTotalEnPagos_1, this.configuracionDeDecimales.defaultDisplayDecimals));
+            etiquetaDeMontoTotalEnPagos.text(this.simboloDeMoneda + " " + format_number(montoTotalEnPagos_1, this.configuracionDeDecimales.defaultDisplayDecimals));
             etiquetaDeMontoTotalEnPagos = null;
         }
         catch (e) {
@@ -170,7 +171,7 @@ var ListaDePagoControlador = (function () {
         var mensaje = new PagoDeFacturaVencidaMensaje(this);
         mensaje.pago = pago;
         mensaje.configuracionDeDecimales = this.configuracionDeDecimales;
-        mensaje.simboloDeMoneda = this.configuracionDeDecimales.currencySymbol;
+        mensaje.simboloDeMoneda = this.simboloDeMoneda;
         this.mensajero.publish(mensaje, getType(PagoDeFacturaVencidaMensaje));
         callback();
     };

@@ -1,4 +1,4 @@
-﻿var mensajero;
+var mensajero;
 var gMaxImpresiones = 5;
 var pictureSource; // picture source
 var destinationType; // sets the format of returned value
@@ -85,16 +85,14 @@ var tipoDePagoDeFacturaVencidaControlador;
 var confirmacionDePagoDeFacturaVencidaControlador;
 var listaDePagoControlador;
 var detalleDePagoControlador;
-var catalogoDeProductoControlador;
-var galeriaDeImagenControlador;
 
 var default_image;
 //var SondaServerURL = "http://190.56.115.27:8596"; //IP Publica Servidor Dev Mobility
 //var SondaServerURL = "http://190.56.115.27:9596"; //IP Publica Servidor QA Mobility
 var SondaServerURL = "";
 
-var currentBranch = "cendalzaRoute";
-var SondaVersion = "2021.03.23";
+var currentBranch = "G-Force@Estocolmo";
+var SondaVersion = "4.6.6";
 var SondaServerOptions = {
   reconnect: true,
   "max reconnection attempts": 60000
@@ -111,7 +109,20 @@ var gIsOnline = 0;
 var gHeaderSerial = "";
 var gDetailSerial = "";
 
+function fakescann() {
+  var globalUtilsServicio = new GlobalUtilsServicio(mensajero);
+  gManifestID = parseInt(47);
+
+  my_dialog("Verificando", "Buscando manifiesto", "open");
+
+  globalUtilsServicio.socketIo.emit("manifest_scanned", {
+    scanned: gManifestID
+  });
+  globalUtilsServicio = null;
+}
 function onMenuKeyDown() {
+  var myFooter;
+
   try {
     var globalUtilsServicio = new GlobalUtilsServicio(mensajero);
     var myPanel;
@@ -169,6 +180,9 @@ function onMenuKeyDown() {
   }
 }
 function onSuccessGPS(position) {
+  //spinnerplugin.hide();
+  //notify("lat: " + position.coords.latitude + " lon: " + position.coords.longitude)
+  //navigator.notification.activityStop();
   window.plugins.spinnerDialog.hide();
   gCurrentGPS = position.coords.latitude + "," + position.coords.longitude;
   gLastGPS = gCurrentGPS;
@@ -176,6 +190,13 @@ function onSuccessGPS(position) {
   $(".gpsclass").text(
     position.coords.latitude + "," + position.coords.longitude
   );
+
+  /*
+    setInterval(function ()
+    {
+    notify('interval');
+    }, 30000);
+    */
 }
 function DeviceIsOnline() {
   try {
@@ -520,18 +541,6 @@ function onBackKeyDown() {
     case "UiPaymentListPage":
       window.history.back();
       break;
-    case "UiSelectedSkuImagePage":
-      var contenedorDeImagenSeleccionada = $("#ImagenDeProductoSeleccionada");
-      contenedorDeImagenSeleccionada.attr("src", "");
-      contenedorDeImagenSeleccionada = null;
-      window.history.back();
-      break;
-    case "UiProductCatalogPage":
-      catalogoDeProductoControlador.usuarioDeseaRegresarAPantallaAnterior();
-      break;
-    case "UiSkuImagesPage":
-      galeriaDeImagenControlador.usuarioDeseaRegresarAPantallaAnterior();
-      break;
   }
 }
 function showmenu() {
@@ -640,7 +649,7 @@ function ShowHideOptions() {
 }
 
 function notify(pMessage) {
-  InteraccionConUsuarioServicio.desbloquearPantalla();
+  console.log("Notify: " + pMessage);
   navigator.notification.alert(
     pMessage, // message
     null, // callback to invoke with index of button pressed
@@ -2527,21 +2536,10 @@ function ShowListPicker(options, callback) {
   window.plugins.listpicker.showPicker(options, callback);
 }
 
-var logOb;
-
 function onDeviceReady() {
-  const path = cordova.file.externalDataDirectory;
-  console.log(path)
-  window.resolveLocalFileSystemURL(path, (dir) => {
-      console.log("got main dir",dir);
-      dir.getFile("conf.json", {create:true}, (file) => {
-          console.log("got the file", file);
-          logOb = file;
-      });
-  });
-    try {
+  var pDebug = "1";
+  try {
     $("#login_isonline").text("OFF");
-    $(".sonda-version").text("Sonda " + SondaVersion);
 
     delegate_events();
 
@@ -2555,6 +2553,8 @@ function onDeviceReady() {
         notify("onDeviceReady:" + ex.message);
       }
     }
+
+    $(".sonda-version").text("Sonda " + SondaVersion);
 
     DelegateSondaRoute();
     DelagateSalesController();
@@ -2695,14 +2695,6 @@ function onDeviceReady() {
 
     detalleDePagoControlador = new DetalleDePagoControlador(mensajero);
     detalleDePagoControlador.delegarDetalleDePagoControlador();
-
-    catalogoDeProductoControlador = new CatalogoDeProductoControlador(
-      mensajero
-    );
-    catalogoDeProductoControlador.delegarCatalogoDeProductoControlador();
-
-    galeriaDeImagenControlador = new GaleriaDeImagenControlador();
-    galeriaDeImagenControlador.delegarGaleriaDeImagenControlador();
 
     //// TODO: EJEMPLO DE COMO USAR EL MESSENGER
     //var mensajero = new Messenger();
@@ -3571,7 +3563,7 @@ function delegate_events() {
       socket.emit("RegisterClientSocketConnected", { routeid: gCurrentRoute });
     }
 
-    estadisticaDeVentaControlador.mostrarUOcultarContenedorDeModuloDeMetas();
+    estadisticaDeVentaControlador.obtenerInformacionDeEstadisticaDeVentaActual();
 
     tareaDetalleControlador.debeCobrarFacturasVencidas(
       ReglaTipo.CobroDeFacturaVencida.toString(),
@@ -4964,13 +4956,9 @@ function DesBloquearPantalla() {
   $.unblockUI();
   document.addEventListener("menubutton", onMenuKeyDown, true);
   document.addEventListener("backbutton", onBackKeyDown, true);
-
-  var appIsReady = localStorage.getItem("APP_IS_READY");
-  if (appIsReady === "1") {
-    localStorage.setItem("LOGIN_STATUS", "OPEN");
-    localStorage.setItem("POS_STATUS", "OPEN");
-    localStorage.setItem("POS_DATE", getDateTime());
-  }
+  localStorage.setItem("LOGIN_STATUS", "OPEN");
+  localStorage.setItem("POS_STATUS", "OPEN");
+  localStorage.setItem("POS_DATE", getDateTime());
 }
 
 function seleccionoOpcionEnBonificacionPorCombo(nombreDeObjeto) {

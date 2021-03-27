@@ -20,7 +20,6 @@ var ValidacionDeLicenciaControlador = (function () {
     ValidacionDeLicenciaControlador.prototype.validateCredentials = function () {
         pUserID = $("#txtUserID").val();
         pPinCode = $("#txtPin").val();
-        localStorage.setItem("APP_IS_READY", "0");
         if (isNaN(pPinCode)) {
             my_dialog("", "", "close");
             notify("ERROR, Debe ingresar un valor numerico");

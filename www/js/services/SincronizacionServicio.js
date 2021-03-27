@@ -9,7 +9,7 @@ var _enviandoNumeroDeImprecionesDeOrdenesDeVenta = false;
 var _enviandoNumeroDeSecuenciaDeDocumentos = false;
 var _enviandoOrdenesDeVentaAnuladas = false;
 var _enviandoInventarioReservadoPorOrdenesDeVentaAnuladas = false;
-var _enviandoBorradoresDeOrdenesDeCompra = true;
+var _enviandoBorradoresDeOrdenesDeCompra = false;
 var _enviandoActualizacionesBorradoresDeOrdenesDeCompra = false;
 var _enviandoTomaDeInventario = false;
 var _enviandoCambiosDeClientes = false;
@@ -741,7 +741,7 @@ function ActualizarEtiqutaPorClienteHandHeld(etiquetaPorCliente) {
           sql += " WHERE IS_POSTED IN (0,1)";
           sql += " AND substr(CLIENT_ID,1,1 ) <> '-'";
           sql += " AND IFNULL(TASK_ID_BO,0) > 0";
-          //sql += " AND IS_DRAFT = 0";
+          sql += " AND IS_DRAFT = 0";
         }
         sql += " ORDER BY POSTED_DATETIME";
 
@@ -790,14 +790,13 @@ function ActualizarEtiqutaPorClienteHandHeld(etiquetaPorCliente) {
                 IsUpdated: results.rows.item(i).IS_UPDATED,
                 PaymentTimesPrinted: results.rows.item(i).PAYMENT_TIMES_PRINTED,
                 PaidToDate: results.rows.item(i).PAID_TO_DATE,
-                ToBill: results.rows.item(i).TO_BILL || 0,
+                ToBill: results.rows.item(i).TO_BILL,
                 Authorized: results.rows.item(i).AUTHORIZED,
                 DetailQty: results.rows.item(i).DETAIL_QTY,
                 DeviceNetworkType: results.rows.item(i).DEVICE_NETWORK_TYPE,
                 IsPostedOffline: results.rows.item(i).IS_POSTED_OFFLINE,
                 GoalHeaderId: results.rows.item(i).GOAL_HEADER_ID,
                 TotalAmountDisplay: results.rows.item(i).TOTAL_AMOUNT_DISPLAY,
-                PurchaseOrderNumber: results.rows.item(i).PURCHASE_ORDER_NUMBER,
                 SaleDetails: []
               };
               ordenesDeCompra.push(ordenDeCompra);
@@ -833,7 +832,7 @@ function ActualizarEtiqutaPorClienteHandHeld(etiquetaPorCliente) {
         tx.executeSql(
           sql,
           [],
-          function(_tx, results) {
+          function(tx, results) {
             for (var j = 0; j < results.rows.length; j++) {
               var detOrdenDeCompra = {
                 SalesOrderId: results.rows.item(j).SALES_ORDER_ID,
@@ -880,7 +879,7 @@ function ActualizarEtiqutaPorClienteHandHeld(etiquetaPorCliente) {
               returncallBack(ordenesDeCompra);
             }
           },
-          function(_tx, err) {
+          function(tx, err) {
             if (err.code !== 0) errCallBack(err);
           }
         );
@@ -1303,18 +1302,18 @@ function EnviarDataSinClientes() {
 
     setTimeout(EnviarInventarioReservadoPorOrdenesDeVentaAnuladas(), 100);
 
-    // setTimeout(
-    //   EnviarBorradoresDeOrdenesDeCompra(function() {}, function(err) {}),
-    //   100
-    // );
+    setTimeout(
+      EnviarBorradoresDeOrdenesDeCompra(function() {}, function(err) {}),
+      100
+    );
 
-    // setTimeout(
-    //   EnviarActualizacionesDeBorradoresDeOrdenesDeCompra(
-    //     function() {},
-    //     function(err) {}
-    //   ),
-    //   100
-    // );
+    setTimeout(
+      EnviarActualizacionesDeBorradoresDeOrdenesDeCompra(
+        function() {},
+        function(err) {}
+      ),
+      100
+    );
 
     setTimeout(EnviarTomasDeInventario(function() {}, function(err) {}), 100);
 
@@ -1436,13 +1435,12 @@ function ObtenerBroadcastPerdidos() {
         sql += " WHERE IS_POSTED IN (0,1)";
         sql += " AND substr(CLIENT_ID,1,1 ) <> '-'";
         sql += " AND IS_DRAFT = 1";
-        sql += " AND IFNULL(TASK_ID_BO,0) > 0";
         sql += " ORDER BY POSTED_DATETIME";
 
         tx.executeSql(
           sql,
           [],
-          function(_tx, results) {
+          function(tx, results) {
             for (var i = 0; i < results.rows.length; i++) {
               var ordenDeCompra = {
                 SalesOrderId: results.rows.item(i).SALES_ORDER_ID,
@@ -1476,28 +1474,15 @@ function ObtenerBroadcastPerdidos() {
                 SalesOrderType: results.rows.item(i).SALES_ORDER_TYPE,
                 Discount: results.rows.item(i).DISCOUNT_BY_GENERAL_AMOUNT,
                 IsDraft: results.rows.item(i).IS_DRAFT,
-                TaskId: results.rows.item(i).TASK_ID_BO,
-                Comment: results.rows.item(i).COMMENT,
-                IsPosted: results.rows.item(i).IS_POSTED,
-                Sinc: results.rows.item(i).SINC,
-                IsPostedVoid: results.rows.item(i).IS_POSTED_VOID,
-                IsUpdated: results.rows.item(i).IS_UPDATED,
-                PaymentTimesPrinted: results.rows.item(i).PAYMENT_TIMES_PRINTED,
-                PaidToDate: results.rows.item(i).PAID_TO_DATE,
-                ToBill: results.rows.item(i).TO_BILL,
-                Authorized: results.rows.item(i).AUTHORIZED,
-                DetailQty: results.rows.item(i).DETAIL_QTY,
                 DeviceNetworkType: results.rows.item(i).DEVICE_NETWORK_TYPE,
-                IsPostedOffline: results.rows.item(i).IS_POSTED_OFFLINE,
-                GoalHeaderId: results.rows.item(i).GOAL_HEADER_ID,
-                TotalAmountDisplay: results.rows.item(i).TOTAL_AMOUNT_DISPLAY,
-                SaleDetails: []
+                IsPostedOffLine: results.rows.item(i).IS_POSTED_OFFLINE,
+                SaleDetails: Array()
               };
               ordenesDeCompra.push(ordenDeCompra);
             }
             callback(ordenesDeCompra);
           },
-          function(_tx, err) {
+          function(tx, err) {
             if (err.code !== 0) errCallBack(err);
           }
         );
@@ -1526,7 +1511,7 @@ function ObtenerBroadcastPerdidos() {
         tx.executeSql(
           sql,
           [],
-          function(_tx, results) {
+          function(tx, results) {
             for (var j = 0; j < results.rows.length; j++) {
               var detOrdenDeCompra = {
                 SalesOrderId: results.rows.item(j).SALES_ORDER_ID,
@@ -1544,26 +1529,7 @@ function ObtenerBroadcastPerdidos() {
                 ParentSeq: results.rows.item(j).PARENT_SEQ,
                 IsActiveRoute: results.rows.item(j).IS_ACTIVE_ROUTE,
                 CodePackUnit: results.rows.item(j).CODE_PACK_UNIT,
-                IsBonus: results.rows.item(j).IS_BONUS,
-                IsPostedVoid: results.rows.item(j).IS_POSTED_VOID,
-                Long: results.rows.item(j).LONG,
-                DiscountType: results.rows.item(j).DISCOUNT_TYPE,
-                DiscountByFamily: results.rows.item(j).DISCOUNT_BY_FAMILY,
-                DiscountByGeneralAmount: results.rows.item(j)
-                  .DISCOUNT_BY_GENERAL_AMOUNT,
-                DiscountByFamilyAndPaymentType: results.rows.item(j)
-                  .DISCOUNT_BY_FAMILY_AND_PAYMENT_TYPE,
-                TypeOfDiscountByFamily: results.rows.item(j)
-                  .TYPE_OF_DISCOUNT_BY_FAMILY,
-                TypeOfDiscountByGeneralAmount: results.rows.item(j)
-                  .TYPE_OF_DISCOUNT_BY_GENERAL_AMOUNT,
-                TypeOfDiscountByFamilyAndPaymentType: results.rows.item(j)
-                  .TYPE_OF_DISCOUNT_BY_FAMILY_AND_PAYMENT_TYPE,
-                BasePrice: results.rows.item(j).BASE_PRICE,
-                CodeFamily: results.rows.item(j).CODE_FAMILY,
-                UniqueDiscountByScaleApplied: results.rows.item(j)
-                  .UNIQUE_DISCOUNT_BY_SCALE_APPLIED,
-                TotalAmountDisplay: results.rows.item(j).TOTAL_AMOUNT_DISPLAY
+                IsBonus: 0
               };
               ordenDeCompra.SaleDetails.push(detOrdenDeCompra);
             }
@@ -1573,7 +1539,7 @@ function ObtenerBroadcastPerdidos() {
               returncallBack(ordenesDeCompra);
             }
           },
-          function(_tx, err) {
+          function(tx, err) {
             if (err.code !== 0) errCallBack(err);
           }
         );
@@ -2664,7 +2630,7 @@ function ObtenerBroadcastPerdidos() {
       encuestasNoSincronizadas
     ) {
       if (encuestasNoSincronizadas.length > 0) {
-        var intervaloDeEnvioDeEncuestas = setInterval(function() {
+        var intervaloDeEnvioDeEncuestas = setInterval(() => {
           encuestasAEnviar = encuestasNoSincronizadas.splice(0, 5); //TODO:Se toman los primeros 5 objetos disponibles
           var data = {
             encuestas: encuestasAEnviar,

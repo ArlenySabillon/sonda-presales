@@ -24,7 +24,6 @@ var DenominacionSkuControlador = (function () {
         this.listaDeSkuOrdenDeVenta = [];
         this.listaDeOrdenAplicarDescuentos = [];
         this.usuarioPuedeModificarPrecioDeProducto = false;
-        this.listadoDeImagenesDeProductoSeleccionado = [];
         this.paqueteServicio = new PaqueteServicio();
         this.historicoDeArticuloServicio = new HistoricoDeArticuloServicio();
         this.precioSkuServicio = new PrecioSkuServicio();
@@ -35,10 +34,8 @@ var DenominacionSkuControlador = (function () {
         this.descuentoServicio = new DescuentoServicio();
         this.promoServicio = new PromoServicio();
         this.precioEspecialServicio = new PrecioEspecialServicio();
-        this.imagenDeSkuServicio = new ImagenDeSkuServicio();
     }
     DenominacionSkuControlador.prototype.delegarDenominacionSkuControlador = function () {
-        var _this = this;
         var este = this;
         document.addEventListener("backbutton", function () {
             este.usuarioEstaRegresandoAPantallaAnterior = true;
@@ -88,7 +85,6 @@ var DenominacionSkuControlador = (function () {
                     este.usuarioCambioCantidaDePaquete(function () {
                         este.validarBonificacionesIngresadas(function () {
                             este.validarIngresoDeDescuento(function (resultado) {
-                                console.log("valida descuento")
                                 notify(resultado.mensaje);
                             });
                         }, function (resultado) {
@@ -108,23 +104,11 @@ var DenominacionSkuControlador = (function () {
         });
         $("#UiTextoCantidadUnidadMedida").on("keypress", function (e) {
             if (e.keyCode === 13) {
-                BloquearPantalla();
-                este.usuarioCambioCantidaDePaquete(function () {
-                    este.estaValidandoElDescuento = true;
-                    este.validarBonificacionesIngresadas(function () {
-                        este.validarIngresoDeDescuento(function (resultado) {
-                            notify(resultado.mensaje);
-                            DesBloquearPantalla();
-                            este.estaValidandoElDescuento = false;
-                        }, function () {
-                            este.estaValidandoElDescuento = false;
-                            este.usuarioDeseaAceptarElSku();
-                        });
-                    }, function (resultado) {
-                        notify(resultado.mensaje);
-                        DesBloquearPantalla();
-                    });
-                });
+                e.preventDefault();
+                var UiBotonAceptarCantidadSku = $("#UiBotonAceptarCantidadSku");
+                UiBotonAceptarCantidadSku.focus();
+                UiBotonAceptarCantidadSku.trigger("touchstart");
+                UiBotonAceptarCantidadSku = null;
             }
         });
         $("#UiTxtPrecioNegociadoConCliente").on("focusout", function (e) {
@@ -160,23 +144,10 @@ var DenominacionSkuControlador = (function () {
                 }
             }
         });
-        $("#skucant_page").on("click", "#UiSkuImageContainer div", function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            var identificadorDeImagen = e.currentTarget.attributes["id"].nodeValue;
-            var indiceDeImagen = identificadorDeImagen.substring(12);
-            if (indiceDeImagen && indiceDeImagen.length > 0) {
-                var imagenSeleccionada = _this.listadoDeImagenesDeProductoSeleccionado[parseInt(indiceDeImagen)];
-                if (imagenSeleccionada) {
-                    _this.imagenDeSkuServicio.usuarioDeseaVerImagenDeProductoEnPantallaCompleta(imagenSeleccionada);
-                }
-            }
-        });
     };
     DenominacionSkuControlador.prototype.cargarPantalla = function () {
         var _this = this;
         try {
-            this.listadoDeImagenesDeProductoSeleccionado.length = 0;
             my_dialog("Espere", "Preparando información, por favor espere...", "open");
             var uiEtiquetaCodigoYNombreDeSku = $("#UiEtiquetaCodigoYNombreDeSku");
             uiEtiquetaCodigoYNombreDeSku.text(this.sku.sku + "/" + this.sku.skuDescription);
@@ -190,9 +161,7 @@ var DenominacionSkuControlador = (function () {
                                     _this.cargarPreciosEspeciales(function () {
                                         if (_this.estaAgregandoSku) {
                                             _this.seleccionarPrimerPaquete();
-                                            _this.prepararImagenesDeProducto(function () {
-                                                my_dialog("", "", "close");
-                                            });
+                                            my_dialog("", "", "close");
                                         }
                                         else {
                                             _this.cargarListaSkuAPaquetes(function () {
@@ -208,9 +177,7 @@ var DenominacionSkuControlador = (function () {
                                                                     _this.obtenerTotalDePaquetesConDescuentoAplicados(function (total) {
                                                                         _this.tarea.salesOrderTotal -= total;
                                                                         _this.cargarDatosDelPaqueteSeleccionado(function () {
-                                                                            _this.prepararImagenesDeProducto(function () {
-                                                                                my_dialog("", "", "close");
-                                                                            });
+                                                                            my_dialog("", "", "close");
                                                                         });
                                                                     }, function (resultado) {
                                                                         my_dialog("", "", "close");
@@ -1111,13 +1078,9 @@ var DenominacionSkuControlador = (function () {
         }
     };
     DenominacionSkuControlador.prototype.mostrarPantallaAnterior = function () {
-        var _this = this;
         switch ($.mobile.activePage[0].id) {
             case "skucant_page":
-                this.imagenDeSkuServicio.limpiarContenedorDeImagenesDeProducto(false, function () {
-                    _this.listadoDeImagenesDeProductoSeleccionado.length = 0;
-                    window.history.back();
-                });
+                window.history.back();
                 break;
         }
     };
@@ -2504,18 +2467,6 @@ var DenominacionSkuControlador = (function () {
         }
         catch (error) {
             notify(error);
-        }
-    };
-    DenominacionSkuControlador.prototype.prepararImagenesDeProducto = function (callback) {
-        var _this = this;
-        try {
-            this.imagenDeSkuServicio.obtenerImagenesDeProducto(this.sku, function (imagenesDeProducto) {
-                _this.listadoDeImagenesDeProductoSeleccionado = imagenesDeProducto;
-                _this.imagenDeSkuServicio.construirListadoDeImagenesParaProductoSeleccionado(imagenesDeProducto, false, callback);
-            });
-        }
-        catch (error) {
-            notify(error.message);
         }
     };
     return DenominacionSkuControlador;

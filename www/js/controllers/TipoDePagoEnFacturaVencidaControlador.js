@@ -45,16 +45,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
                 }
             });
         });
-        $("#UiBtnTakeFrontImageForCreditOrDebitCardVoucher").on("click", function (e) {
-            e.preventDefault();
-            TomarFoto(function (imagen) {
-                _this.imagenFrontalDelDocumentoDePago = imagen;
-            }, function (mensajeDeError) {
-                if (mensajeDeError !== "Camera cancelled.") {
-                    notify(mensajeDeError);
-                }
-            });
-        });
         $("#UiCmbPaymentType").on("change", function (e) {
             e.preventDefault();
             _this.expandirContenedorDeInformacionDeTipoDePagoSeleccionado(e);
@@ -83,14 +73,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
                 });
             }
         });
-        $("#UiOverdueInvoicePaymentDetailPage").on("click", "#UiCreditOrDebitCardDetail a", function (e) {
-            var id = e.currentTarget.id;
-            if (id) {
-                _this.obtenerAutorizacionDeUsuarioParaEliminarPago(function () {
-                    _this.eliminarPagoSeleccionado(id);
-                });
-            }
-        });
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.expandirContenedorDeInformacionDeTipoDePagoSeleccionado = function (e) {
         var tipoDePagoSeleccionado = e.currentTarget
@@ -98,8 +80,7 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         var contenedorDeInformacionEnEfectivo = $("#InfoCashContainer");
         var contenedorDeInformacionDeDepositos = $("#InfoDepositsContainer");
         var contenedorDeInformacionDeCheques = $("#InfoBankChecksContainer");
-        var contenedorDeInformacionDeTarjetas = $("#InfoCreditOrDebitCardContainer");
-        this.colapsarTodosLosContenedoresDeInformacionDePagos(contenedorDeInformacionEnEfectivo, contenedorDeInformacionDeCheques, contenedorDeInformacionDeDepositos, contenedorDeInformacionDeTarjetas);
+        this.colapsarTodosLosContenedoresDeInformacionDePagos(contenedorDeInformacionEnEfectivo, contenedorDeInformacionDeCheques, contenedorDeInformacionDeDepositos);
         switch (tipoDePagoSeleccionado) {
             case TipoDePagoFacturaVencida.Cheque:
                 contenedorDeInformacionDeCheques.collapsible("expand");
@@ -113,10 +94,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
                 contenedorDeInformacionDeDepositos.collapsible("expand");
                 this.cambiarVisualizacionDeContenedorDeCamposParaChequesODepositos(true);
                 break;
-            case TipoDePagoFacturaVencida.Tarjeta:
-                this.cambiarVisualizacionDeCamposDePagoEnTarjeta(true);
-                contenedorDeInformacionDeTarjetas.collapsible("expand");
-                break;
             default:
                 contenedorDeInformacionEnEfectivo.collapsible("expand");
                 this.cambiarVisualizacionDeContenedorDeCamposParaChequesODepositos(false);
@@ -126,19 +103,16 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         contenedorDeInformacionEnEfectivo = null;
         tipoDePagoSeleccionado = null;
     };
-    TipoDePagoEnFacturaVencidaControlador.prototype.colapsarTodosLosContenedoresDeInformacionDePagos = function (contenedorDeInformacionEnEfectivo, contenedorDeInformacionDeCheques, contenedorDeInformacionDeDepositos, contenedorDeInformacionDeTarjetas) {
+    TipoDePagoEnFacturaVencidaControlador.prototype.colapsarTodosLosContenedoresDeInformacionDePagos = function (contenedorDeInformacionEnEfectivo, contenedorDeInformacionDeCheques, contenedorDeInformacionDeDepositos) {
         contenedorDeInformacionEnEfectivo.collapsible("collapse");
         contenedorDeInformacionDeDepositos.collapsible("collapse");
         contenedorDeInformacionDeCheques.collapsible("collapse");
-        contenedorDeInformacionDeTarjetas.collapsible("collapse");
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.cambiarVisualizacionDeContenedorDeCamposParaChequesODepositos = function (visualizar) {
         var contenedorDeCamposParaChequesODepositos = $("#BankCheckOrDepositContainer");
         var contenedorDeCamposParaEfectivo = $("#CashContainer");
-        var contenedorDeCamposParaTarjeta = $("#CreditOrDebitCardContainer");
         var campoDeMontoIngresadoEnEfectivo = $("#TxtCashAmount");
         var campoDeNumeroDeDocumentoDeChequeODeposito = $("#TxtBankCheckOrDepositNumber");
-        contenedorDeCamposParaTarjeta.css("display", "none");
         if (visualizar) {
             contenedorDeCamposParaChequesODepositos.css("display", "block");
             contenedorDeCamposParaEfectivo.css("display", "none");
@@ -153,7 +127,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         contenedorDeCamposParaEfectivo = null;
         campoDeMontoIngresadoEnEfectivo = null;
         campoDeNumeroDeDocumentoDeChequeODeposito = null;
-        contenedorDeCamposParaTarjeta = null;
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.cargarDatosIniciales = function () {
         var _this = this;
@@ -164,10 +137,8 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         tipoDePago = null;
         this.limpiarCamposDePagoDeChequeODeposito();
         this.limpiarCampoDePagoEnEfectivo();
-        this.limpiarCamposDePagoEnTarjeta();
         this.decimalesServicio.obtenerInformacionDeManejoDeDecimales(function (decimales) {
             _this.configuracionDeDecimales = decimales;
-            _this.cambiarVisualizacionDeCamposDePagoEnTarjeta(false);
             _this.cambiarVisualizacionDeContenedorDeCamposParaChequesODepositos(false);
             _this.calcularMontosDeLosDiferentesTiposDePagos();
             _this.generarListadoDeTiposDePagos();
@@ -180,11 +151,9 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         var montoEnEfectivo = 0;
         var montoEnDepositos = 0;
         var montoEnCheques = 0;
-        var montoEnTarjetas = 0;
         var montoPagadoEnEfectivo = $("#UiLblCashPayedAmount");
         var montoPagadoEnDepositos = $("#UiLblDepositsPayedAmount");
         var montoPagadoEnCheques = $("#UiLblBankChecksPayedAmount");
-        var montoPagadoEnTarjetas = $("#UiLblCreditOrDebitCardPayedAmount");
         var montoTotalPagado = $("#UiLblTotalPayedAmount");
         this.detalleDeTiposDePagosRealizados.forEach(function (tipoDePagoEnFacturaVencida) {
             switch (tipoDePagoEnFacturaVencida.paymentType) {
@@ -197,24 +166,18 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
                 case TipoDePagoFacturaVencida.Cheque:
                     montoEnCheques += tipoDePagoEnFacturaVencida.amount;
                     break;
-                case TipoDePagoFacturaVencida.Tarjeta:
-                    montoEnTarjetas += tipoDePagoEnFacturaVencida.amount;
-                    break;
             }
         });
         montoPagadoEnEfectivo.text(this.configuracionDeDecimales.currencySymbol + ". " + format_number(montoEnEfectivo, this.configuracionDeDecimales.defaultDisplayDecimals));
         montoPagadoEnDepositos.text(this.configuracionDeDecimales.currencySymbol + ". " + format_number(montoEnDepositos, this.configuracionDeDecimales.defaultDisplayDecimals));
         montoPagadoEnCheques.text(this.configuracionDeDecimales.currencySymbol + ". " + format_number(montoEnCheques, this.configuracionDeDecimales.defaultDisplayDecimals));
-        montoPagadoEnTarjetas.text(this.configuracionDeDecimales.currencySymbol + ". " + format_number(montoEnTarjetas, this.configuracionDeDecimales.defaultDisplayDecimals));
-        montoTotalPagado.text(this.configuracionDeDecimales.currencySymbol + ". " + format_number(montoEnEfectivo + montoEnDepositos + montoEnCheques + montoEnTarjetas, this.configuracionDeDecimales.defaultDisplayDecimals));
+        montoTotalPagado.text(this.configuracionDeDecimales.currencySymbol + ". " + format_number(montoEnEfectivo + montoEnDepositos + montoEnCheques, this.configuracionDeDecimales.defaultDisplayDecimals));
         montoEnEfectivo = null;
         montoEnCheques = null;
         montoEnDepositos = null;
-        montoEnTarjetas = null;
         montoPagadoEnDepositos = null;
         montoPagadoEnCheques = null;
         montoPagadoEnEfectivo = null;
-        montoPagadoEnTarjetas = null;
         montoTotalPagado = null;
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.irAPantalla = function (pantalla) {
@@ -235,9 +198,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
                 break;
             case TipoDePagoFacturaVencida.Cheque:
                 this.validarPagoConDepositoOCheque();
-                break;
-            case TipoDePagoFacturaVencida.Tarjeta:
-                this.validarPagoConTarjeta();
                 break;
         }
     };
@@ -378,28 +338,19 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.generarListadoDeCuentasBancarias = function () {
         var contenedorDeCuentasBancarias = $("#CmbBankAccount");
-        var contenedorDeCuentasBancariasParaTarjeta = $("#CmbBankAccountCreditOrDebitCard");
         contenedorDeCuentasBancarias.children().remove("option");
         contenedorDeCuentasBancarias.selectmenu("refresh", true);
-        contenedorDeCuentasBancariasParaTarjeta.children().remove("option");
-        contenedorDeCuentasBancariasParaTarjeta.selectmenu("refresh", true);
         obtenerCuentasDeBancos(function (cuentasDeBanco) {
             cuentasDeBanco.forEach(function (cuentaBancaria, posicion) {
                 if (posicion === 0) {
                     contenedorDeCuentasBancarias.append("<option value=\"NULL\" selected=\"selected\">Seleccionar...</option>");
-                    contenedorDeCuentasBancariasParaTarjeta.append("<option value=\"NULL\" selected=\"selected\">Seleccionar...</option>");
                 }
                 contenedorDeCuentasBancarias.append($("<option>", {
                     value: "" + cuentaBancaria.banco,
                     text: "" + cuentaBancaria.banco
                 }));
-                contenedorDeCuentasBancariasParaTarjeta.append($("<option>", {
-                    value: "" + cuentaBancaria.banco,
-                    text: "" + cuentaBancaria.banco
-                }));
             });
             contenedorDeCuentasBancarias.selectmenu("refresh", true);
-            contenedorDeCuentasBancariasParaTarjeta.selectmenu("refresh", true);
         }, function (resultado) {
             notify(resultado.message);
         });
@@ -416,9 +367,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         var pagoEnCheques = this.detalleDeTiposDePagosRealizados.filter(function (tipoDePago) {
             return tipoDePago.paymentType === TipoDePagoFacturaVencida.Cheque;
         });
-        var pagosEnTarjeta = this.detalleDeTiposDePagosRealizados.filter(function (tipoDePago) {
-            return tipoDePago.paymentType === TipoDePagoFacturaVencida.Tarjeta;
-        });
         if (pagoEnEfectivo && pagoEnEfectivo.length > 0) {
             this.generarListadoDePagoEnEfectivo(pagoEnEfectivo);
         }
@@ -427,9 +375,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         }
         if (pagoEnCheques && pagoEnCheques.length > 0) {
             this.generarListadoDePagoEnCheques(pagoEnCheques);
-        }
-        if (pagosEnTarjeta && pagosEnTarjeta.length > 0) {
-            this.generarListadoDePagosEnTarjeta(pagosEnTarjeta);
         }
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.generarListadoDePagoEnEfectivo = function (pagoEnEfectivo) {
@@ -504,15 +449,12 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         var contenedorEfectivo = $("#UiCashDetail");
         var contenedorDepositos = $("#UiDepositsDetail");
         var contenedorCheques = $("#UiBanckCheksDetail");
-        var contenedorDePagosEnTarjeta = $("#UiCreditOrDebitCardDetail");
         contenedorEfectivo.children().remove("li");
         contenedorDepositos.children().remove("li");
         contenedorCheques.children().remove("li");
-        contenedorDePagosEnTarjeta.children().remove("li");
         contenedorEfectivo = null;
         contenedorCheques = null;
         contenedorDepositos = null;
-        contenedorDePagosEnTarjeta = null;
     };
     TipoDePagoEnFacturaVencidaControlador.prototype.eliminarPagoSeleccionado = function (id) {
         var tipoDePago = id.toString().split("|")[0];
@@ -556,121 +498,6 @@ var TipoDePagoEnFacturaVencidaControlador = (function () {
         var montoEnEfectivo = $("#TxtCashAmount");
         montoEnEfectivo.val("");
         montoEnEfectivo = null;
-    };
-    TipoDePagoEnFacturaVencidaControlador.prototype.limpiarCamposDePagoEnTarjeta = function () {
-        var numeroDeDocumento = $("#TxtCreditOrDebitCardAuthorizationNumber");
-        var montoDelDocumento = $("#TxtCreditOrDebitCardAmount");
-        numeroDeDocumento.val("");
-        montoDelDocumento.val("");
-        this.imagenFrontalDelDocumentoDePago = "";
-        numeroDeDocumento = null;
-        montoDelDocumento = null;
-    };
-    TipoDePagoEnFacturaVencidaControlador.prototype.generarListadoDePagosEnTarjeta = function (pagosEnTarjeta) {
-        var _this = this;
-        var contenedorDeDetalleDePagosEnTarjeta = $("#UiCreditOrDebitCardDetail");
-        var objetoDePagosEnTarjeta = [];
-        pagosEnTarjeta.forEach(function (pago) {
-            objetoDePagosEnTarjeta.push(_this.obtenerCadenaHtmlDePagoEnTarjeta(pago));
-        });
-        var cadenaHtmlDeObjetoAInsertar = objetoDePagosEnTarjeta.join("");
-        if (cadenaHtmlDeObjetoAInsertar !== "") {
-            contenedorDeDetalleDePagosEnTarjeta.append(cadenaHtmlDeObjetoAInsertar);
-            contenedorDeDetalleDePagosEnTarjeta.listview("refresh");
-        }
-        contenedorDeDetalleDePagosEnTarjeta = null;
-        objetoDePagosEnTarjeta.length = 0;
-        objetoDePagosEnTarjeta = null;
-        cadenaHtmlDeObjetoAInsertar = null;
-    };
-    TipoDePagoEnFacturaVencidaControlador.prototype.obtenerCadenaHtmlDePagoEnTarjeta = function (pago) {
-        var html = [];
-        html.push(" <li>");
-        html.push(" <a href=\"#\">");
-        html.push(" <label>" + pago.documentNumber + " </label>");
-        html.push("<span class=\"small-roboto ui-li-count\">" + this.configuracionDeDecimales.currencySymbol + ". " + format_number(pago.amount, this.configuracionDeDecimales.defaultDisplayDecimals) + "</span>");
-        html.push(" <label>" + pago.bankName + "</label>");
-        html.push(" </a>");
-        html.push(" <a href=\"#\" id=\"" + pago.paymentType + "|" + pago.documentNumber + "\"></a>");
-        html.push(" </li>");
-        return html.join("");
-    };
-    TipoDePagoEnFacturaVencidaControlador.prototype.cambiarVisualizacionDeCamposDePagoEnTarjeta = function (visualizarCampos) {
-        var contenedorDeCamposParaChequesODepositos = $("#BankCheckOrDepositContainer");
-        var contenedorDeCamposParaEfectivo = $("#CashContainer");
-        var contenedorDeCamposParaTarjeta = $("#CreditOrDebitCardContainer");
-        var campoDeIngresoDeNumeroDeAutorizacion = $("#TxtCreditOrDebitCardAuthorizationNumber");
-        contenedorDeCamposParaChequesODepositos.css("display", "none");
-        contenedorDeCamposParaEfectivo.css("display", "none");
-        if (visualizarCampos) {
-            contenedorDeCamposParaTarjeta.css("display", "block");
-            campoDeIngresoDeNumeroDeAutorizacion.focus();
-        }
-        else {
-            contenedorDeCamposParaTarjeta.css("display", "none");
-        }
-        contenedorDeCamposParaChequesODepositos = null;
-        contenedorDeCamposParaEfectivo = null;
-        contenedorDeCamposParaTarjeta = null;
-        campoDeIngresoDeNumeroDeAutorizacion = null;
-    };
-    TipoDePagoEnFacturaVencidaControlador.prototype.validarPagoConTarjeta = function () {
-        var numeroDeDocumento = $("#TxtCreditOrDebitCardAuthorizationNumber");
-        var montoDelDocumento = $("#TxtCreditOrDebitCardAmount");
-        var cuentaBancaria = $("#CmbBankAccountCreditOrDebitCard");
-        if (cuentaBancaria.val() === "NULL") {
-            notify("Debe seleccionar un banco, por favor, verifique y vuelva a intentar");
-            InteraccionConUsuarioServicio.desbloquearPantalla();
-            cuentaBancaria.focus();
-            return;
-        }
-        if (this.usuarioNoIngresoNumeroDeDocumento(numeroDeDocumento)) {
-            notify("Debe proporcionar el n\u00FAmero de autorizaci\u00F3n, por favor, verifique y vuelva a intentar");
-            InteraccionConUsuarioServicio.desbloquearPantalla();
-            numeroDeDocumento.focus();
-            return;
-        }
-        if (this.imagenFrontalDelDocumentoDePago === "") {
-            notify("Debe proporcionar la im\u00E1gen del comprobante de pago, por favor, verifique y vuelva a intentar");
-            InteraccionConUsuarioServicio.desbloquearPantalla();
-            numeroDeDocumento.focus();
-            return;
-        }
-        if (this.usuarioIngresoValorIncorrecto(montoDelDocumento)) {
-            notify("El monto ingresado es incorrecto, por favor, verifique y vuelva a intentar.");
-            InteraccionConUsuarioServicio.desbloquearPantalla();
-            montoDelDocumento.focus();
-            return;
-        }
-        this.agregarPagoEnTarjeta(numeroDeDocumento, montoDelDocumento);
-    };
-    TipoDePagoEnFacturaVencidaControlador.prototype.agregarPagoEnTarjeta = function (numeroDeDocumento, montoDelDocumento) {
-        var tipoDePagoSeleccionado = $("#UiCmbPaymentType");
-        var pagoEnTarjeta = this
-            .detalleDeTiposDePagosRealizados.find(function (tipoDePago) {
-            return tipoDePago.documentNumber === numeroDeDocumento.val();
-        });
-        var bancoSeleccionado = $("#CmbBankAccountCreditOrDebitCard");
-        if (pagoEnTarjeta) {
-            InteraccionConUsuarioServicio.desbloquearPantalla();
-            notify("Ya existe el n\u00FAmero de documento en el detalle de pagos, por favor, verifique y vuelva a intentar.");
-            numeroDeDocumento.focus();
-            return;
-        }
-        else {
-            var pago = new TipoDePagoEnFacturaVencida();
-            pago.paymentType = tipoDePagoSeleccionado.val();
-            pago.amount = parseFloat(montoDelDocumento.val());
-            pago.documentNumber = numeroDeDocumento.val();
-            pago.bankName = bancoSeleccionado.val();
-            pago.frontImage = this.imagenFrontalDelDocumentoDePago;
-            this.detalleDeTiposDePagosRealizados.push(pago);
-        }
-        this.calcularMontosDeLosDiferentesTiposDePagos();
-        InteraccionConUsuarioServicio.desbloquearPantalla();
-        this.limpiarCamposDePagoEnTarjeta();
-        numeroDeDocumento.focus();
-        this.generarListadoDeTiposDePagos();
     };
     return TipoDePagoEnFacturaVencidaControlador;
 }());
