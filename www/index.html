@@ -18,6 +18,7 @@
     under the License.
 -->
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=yes" />
@@ -85,8 +86,8 @@
     <script src="js/controllers/NuevaTareaControlador.js"></script>
     <script src="js/controllers/PagoControlador.js"></script>
     <script src="js/controllers/ControlDeFinDeRutaControlador.js"></script>
-    <script src="js/controllers/PromocionesPorClienteControlador.js"></script>    
-    <script src="js/controllers/AvanceDeRutaControlador.js"></script>    
+    <script src="js/controllers/PromocionesPorClienteControlador.js"></script>
+    <script src="js/controllers/AvanceDeRutaControlador.js"></script>
 
     <!--Servicios-->
     <script src="js/services/CustomerService.js"></script>
@@ -193,7 +194,7 @@
     <script src="js/modelo/Interfaces/ISincronizacionDeDatosEnBackOfficeServicio.js"></script>
     <script src="js/modelo/Interfaces/IEstadisticaDeVentaServicio.js"></script>
     <script src="js/modelo/Interfaces/IEncuestaServicio.js"></script>
-    
+
     <script src="js/modelo/Interfaces/IPagoDeFacturaVencidaServicio.js"></script>
     <script src="js/modelo/Interfaces/ICuentaCorrienteServicio.js"></script>
     <script src="js/modelo/Interfaces/IInteraccionConUsuarioServicio.js"></script>
@@ -226,7 +227,7 @@
     <script src="js/services/PromoServicio.js"></script>
     <script src="js/services/SincronizacionDeDatosEnBackOfficeServicio.js"></script>
     <script src="js/services/EstadisticaDeVentaServicio.js"></script>
-    <script src="js/services/PrecioEspecialServicio.js"></script>    
+    <script src="js/services/PrecioEspecialServicio.js"></script>
     <script src="js/services/EncuestaServicio.js"></script>
 
     <script src="js/services/PagoDeFacturaVencidaServicio.js"></script>
@@ -265,7 +266,7 @@
     <script type="text/javascript" src="js/controllers/ConfirmacionDePagoControlador.js"></script>
     <script type="text/javascript" src="js/controllers/CobroDeFacturaVencidaControlador.js"></script>
     <script type="text/javascript" src="js/controllers/ListaDePagoControlador.js"></script>
-    
+
 
     <!--Mensajes TS-->
     <script src="js/vertical/ClienteMensaje.js"></script>
@@ -306,7 +307,8 @@
     <link rel="stylesheet" href="css/styles/jqm-icon-pack-fa.css" />
     <link href="css/styles/font-awesome.css" rel="stylesheet" />
     <style>
-        #UiModificarClienteMapa, #map-canvas {
+        #UiModificarClienteMapa,
+        #map-canvas {
             width: 100%;
             height: 100%;
             padding: 0;
@@ -318,127 +320,124 @@
         body {
             font-family: 'Roboto';
         }
-
-            body .btn {
-                margin: 0.6em 10% 0.8em !important;
-                overflow: visible;
-                text-overflow: clip;
-                white-space: normal;
-            }
-
-            body .button {
-                margin: 0.6em 10% 0.8em !important;
-                overflow: visible;
-                text-overflow: clip;
-                white-space: normal;
-            }
-
-            body .ui-btn-c {
-                margin: 0.3em 1% 0.4em !important;
-                overflow: visible;
-                text-overflow: clip;
-                white-space: normal;
-                border-color: black;
-            }
-
-            body .ui-body-c {
-                border-color: black !important;
-                background-color: #808080;
-            }
-
+        
+        body .btn {
+            margin: 0.6em 10% 0.8em !important;
+            overflow: visible;
+            text-overflow: clip;
+            white-space: normal;
+        }
+        
+        body .button {
+            margin: 0.6em 10% 0.8em !important;
+            overflow: visible;
+            text-overflow: clip;
+            white-space: normal;
+        }
+        
+        body .ui-btn-c {
+            margin: 0.3em 1% 0.4em !important;
+            overflow: visible;
+            text-overflow: clip;
+            white-space: normal;
+            border-color: black;
+        }
+        
+        body .ui-body-c {
+            border-color: black !important;
+            background-color: #808080;
+        }
+        
         .ui-page {
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
-
+        
         .ui-content {
             padding-top: 0px;
         }
-
+        
         .ui-focus {
             -moz-box-shadow: none !important;
             -webkit-box-shadow: none !important;
             box-shadow: none !important;
         }
-
+        
         .HeaderSmall {
             font-size: 13px;
         }
-
+        
         .center {
             text-align: center;
         }
-
+        
         div.ui-input-text {
             height: 36px;
             position: relative;
         }
-
-        .configuracionBonificacionPorCombo {
-            
-        }
-
+        
+        .configuracionBonificacionPorCombo {}
+        
         input.configuracionBonificacionPorComboCantidad {
             width: 90%;
             padding: 5px;
         }
-
+        
         #aaa1444 {
             float: left;
             position: absolute;
             left: 0px;
             top: 0px;
         }
-
+        
         .info-client-header {
             font-size: 0.8rem;
         }
-
+        
         .info-client-detail-left {
             float: left;
             text-align: left;
             font-size: 0.8rem;
         }
-
+        
         .info-client-detail-right {
             float: right;
             text-align: left;
             font-size: 0.8rem;
         }
-
+        
         .quit-space {
             padding: 0 0.5em;
         }
+        
         .tablePromo {
             font-family: arial, sans-serif;
             border-collapse: collapse;
             width: 100%;
         }
-
+        
         .filaPromo {
             border: 1px solid #dddddd;
-            text-align: left;            
+            text-align: left;
         }
-
+        
         .filaCambioDeColor:nth-child(even) {
             background-color: #dddddd;
         }
-
+        
         .sonda-version {
             font-weight: bold;
         }
-
     </style>
 </head>
+
 <body>
     <div data-role="page" id="login_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="title ui-btn ui-nodisc-icon ui-icon-info ui-btn-icon-left sonda-version" style="background-color: transparent; border-style: none">
+            <div onclick="writeConfig()" class="title ui-btn ui-nodisc-icon ui-icon-info ui-btn-icon-left sonda-version" style="background-color: transparent; border-style: none">
                 Sonda 4.6.2
             </div>
         </div>
@@ -462,17 +461,16 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" onclick="navigator.app.exitApp();"
-                       class="ui-nodisc-icon ui-icon-power ui-btn ui-btn-icon-left">
+                    <a href="#" onclick="navigator.app.exitApp();" class="ui-nodisc-icon ui-icon-power ui-btn ui-btn-icon-left">
                         <span class="menupanel">Salir</span>
                     </a>
                 </li>
             </ul>
 
-        </div><!-- /panel -->
+        </div>
+        <!-- /panel -->
         <div data-role="content">
-            <h4 class="ui-bar ui-bar-b ui-corner-all menupanel" data-corners="true"
-                style="text-align: center; box-shadow: 0px 0px 10px 2px rgba(119, 119, 119, 0.75);
+            <h4 class="ui-bar ui-bar-b ui-corner-all menupanel" data-corners="true" style="text-align: center; box-shadow: 0px 0px 10px 2px rgba(119, 119, 119, 0.75);
                                            -moz-box-shadow: 0px 0px 10px 2px rgba(119, 119, 119, 0.75);
                                            -webkit-box-shadow: 0px 0px 10px 2px rgba(119, 119, 119, 0.75);">
                 Sonda® <strong> Ruta</strong>
@@ -506,17 +504,13 @@
     </div>
     <div data-role="page" id="NotDeliveryReason_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="content">
             <p></p>
@@ -527,51 +521,41 @@
     <div data-role="page" id="pageDeliveryOrder" data-add-back-btn="true" data-theme="a">
 
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="btnPictureOnDelivery"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-camera">
+                        <a href="#" id="btnPictureOnDelivery" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-camera">
                             Fotografia
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnAcceptOnDelivery"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">
+                        <a href="#" id="btnAcceptOnDelivery" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">
                             Entregar
                         </a>
                     </li>
                     <li>
-                        <a href="#NotDeliveryReason_page" data-theme="b"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-delete">
+                        <a href="#NotDeliveryReason_page" data-theme="b" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-delete">
                             No Entregar
                         </a>
                     </li>
 
                 </ul>
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
 
         </div>
         <div data-role="content">
             <p></p>
             <div class="ui-grid-solo">
-                <img src="img/camera.png"
-                     class="ui-corner-all"
-                     border="0"
-                     id="imgDelivery"
-                     style="width: 90%; height: 300px">
+                <img src="img/camera.png" class="ui-corner-all" border="0" id="imgDelivery" style="width: 90%; height: 300px">
             </div>
             <button id="btnCleanPicture" onclick="CleanUpDeliveryImage();">Limpiar</button>
         </div>
@@ -583,15 +567,12 @@
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#"
-                           id="btnTryPrinter1"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-info">
+                        <a href="#" id="btnTryPrinter1" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-info">
                             Probar impresora
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnSavePrinter1"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-save">
+                        <a href="#" id="btnSavePrinter1" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-save">
                             Guardar impresora
                         </a>
                     </li>
@@ -667,8 +648,7 @@
                 </li>
 
                 <li>
-                    <a href="#" onclick="navigator.app.exitApp();"
-                       class="ui-nodisc-icon ui-icon-power ui-btn ui-btn-icon-left">
+                    <a href="#" onclick="navigator.app.exitApp();" class="ui-nodisc-icon ui-icon-power ui-btn ui-btn-icon-left">
                         <span class="menupanel">Salir</span>
                     </a>
                 </li>
@@ -678,47 +658,42 @@
                     </a>
                 </li>-->
             </ul>
-        </div><!-- /panel -->
+        </div>
+        <!-- /panel -->
 
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto batteryclass fa"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto batteryclass fa" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" onclick="gotomypickupplan();"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-calendar">
+                        <a href="#" onclick="gotomypickupplan();" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-calendar">
                             Tareas Ruta
                         </a>
                     </li>
                     <li>
-                        <a href="#" onclick="gotomyManifestHeader();"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-navigation">
+                        <a href="#" onclick="gotomyManifestHeader();" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-navigation">
                             Manifiesto
                         </a>
                     </li>
                     <li>
-                        <a href="#" data-theme="b" id="linknew_client"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-flag">
+                        <a href="#" data-theme="b" id="linknew_client" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-flag">
                             Scouting
                         </a>
                     </li>
                     <li>
-                        <a href="#" data-theme="b" id="linkfinishroute"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-cloud-upload">
+                        <a href="#" data-theme="b" id="linkfinishroute" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-cloud-upload">
                             Fin de Ruta
                         </a>
                     </li>
                 </ul>
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="false">
@@ -726,7 +701,7 @@
                     <div style="float: left; width: 80%;">
                         <p id="teamName" style="text-align: center; font-size: 1.5em;">Sin Equipo</p>
                         <p id="goalName" style="text-align: center; font-size: 1em;">Sin Meta</p>
-            </div>
+                    </div>
                     <div style="display: flex; flex-direction: column; float: right; width: 20%; padding-top: 0.7em;">
                         <img src="img/trophy.png" alt="" style="height: 2.5em; width: 2.5em;" />
                         <p id="ranking" style="padding-left: 0.4em; font-size: 1em;"></p>
@@ -757,7 +732,8 @@
                     <p id="pendingToSaleToday" style="float: right;">000.00</p>
                 </li>
             </ul>
-        </div><!-- /panel resumen de rutas -->
+        </div>
+        <!-- /panel resumen de rutas -->
         <img id="imgCargandoInicioDeRuta" src="img/loading.gif" style="display: none;" />
     </div>
     <div data-role="page" id="pickupplan_page" data-theme="a">
@@ -772,17 +748,14 @@
                     </a>
                 </li>
             </ul>
-        </div><!-- /panel -->
+        </div>
+        <!-- /panel -->
         <div data-role="header" style="position: fixed; width: 100%; z-index: 2;" data-theme="b">
             <div>
-                <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                     style="background-color: transparent; border-style: none"></div>
-                <div class="small-roboto fa batteryclass"
-                     style="background-color: transparent; border-style: none"></div>
-                <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                     style="background-color: transparent; border-style: none"></div>
-                <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                     style="background-color: transparent; border-style: none">
+                <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
+                <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+                <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
+                <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none">
                 </div>
             </div>
         </div>
@@ -792,34 +765,24 @@
                 <br />
                 <ul>
                     <li>
-                        <a href="#UiTabTareasAsignadas" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-alert" data-ajax="false">
+                        <a href="#UiTabTareasAsignadas" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-alert" data-ajax="false">
                             Pendientes
                         </a>
                     </li>
                     <li>
-                        <a href="#UiTabTareasAceptadas" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check" data-ajax="false">
+                        <a href="#UiTabTareasAceptadas" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check" data-ajax="false">
                             Aceptadas
                         </a>
                     </li>
                     <li>
-                        <a href="#UiTabTareasCompletadas" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-tag" data-ajax="false">
+                        <a href="#UiTabTareasCompletadas" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-tag" data-ajax="false">
                             Completadas
                         </a>
                     </li>
                 </ul>
             </div>
             <div id="UiTabTareasAsignadas" class="ui-body-d ui-content">
-                <div data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u"
-                     data-inset="false"
-                     data-role="collapsible-set"
-                     data-theme="a"
-                     data-content-theme="a"
-                     class="ui-alt-icon ui-nodisc-icon"
-                     id="UiAcordionPadreTareasAsignadas">
+                <div data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-inset="false" data-role="collapsible-set" data-theme="a" data-content-theme="a" class="ui-alt-icon ui-nodisc-icon" id="UiAcordionPadreTareasAsignadas">
                     <form class="ui-filterable">
                         <table style="width: 100%">
                             <tr>
@@ -847,14 +810,7 @@
                         </tr>
                     </table>
                 </form>
-                <div data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u"
-                     data-inset="false"
-                     data-role="collapsible-set"
-                     data-theme="a"
-                     data-content-theme="a"
-                     class="ui-alt-icon ui-nodisc-icon"
-                     id="UiAcordionPadreTareasAceptadas">
+                <div data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-inset="false" data-role="collapsible-set" data-theme="a" data-content-theme="a" class="ui-alt-icon ui-nodisc-icon" id="UiAcordionPadreTareasAceptadas">
                 </div>
             </div>
             <div id="UiTabTareasCompletadas" class="ui-body-d ui-content">
@@ -870,14 +826,7 @@
                         </tr>
                     </table>
                 </form>
-                <div data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u"
-                     data-inset="false"
-                     data-role="collapsible-set"
-                     data-theme="a"
-                     data-content-theme="a"
-                     class="ui-alt-icon ui-nodisc-icon"
-                     id="UiAcordionPadreTareasCompletadas">
+                <div data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-inset="false" data-role="collapsible-set" data-theme="a" data-content-theme="a" class="ui-alt-icon ui-nodisc-icon" id="UiAcordionPadreTareasCompletadas">
                 </div>
             </div>
         </div>
@@ -983,83 +932,74 @@
 
     <div data-role="page" id="taskpickup_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="btnNewOrder" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-plus">
+                        <a href="#" id="btnNewOrder" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-plus">
                             Pedido
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnSignatureGuide" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                        <a href="#" id="btnSignatureGuide" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                             Firma, foto
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnOrderSumm" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-shop">
+                        <a href="#" id="btnOrderSumm" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-shop">
                             Q0.00
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnFinishPickup" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="btnFinishPickup" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             Finalizar
                         </a>
                     </li>
                 </ul>
                 <div class="ui-bar ui-bar-b menupanel" id="lblRemitenteName">...</div>
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
         </div>
 
         <div data-role="content">
             <p></p>
             <ul data-role="listview" id="guides_listing" data-inset="false" data-shadow="false" data-corners="false"></ul>
-        </div><!-- /panel -->
+        </div>
+        <!-- /panel -->
     </div>
     <div data-role="page" id="taskpickupguide_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="btnGetClientBrances" style="text-align: center" onclick="GetClientBranches();"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-bullets">
+                        <a href="#" id="btnGetClientBrances" style="text-align: center" onclick="GetClientBranches();" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-bullets">
                             <span id="btnBranchName">Destino</span>
                             <span id="btnBranchCode" style="visibility: hidden">&nbsp</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnGuideIsCompleted" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="btnGuideIsCompleted" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             Pedido Q <span id="lblTotalOrder">0.00</span>
                         </a>
                     </li>
 
                 </ul>
 
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
         </div>
 
         <div data-role="content">
@@ -1077,31 +1017,23 @@
                 <textarea id="txtAddressInputed" style="visibility: hidden"></textarea>
             </div>
 
-            <div data-role="collapsible" data-content-theme="a"
-                 id="divSKUsOrder"
-                 data-inset="false" data-mini="true" data-theme="b"
-                 class="ui-nodisc-icon"
-                 data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u">
+            <div data-role="collapsible" data-content-theme="a" id="divSKUsOrder" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                 <h4>SKUs en el pedido</h4>
                 <ul data-role="listview" id="listview_packs_detail" data-inset="false" data-split-icon="delete" data-shadow="false"></ul>
             </div>
 
-        </div><!-- /panel resumen de rutas -->
+        </div>
+        <!-- /panel resumen de rutas -->
     </div>
     <div data-role="page" id="taskpickuppackage_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
         </div>
 
@@ -1109,35 +1041,29 @@
             <p></p>
             <ul data-role="listview" id="listview_guidedetail" data-corners="false" data-inset="false" data-shadow="false"></ul>
 
-        </div><!-- /panel resumen de rutas -->
+        </div>
+        <!-- /panel resumen de rutas -->
     </div>
     <div data-role="page" id="pickupsignature_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="btnClearSignature" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-comment">
+                        <a href="#" id="btnClearSignature" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-comment">
                             <span id="lblcleanup">Limpiar firma</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnTakePicture" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                        <a href="#" id="btnTakePicture" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                             Tomar Foto
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnSaveSignAndPicture" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="btnSaveSignAndPicture" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             Guardar
                         </a>
                     </li>
@@ -1159,17 +1085,13 @@
     </div>
     <div data-role="page" id="finishroutes_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
         </div>
         <div data-role="content">
@@ -1192,22 +1114,19 @@
                         <p>Ruta Entrega</p>
                     </span>
                 </div>
-            </div><!-- /grid-a -->
+            </div>
+            <!-- /grid-a -->
         </div>
     </div>
     <div data-role="page" id="scanmanifest_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
         </div>
         <div data-role="content">
@@ -1220,8 +1139,7 @@
 
                 <li><span id="lblAssignedCourier" class="bold"></span></li>
                 <li class="ui-body ui-body-b">
-                    <button type="button" id="btnAcceptManifest" class="ui-btn ui-corner-all ui-btn-a ui-nodisc-icon ui-alt-icon ui-btn-icon-left ui-icon-check"
-                            style="text-align: center; visibility: hidden">
+                    <button type="button" id="btnAcceptManifest" class="ui-btn ui-corner-all ui-btn-a ui-nodisc-icon ui-alt-icon ui-btn-icon-left ui-icon-check" style="text-align: center; visibility: hidden">
                         Aceptar Manifiesto
                     </button>
                 </li>
@@ -1230,40 +1148,34 @@
     </div>
     <div data-role="page" id="manifest_orders_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" onclick="filtermydispatchplan('PENDING');"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-alert ui-btn-active">
+                        <a href="#" onclick="filtermydispatchplan('PENDING');" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-alert ui-btn-active">
                             Pendientes
                         </a>
                     </li>
                     <li>
-                        <a href="#" onclick="filtermydispatchplan('ACCEPTED');"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">
+                        <a href="#" onclick="filtermydispatchplan('ACCEPTED');" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">
                             Aceptadas
                         </a>
                     </li>
                     <li>
-                        <a href="#" onclick="filtermydispatchplan('COMPLETED'); " data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-tag">
+                        <a href="#" onclick="filtermydispatchplan('COMPLETED'); " data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-tag">
                             Completadas
                         </a>
                     </li>
                 </ul>
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
 
         </div>
 
@@ -1274,46 +1186,39 @@
     </div>
     <div data-role="page" id="deliver_order_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" onclick="scanpackage();"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-qrcode">
+                        <a href="#" onclick="scanpackage();" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-qrcode">
                             Escanear
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnDeliveryPhotoSignature"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-camera ui-disabled">
+                        <a href="#" id="btnDeliveryPhotoSignature" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-camera ui-disabled">
                             Firma y foto
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnDeliveryPrint"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-print  ui-disabled">
+                        <a href="#" id="btnDeliveryPrint" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-print  ui-disabled">
                             Imprimir
                         </a>
                     </li>
                     <li>
-                        <a href="#" data-theme="b" id="btnDeliveryFinish"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check  ui-disabled">
+                        <a href="#" data-theme="b" id="btnDeliveryFinish" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check  ui-disabled">
                             Finalizar
                         </a>
                     </li>
                 </ul>
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
 
         </div>
 
@@ -1344,32 +1249,25 @@
     </div>
     <div data-role="page" id="deliverysignature_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="btnClearSignature_delivery" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-comment">
+                        <a href="#" id="btnClearSignature_delivery" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-comment">
                             <span id="lblcleanup">Limpiar firma</span>
                         </a>
                     </li>
                     <li>
 
-                        <a href="#" id="btnTakePicture_delivery" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                        <a href="#" id="btnTakePicture_delivery" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                             Tomar Foto
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="btnSaveSignAndPicture_delivery" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="btnSaveSignAndPicture_delivery" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             Guardar
                         </a>
                     </li>
@@ -1391,17 +1289,13 @@
     </div>
     <div data-role="page" id="offplan_task_page" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
 
         </div>
         <div data-role="content">
@@ -1415,14 +1309,11 @@
     </div>
     <div data-role="page" id="pageManifestHeader" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
 
         </div>
@@ -1430,16 +1321,15 @@
             <p></p>
             <div class="ui-grid-a">
                 <div class="ui-block-a">
-                    <input name="txtManifestHeader" id="txtManifestHeader" value="" data-corners="true"
-                           placeholder="Manifiesto">
+                    <input name="txtManifestHeader" id="txtManifestHeader" value="" data-corners="true" placeholder="Manifiesto">
                 </div>
                 <div class="ui-block-b">
-                    <a href="#" id="btnScannManifest" data-mini="true"
-                       class="ui-corner-all ui-btn ui-btn-icon-right ui-icon-bars ui-nodisc-icon ui-alt-icon">
+                    <a href="#" id="btnScannManifest" data-mini="true" class="ui-corner-all ui-btn ui-btn-icon-right ui-icon-bars ui-nodisc-icon ui-alt-icon">
                         Escaner
                     </a>
                 </div>
-            </div><!-- /grid-a -->
+            </div>
+            <!-- /grid-a -->
 
             <ul data-role="listview" data-inset="true" data-theme="a" data-shadow="false">
                 <li>
@@ -1470,32 +1360,28 @@
             <div class="ui-grid-a">
                 <div class="ui-block-a">
 
-                    <a href="#" id="btnStartMyManifest" data-mini="true"
-                       class="ui-btn-icon-right ui-icon-navigation ui-nodisc-icon ui-alt-icon ui-corner-all ui-btn">
+                    <a href="#" id="btnStartMyManifest" data-mini="true" class="ui-btn-icon-right ui-icon-navigation ui-nodisc-icon ui-alt-icon ui-corner-all ui-btn">
                         Iniciar la ruta
                     </a>
 
                 </div>
                 <div class="ui-block-b">
 
-                    <a href="#" id="btnCancelManifest" data-mini="true"
-                       class="ui-btn-icon-right ui-icon-delete ui-nodisc-icon ui-alt-icon ui-corner-all ui-btn">Cancelar</a>
+                    <a href="#" id="btnCancelManifest" data-mini="true" class="ui-btn-icon-right ui-icon-delete ui-nodisc-icon ui-alt-icon ui-corner-all ui-btn">Cancelar</a>
 
                 </div>
-            </div><!-- /grid-a -->
+            </div>
+            <!-- /grid-a -->
 
         </div>
     </div>
     <div data-role="page" id="pageDeliverys" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
         </div>
         <div data-role="tabs" id="tabs" data-theme="b">
@@ -1548,8 +1434,7 @@
                     <div data-role="navbar" class="ui-state-persist">
                         <ul data-role="listview" data-inset="true" data-theme="b">
                             <li>
-                                <a href="#" id="btnDeliverInvoice" style="text-align: center" data-theme="b"
-                                   class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                                <a href="#" id="btnDeliverInvoice" style="text-align: center" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                                     Entrega
                                 </a>
                             </li>
@@ -1569,11 +1454,7 @@
                             <span class="medium" id="lblInfInvoice_TotalDoc">0</span>
                         </li>
                     </ul>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                         <h5>Detalle</h5>
                         <ul data-role="listview" data-inset="true" id="lstInfInvoice_Det" data-theme="c"></ul>
                     </div>
@@ -1663,8 +1544,7 @@
 
                 <ul data-role="listview" data-inset="true" data-theme="b">
                     <li>
-                        <a href="#" id="btnSignatureGuideInvoice" style="text-align: center" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                        <a href="#" id="btnSignatureGuideInvoice" style="text-align: center" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                             Firma, foto
                         </a>
                     </li>
@@ -1691,11 +1571,7 @@
                     </li>
                 </ul>
                 <div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                         <h5>Total pagado</h5>
                         <ul data-role="listview" id="lstInvoiceTotal" data-inset="true" data-theme="c"></ul>
                     </div>
@@ -1706,13 +1582,10 @@
 
     <div data-role="page" id="pos_skus_page" data-theme="c">
         <div data-role="header" data-theme="b" data-position="fixed">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
             <div data-role="navbar">
                 <ul>
                     <li>
@@ -1729,10 +1602,7 @@
         </div>
         <hr />
         <div data-role="content">
-            <ul data-role="listview" id="pos_skus_page_listview"
-                data-inset="false"
-                data-divider-theme="b"
-                data-count-theme="b"></ul>
+            <ul data-role="listview" id="pos_skus_page_listview" data-inset="false" data-divider-theme="b" data-count-theme="b"></ul>
         </div>
 
         <div data-role="footer" data-theme="b" class="center" data-position="fixed">
@@ -1872,7 +1742,7 @@
                 <table>
                     <tr>
                         <td style="width: 10%">
-                            <a href="#" id="UiBotonPromocionesListaSku"  class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-star ui-btn-icon-notext">
+                            <a href="#" id="UiBotonPromocionesListaSku" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-star ui-btn-icon-notext">
                             </a>
                         </td>
                         <td style="width: 85%">
@@ -1886,24 +1756,17 @@
             </form>
         </div>
         <div data-role="content">
-            <ul data-role="listview"
-                id="skus_listview_panel"
-                data-inset="true"
-                data-filter="false"
-                data-mini="true"></ul>
+            <ul data-role="listview" id="skus_listview_panel" data-inset="true" data-filter="false" data-mini="true"></ul>
         </div>
     </div>
 
     <div data-role="page" id="ui_payment_page" data-add-back-btn="true" data-theme="b">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
         </div>
         <div data-role="tabs" id="uiPaymentTabs" data-theme="b">
@@ -1945,7 +1808,9 @@
             <div id="uiPaymentTabDetail">
                 <div data-role="content">
                     <div data-role="navbar" class="ui-state-persist">
-                        <ul data-role="listview" data-inset="true" data-theme="b"><li></li></ul>
+                        <ul data-role="listview" data-inset="true" data-theme="b">
+                            <li></li>
+                        </ul>
                     </div>
 
                     <ul data-role="listview" data-inset="true" data-theme="c">
@@ -1961,11 +1826,7 @@
                             <span class="medium"  id="uiPaymentLblInfInvoice_TotalDoc">0</span>
                         </li>
                     </ul>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                         <h5>Detalle</h5>
                         <ul data-role="listview" data-inset="true" id="uiPaymentLstInfInvoice_Det" data-theme="c"></ul>
                     </div>
@@ -2053,8 +1914,7 @@
                 <!--<div data-role="content">-->
                 <ul data-role="listview" data-inset="true" data-theme="b">
                     <li>
-                        <a href="#" id="uiFirmaYFoto" style="text-align: center" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                        <a href="#" id="uiFirmaYFoto" style="text-align: center" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                             Firma, foto
                         </a>
                     </li>
@@ -2081,11 +1941,7 @@
                     </li>
                 </ul>
                 <div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                         <h5>Total pagado</h5>
                         <ul data-role="listview" id="uiPaymentLstInvoiceTotal" data-inset="true" data-theme="c"></ul>
                     </div>
@@ -2122,41 +1978,30 @@
     </div>
     <div data-role="page" id="dialog_startpos">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#"
-                           id="btnSyncAuthInvInfo"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">Validar</a>
+                        <a href="#" id="btnSyncAuthInvInfo" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">Validar</a>
                     </li>
 
                     <li>
-                        <a href="#" id="btnStartPOS_action"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel  ui-icon-navigation"
-                           style="visibility: hidden">Iniciar</a>
+                        <a href="#" id="btnStartPOS_action" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel  ui-icon-navigation" style="visibility: hidden">Iniciar</a>
                     </li>
                 </ul>
-            </div><!-- /navbar -->
+            </div>
+            <!-- /navbar -->
         </div>
         <div data-role="content">
             <div data-role="collapsibleset" class="ui-alt-icon ui-nodisc-icon" data-mini="true">
-                <div data-role="collapsible" data-content-theme="a"
-                     data-inset="false" data-mini="true" data-theme="a"
-                     id="UiAcordionInformacionUsuario" data-collapsed="true"
-                     data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u">
+                <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="a" id="UiAcordionInformacionUsuario" data-collapsed="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                     <h5>Info. general</h5>
-                    <ul data-role="listview" id="UiInfoUsuario" data-inset="false" data-theme="a"
-                        data-split-icon="delete" class="touch" data-split-theme="b">
+                    <ul data-role="listview" id="UiInfoUsuario" data-inset="false" data-theme="a" data-split-icon="delete" class="touch" data-split-theme="b">
                         <li class="ui-field-contain">
                             <table>
                                 <tr>
@@ -2177,27 +2022,24 @@
                         </li>
                         <li class="ui-field-contain">
                             <span class="small-roboto" >B.Venta:</span>
-                            <span class="small-roboto"  id="UiLblBodegaVenta">...</span><p></p>
+                            <span class="small-roboto"  id="UiLblBodegaVenta">...</span>
+                            <p></p>
                             <span class="small-roboto"  id="UiLblBodegaVentaNombre">...</span>
                         </li>
                         <li class="ui-field-contain">
                             <span class="small-roboto" >B.Preventa:</span>
-                            <span class="small-roboto"  id="UiLblBodegaPreventa">...</span><p></p>
-                            <span class="small-roboto"  id="UiLblBodegaPreventaNombre">...</span><p></p>
+                            <span class="small-roboto"  id="UiLblBodegaPreventa">...</span>
+                            <p></p>
+                            <span class="small-roboto"  id="UiLblBodegaPreventaNombre">...</span>
+                            <p></p>
                             <span class="small-roboto">Usa Unidad de Paquetes: <span class="small-roboto" id="UiLblUsaUnidadDePaquete"></span> </span>
                         </li>
 
                     </ul>
                 </div>
-                <div data-role="collapsible" data-content-theme="a"
-                     data-inset="false" data-mini="true" data-theme="a"
-                     id="UiAcordionResolucion" class="ui-alt-icon ui-nodisc-icon"
-                     data-collapsed="true"
-                     data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u">
+                <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="a" id="UiAcordionResolucion" class="ui-alt-icon ui-nodisc-icon" data-collapsed="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                     <h5>Resoluciones de Facturas</h5>
-                    <ul data-role="listview" id="UiResolucionesFacturas" data-inset="false" data-theme="a"
-                        data-split-icon="delete" class="touch" data-split-theme="a" data-mini="true">
+                    <ul data-role="listview" id="UiResolucionesFacturas" data-inset="false" data-theme="a" data-split-icon="delete" class="touch" data-split-theme="a" data-mini="true">
                         <li class="ui-field-contain">
                             <span class="small-roboto" >Auto./Serie</span>
                             <span class="small-roboto"  id="UiLblAutorizacion">...</span>/
@@ -2220,37 +2062,19 @@
 
                     </ul>
                 </div>
-                <div data-role="collapsible" data-content-theme="a"
-                     data-inset="false" data-mini="true" data-theme="a"
-                     data-collapsed="true"
-                     id="UiAcordionSecuenciaDeDocumentps" class="ui-alt-icon ui-nodisc-icon"
-                     data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u">
+                <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="a" data-collapsed="true" id="UiAcordionSecuenciaDeDocumentps" class="ui-alt-icon ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                     <h5>Secuencias</h5>
-                    <ul data-role="listview" id="UiSecuenciaDeDocumentos" data-inset="false" data-theme="a"
-                        data-split-icon="delete" class="touch" data-split-theme="d"></ul>
+                    <ul data-role="listview" id="UiSecuenciaDeDocumentos" data-inset="false" data-theme="a" data-split-icon="delete" class="touch" data-split-theme="d"></ul>
 
                 </div>
-                <div data-role="collapsible" data-content-theme="a"
-                     data-inset="false" data-mini="true" data-theme="a"
-                     id="UiAcordionResumenDeTareas" class="ui-alt-icon ui-nodisc-icon"
-                     data-collapsed="true"
-                     data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u">
+                <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="a" id="UiAcordionResumenDeTareas" class="ui-alt-icon ui-nodisc-icon" data-collapsed="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                     <h5>Tareas <span id="lblmistareas_count" class="ui-li-count" data-theme="b">0</span></h5>
-                    <ul data-role="listview" id="UiResumenDeTareas"
-                        data-inset="false" data-theme="a" class="touch" data-split-theme="a"></ul>
+                    <ul data-role="listview" id="UiResumenDeTareas" data-inset="false" data-theme="a" class="touch" data-split-theme="a"></ul>
 
                 </div>
-                <div data-role="collapsible" data-content-theme="a"
-                     data-inset="false" data-mini="true" data-theme="a"
-                     id="UiAcordionResumenDeCantidad" class="ui-alt-icon ui-nodisc-icon"
-                     data-collapsed="true"
-                     data-collapsed-icon="carat-d"
-                     data-expanded-icon="carat-u">
+                <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="a" id="UiAcordionResumenDeCantidad" class="ui-alt-icon ui-nodisc-icon" data-collapsed="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                     <h5>Resumen de Datos</h5>
-                    <ul data-role="listview" id="UiResumenDeCantidad" data-inset="true"
-                        data-theme="a" data-split-icon="delete" class="touch" data-split-theme="a"></ul>
+                    <ul data-role="listview" id="UiResumenDeCantidad" data-inset="true" data-theme="a" data-split-icon="delete" class="touch" data-split-theme="a"></ul>
                 </div>
             </div>
         </div>
@@ -2267,26 +2091,21 @@
             <table>
                 <tr>
                     <td width="25%" align="left">
-                        <div id="uiMostrarEtiquetas" class="showleftmenuclass"
-                             style="left: 0; background-color: transparent; border-style: none">
+                        <div id="uiMostrarEtiquetas" class="showleftmenuclass" style="left: 0; background-color: transparent; border-style: none">
                             <img style="vertical-align: middle" width="16" src="img/menu.png" />
                         </div>
                     </td>
                     <td width="25%" align="center">
-                        <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                             style="background-color: transparent; border-style: none"></div>
+                        <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
                     </td>
                     <td width="25%" align="center">
-                        <div class="small-roboto fa batteryclass"
-                             style="background-color: transparent; border-style: none"></div>
+                        <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
                     </td>
                     <td>
-                        <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                             style="background-color: transparent; border-style: none"></div>
+                        <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
                     </td>
                     <td width="25%" align="right">
-                        <div id="uiMostrarClientes" class="showrightmenuclass"
-                             style="right: 0; background-color: transparent; border-style: none">
+                        <div id="uiMostrarClientes" class="showrightmenuclass" style="right: 0; background-color: transparent; border-style: none">
                             <img src="img/search.png" style="vertical-align: middle" width="16" />
                         </div>
                     </td>
@@ -2317,11 +2136,7 @@
                         <tr>
                             <td>
                                 <div data-role="collapsibleset">
-                                    <div data-role="collapsible" data-content-theme="a"
-                                         data-inset="true" data-mini="true" data-theme="b"
-                                         id="listaDatosGenerales" data-collapsed="false"
-                                         data-collapsed-icon="carat-d"
-                                         data-expanded-icon="carat-u">
+                                    <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" id="listaDatosGenerales" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                                         <h5>Datos Generales</h5>
                                         <table width="100%">
                                             <tr>
@@ -2356,11 +2171,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <div data-role="collapsible" data-content-theme="a"
-                                         data-inset="true" data-mini="true" data-theme="b"
-                                         id="EtiquetasElegidas"
-                                         data-collapsed-icon="carat-d"
-                                         data-expanded-icon="carat-u">
+                                    <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" id="EtiquetasElegidas" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                                         <h5>Etiquetas</h5>
                                         <ul data-role="listview" id="UiListaEtiquetas" data-inset="true" data-theme="c" data-split-icon="delete" class="touch" data-split-theme="d"></ul>
                                     </div>
@@ -2377,11 +2188,7 @@
                         <tr>
                             <td>
                                 <div data-role="collapsibleset">
-                                    <div data-role="collapsible" data-content-theme="a"
-                                         data-inset="true" data-mini="true" data-theme="b"
-                                         id="listaDatosGenerales" data-collapsed="false"
-                                         data-collapsed-icon="carat-d"
-                                         data-expanded-icon="carat-u">
+                                    <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" id="listaDatosGenerales" data-collapsed="false" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                                         <h5>Datos de Facturaci&oacute;n</h5>
                                         <table width="100%">
                                             <tr>
@@ -2432,11 +2239,7 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <div data-role="collapsible" data-content-theme="a"
-                                     data-inset="true" data-mini="true" data-theme="b"
-                                     class="ui-nodisc-icon"
-                                     data-collapsed-icon="carat-d"
-                                     data-expanded-icon="carat-u" id="collapseCheckDias">
+                                <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="collapseCheckDias">
                                     <h5>Días de visita</h5>
                                     <input checked type="checkbox" name="checkboxLunes" id="checkboxLunes">
                                     <label for="checkboxLunes">Lunes</label>
@@ -2464,8 +2267,7 @@
         <div data-role="navbar" class="ui-state-persist">
             <ul>
                 <li id="uiLiBotonAceptarCantidadSku">
-                    <a href="#" id="UiBotonAceptarCantidadSku" style="text-align: center; background-color: #2E2E2E;" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                    <a href="#" id="UiBotonAceptarCantidadSku" style="text-align: center; background-color: #2E2E2E;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                         <FONT color="#FFFFFF">Aceptar Cantidad</FONT>
                     </a>
                 </li>
@@ -2480,7 +2282,9 @@
             <ul data-role="listview" data-inset="false" data-divider-theme="a" id="UiListaResumenUnidadMedida">
                 <li class="ui-field-contain" data-theme="a" style="text-align: right">
                     <a href="#" style="text-align: left; background-color: #2E2E2E;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon">
-                        <h3><FONT color="#FFFFFF">Manual</FONT></h3>
+                        <h3>
+                            <FONT color="#FFFFFF">Manual</FONT>
+                        </h3>
                     </a>
                     <ul data-role="listview" data-inset="false" data-divider-theme="a">
                         <li class="ui-field-contain" data-theme="a" style="text-align: right">
@@ -2497,8 +2301,7 @@
                         </li>
 
                         <li class="ui-field-contain" data-theme="a" style="text-align: right">
-                            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                                 data-expanded-icon="carat-u" Width="100%">
+                            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" Width="100%">
                                 <h5 style="text-align:center">Bonificaciones</h5>
                                 <ul data-role="listview" data-inset="false" data-divider-theme="a">
                                     <li class="ui-field-contain" data-theme="a" style="text-align: right">
@@ -2606,8 +2409,7 @@
                     </span>
                 </li>
             </ul>
-            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u" Width="100%" id="UiAcordionDeBonificacionesUnidadMedida">
+            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" Width="100%" id="UiAcordionDeBonificacionesUnidadMedida">
                 <h5>Bonificaciones</h5>
                 <ul data-role="listview" id="UiListaDeBonificacionesUnidadMedida" data-inset="true" data-theme="a">
                     <li class="ui-field-contain" data-theme="a" style="text-align: left">
@@ -2633,32 +2435,25 @@
     </div>
     <div data-role="page" id="uiCaputarDeFirmaYFoto" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="uiLimpiarFirma" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-comment">
+                        <a href="#" id="uiLimpiarFirma" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-comment">
                             <span>Limpiar firma</span>
                         </a>
                     </li>
                     <li>
 
-                        <a href="#" id="uiTomarFoto" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                        <a href="#" id="uiTomarFoto" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                             Tomar Foto
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="uiGuardarFoto" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="uiGuardarFoto" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             Guardar
                         </a>
                     </li>
@@ -2679,30 +2474,24 @@
     </div>
     <div data-role="page" id="UiFinRuta" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
 
             <div data-role="navbar" class="ui-state-persist" data-theme="b">
                 <ul data-theme="b" id="NavBarFinishDayMain">
                     <li data-theme="b">
-                        <a href="#" id="btnImprimirReporteFinDeRuta" data-theme="b"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">Imprimir</a>
+                        <a href="#" id="btnImprimirReporteFinDeRuta" data-theme="b" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">Imprimir</a>
                     </li>
                 </ul>
                 <ul data-theme="b" id="NavBarFinishDayAlternate">
                     <li data-theme="b">
-                        <a href="#" id="btnImprimirReporteDeFinDeRuta" data-theme="b"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">Imprimir y Finalizar</a>
+                        <a href="#" id="btnImprimirReporteDeFinDeRuta" data-theme="b" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-check">Imprimir y Finalizar</a>
                     </li>
                     <li data-theme="b">
-                        <a href="#" id="btnFinalizarRutaSinImprimirReporteDeFinDeRuta" data-theme="b"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-action">Finalizar Sin Imprimir</a>
+                        <a href="#" id="btnFinalizarRutaSinImprimirReporteDeFinDeRuta" data-theme="b" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-action">Finalizar Sin Imprimir</a>
                     </li>
                 </ul>
             </div>
@@ -2714,12 +2503,7 @@
                     <li class="ui-li-divider title" data-theme="b">Reporte</li>
                 </ul>
                 <div data-role="collapsibleset">
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u"
-                         id="acordionPagos">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="acordionPagos">
                         <h5>Pagos</h5>
                         <ul data-role="listview" id="lstReportePagos" data-inset="true" data-theme="c">
                             <li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">
@@ -2740,12 +2524,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u"
-                         id="acordionConsignacion">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="acordionConsignacion">
                         <h5>Productos en Consignacion</h5>
                         <ul data-role="listview" id="lstReporteConsginacion" data-inset="true" data-theme="c">
                             <li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">
@@ -2759,12 +2538,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u"
-                         id="acordionVentas">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="acordionVentas">
                         <h5>Ventas</h5>
                         <ul data-role="listview" id="lstReporteVentas" data-inset="true" data-theme="c">
                             <li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">
@@ -2778,12 +2552,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u"
-                         id="acordionVentasPorCliente">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="acordionVentasPorCliente">
                         <h5>Ventas por Cliente</h5>
                         <ul data-role="listview" id="lstReporteVentasPorCliente" data-inset="true" data-theme="c">
                             <li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">
@@ -2797,12 +2566,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u"
-                         id="acordionProductosOrdenesDeVenta">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="acordionProductosOrdenesDeVenta">
                         <h5>Productos en Ordenes De Venta</h5>
                         <ul data-role="listview" id="lstReporteProductosOrdenesDeVenta" data-inset="true" data-theme="c">
                             <li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">
@@ -2816,12 +2580,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="false" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon"
-                         data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u"
-                         id="acordionClientesOrdenesDeVenta">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="false" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="acordionClientesOrdenesDeVenta">
                         <h5>Clientes en Ordenes De Venta</h5>
                         <ul data-role="listview" id="lstReporteClientesOrdenesDeVenta" data-inset="true" data-theme="c">
                             <li data-icon="false" class="ui-field-contain ui-alt-icon ui-nodisc-icon ui-shadow ui-icon-check">
@@ -2851,16 +2610,14 @@
                     </a>
                 </li>
             </ul>
-        </div><!-- /panel -->
+        </div>
+        <!-- /panel -->
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div id="UiReporteCliente" data-role="content">
             <ul data-role="listview" data-inset="true" data-theme="c">
@@ -2896,19 +2653,13 @@
                 </li>
 
                 <li class="ui-field-contain">
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="true" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                         <h5>Etiquetas</h5>
                         <ul data-role="listview" id="UiListaEtiquetasRecp" data-inset="true" data-theme="c"></ul>
                     </div>
                 </li>
                 <li class="ui-field-contain">
-                    <div data-role="collapsible" data-content-theme="a"
-                         data-inset="true" data-mini="true" data-theme="b"
-                         class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                         data-expanded-icon="carat-u">
+                    <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                         <h5>Foto</h5>
                         <div id="divClientPicture" style="visibility: hidden">
                             <img src="#" border="1" id="imgClientPicture" style="width: 100%; height: 200px">
@@ -2923,16 +2674,14 @@
         <div data-role="panel" id="UiPanelDerrecho" data-display="overlay" data-theme="b">
             <ul data-role="listview" data-inset="true" data-divider-theme="a">
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UIBotonCrearOrdenDeVenta" style="text-align: center; background-color: #2E2E2E" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-plus">
+                    <a href="#" id="UIBotonCrearOrdenDeVenta" style="text-align: center; background-color: #2E2E2E" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-plus">
                         <FONT color="#FFFFFF">
                             Crear Nueva Tarea
                         </FONT>
                     </a>
                 </li>
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UIBotonModificcarClienteDesdeResumen" style="text-align: center;background-color:#2E2E2E" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-edit">
+                    <a href="#" id="UIBotonModificcarClienteDesdeResumen" style="text-align: center;background-color:#2E2E2E" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-edit">
                         <FONT color="#FFFFFF">
                             Modificar Cliente
                         </FONT>
@@ -2941,21 +2690,17 @@
             </ul>
         </div>
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div id="UiRepPreSale" data-role="content">
 
             <ul data-role="listview" id="listaFirmFotoPreVenta" data-inset="true" data-theme="c">
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UiBotonFimaFotoPresale" style="text-align: center; background-color: #2E2E2E" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
+                    <a href="#" id="UiBotonFimaFotoPresale" style="text-align: center; background-color: #2E2E2E" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-camera">
                         <FONT color="#FFFFFF">
                             Firma, foto
                         </FONT>
@@ -2964,16 +2709,14 @@
             </ul>
             <ul data-role="listview" id="listaFormaDePago" data-inset="true" data-theme="c">
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UiBotonDeFormaDePago" style="text-align: center; background-color: #2E2E2E; color: white;" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-money">
+                    <a href="#" id="UiBotonDeFormaDePago" style="text-align: center; background-color: #2E2E2E; color: white;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-money">
                         Efectivo
                     </a>
                 </li>
             </ul>
             <ul data-role="listview" id="listaImprimirPreVenta" data-inset="true" data-theme="c">
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UiBotonImprimirPresale" style="text-align: center; background-color: #2E2E2E" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-print">
+                    <a href="#" id="UiBotonImprimirPresale" style="text-align: center; background-color: #2E2E2E" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-print">
                         <FONT color="#FFFFFF">
                             REIMPRESION
                         </FONT>
@@ -2982,8 +2725,7 @@
             </ul>
             <ul data-role="listview" id="listaImprimirPagoPreVenta" data-inset="true" data-theme="c">
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UiBotonImprimirPagoPreVenta" style="text-align: center;background-color:#2E2E2E" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-print">
+                    <a href="#" id="UiBotonImprimirPagoPreVenta" style="text-align: center;background-color:#2E2E2E" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-print">
                         <FONT color="#FFFFFF">
                             REIMPRESION DE PAGO
                         </FONT>
@@ -3048,10 +2790,7 @@
                     <textarea id="UiEtiquetaComentarioDeOrdenDeVenta" rows="5" cols="50" readonly></textarea>
                 </li>
             </ul>
-            <div data-role="collapsible" data-content-theme="a"
-                 data-inset="true" data-mini="true" data-theme="b"
-                 class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u">
+            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                 <h5>Orden de Venta</h5>
                 <ul data-role="listview" id="UiListaRepPrsSale" data-inset="true" data-theme="c"></ul>
             </div>
@@ -3059,14 +2798,11 @@
     </div>
     <div data-role="page" id="UiPagePreventa" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="navbar" class="ui-state-persist">
             <ul>
@@ -3087,10 +2823,7 @@
                     <input type="number" pattern="[0-9]*" id="UiTotalPreVenta" data-clear-btn="true" placeholder="Total">
                 </li>
             </ul>
-            <div data-role="collapsible" data-content-theme="a"
-                 data-inset="true" data-mini="true" data-theme="b"
-                 class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u" id="UiListaOrdenPrincipal">
+            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" id="UiListaOrdenPrincipal">
                 <h5>
                     <span class="medium" id="UiTotalDeOrdenPrincipal">Orden</span>
                 </h5>
@@ -3113,10 +2846,7 @@
                     </li>
                 </ul>
             </div>
-            <div data-role="collapsible" data-content-theme="a"
-                 data-inset="true" data-mini="true" data-theme="b"
-                 class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u">
+            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                 <h5>
                     <span class="medium" id="UiTotalDeOrdenRestante">Restante</span>
                 </h5>
@@ -3139,22 +2869,17 @@
     </div>
     <div data-role="page" id="UiPageSalesOrderList" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true" data-theme="c">
                 <li class="ui-li-divider title" data-theme="b" style="text-align: center">Listado Ordenes de Venta</li>
             </ul>
-            <ul data-role="listview" id="UiListaOrdenDeVenta"
-                data-filter-placeholder="Buscar orden..." data-filter="true" data-count-theme="b"
-                data-inset="false" data-divider-theme="b"></ul>
+            <ul data-role="listview" id="UiListaOrdenDeVenta" data-filter-placeholder="Buscar orden..." data-filter="true" data-count-theme="b" data-inset="false" data-divider-theme="b"></ul>
         </div>
         <div data-role="popup" id="UiPopupListadoOrdenesDeVenta" data-corners="false" data-position-to="window" data-shadow="true">
             <p>Opciones</p>
@@ -3166,14 +2891,11 @@
 
     <div data-role="page" id="UiPageDocsDraft" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true" data-theme="c">
@@ -3181,42 +2903,34 @@
             </ul>
             <div data-role="collapsible">
                 <h3 class="HeaderSmall">Ordenes de Venta</h3>
-                <ul data-role="listview"
-                    data-inset="false"
-                    data-divider-theme="b"
-                    data-filter="true"
-                    data-filter-placeholder="Buscar Orden de Venta..."
-                    id="UiListaOrdenDeVentaDraft"></ul>
+                <ul data-role="listview" data-inset="false" data-divider-theme="b" data-filter="true" data-filter-placeholder="Buscar Orden de Venta..." id="UiListaOrdenDeVentaDraft"></ul>
             </div>
         </div>
     </div>
 
     <div data-role="page" id="UiPageTakeInventory" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
             <div data-role="navbar">
                 <ul>
                     <li>
-                        <a href="" id="uiBtnCancelarTomadeInventario" style="text-align: center" data-role="button"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-delete">Cancelar</a>
+                        <a href="" id="uiBtnCancelarTomadeInventario" style="text-align: center" data-role="button" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-delete">Cancelar</a>
                     </li>
                     <li class="center">
-                        <a href="" id="uiBtnAceptarTomaDeInventario" style="text-align: center" data-role="button"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">Aceptar</a>
+                        <a href="" id="uiBtnAceptarTomaDeInventario" style="text-align: center" data-role="button" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">Aceptar</a>
                     </li>
                 </ul>
             </div>
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true" data-theme="c">
-                <h1><li class="ui-li-divider title" data-theme="b" style="text-align: center">Toma de Inventario</li></h1>
+                <h1>
+                    <li class="ui-li-divider title" data-theme="b" style="text-align: center">Toma de Inventario</li>
+                </h1>
                 <li>Total de Productos: <span id="uiTotalSkusInventareados" class="ui-li-count">0</span></li>
             </ul>
             <ul data-role="listview" id="uiListaSkusInventareados" data-inset="true"></ul>
@@ -3225,20 +2939,15 @@
 
     <div id="UiSkusListPageForTakeInventory" data-role="page">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="content">
             <div data-role="controlgroup" data-type="horizontal" align="left" data-theme="b" data-mini="true">
                 <a id="UiBotonFiltrarListaSkuInventario" data-role="button" class="ui-btn ui-corner-all ui-icon-bars ui-btn-icon-left">Filtrar</a>
             </div>
-            <ul data-role="listview" id="UiSkuListViewForTakeInventory"
-                data-filter-placeholder="Filtrar SKU..." data-filter="true" data-count-theme="b"
-                data-inset="true" data-divider-theme="b"></ul>
+            <ul data-role="listview" id="UiSkuListViewForTakeInventory" data-filter-placeholder="Filtrar SKU..." data-filter="true" data-count-theme="b" data-inset="true" data-divider-theme="b"></ul>
         </div>
     </div>
 
@@ -3247,14 +2956,12 @@
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li id="UiLiBtnCancelarUnitPackTakeInventory">
-                        <a href="#" id="UiBtnCancelarUnitPackTakeInventory" style="text-align: center; background-color: #2E2E2E;" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-delete">
+                        <a href="#" id="UiBtnCancelarUnitPackTakeInventory" style="text-align: center; background-color: #2E2E2E;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-delete">
                             <FONT color="#FFFFFF">Cancelar</FONT>
                         </a>
                     </li>
                     <li id="UiLiBtnAceptarUnitPackTakeInventory">
-                        <a href="#" id="UiBtnAceptarUnitPackTakeInventory" style="text-align: center; background-color: #2E2E2E;" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="UiBtnAceptarUnitPackTakeInventory" style="text-align: center; background-color: #2E2E2E;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             <FONT color="#FFFFFF">Aceptar</FONT>
                         </a>
                     </li>
@@ -3269,8 +2976,7 @@
                 </li>
                 <li>
                     <div style="float:left; width:85%">
-                        <input placeholder="Buscar Sku..." type="text" id="UiInputSkuCode" data-clear-btn="true"
-                               pattern="[A-Za-z0-9]{4,25}" class="">
+                        <input placeholder="Buscar Sku..." type="text" id="UiInputSkuCode" data-clear-btn="true" pattern="[A-Za-z0-9]{4,25}" class="">
                     </div>
                     <div style="float:left; width:5%">
                         <a href="" id="UiBtnSearchSku" data-role="button" data-icon="search" style=" width:-5px; height:13px; background-color:#000000;
@@ -3287,14 +2993,11 @@
 
     <div data-role="page" id="UiPageSummaryTakeInventory" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-bolt ui-btn-icon-left fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true">
@@ -3333,10 +3036,7 @@
                 </li>
                 <li>Total de Productos: <span id="uiTotalSkusInventareadosResumen" class="ui-li-count">0</span></li>
             </ul>
-            <div data-role="collapsible" data-content-theme="a"
-                 data-inset="true" data-mini="true" data-theme="b"
-                 class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u">
+            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                 <h5>Toma de Inventario</h5>
                 <ul data-role="listview" id="UiListaRepTomaDeInventario" data-inset="true" data-theme="c"></ul>
             </div>
@@ -3347,8 +3047,7 @@
         <div data-role="panel" id="UiPanelDerrechoTareaCompletaSinGestion" data-display="overlay" data-theme="b">
             <ul data-role="listview" data-inset="true" data-divider-theme="a">
                 <li class="ui-li-divider title" data-theme="b">
-                    <a href="#" id="UIBotonCrearNuevaTareaCompletaSinGestion" style="text-align: center;background-color:#2E2E2E" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-plus">
+                    <a href="#" id="UIBotonCrearNuevaTareaCompletaSinGestion" style="text-align: center;background-color:#2E2E2E" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-plus">
                         <FONT color="#FFFFFF">
                             Crear Nueva Tarea
                         </FONT>
@@ -3357,14 +3056,11 @@
             </ul>
         </div>
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true" data-theme="c">
@@ -3452,12 +3148,7 @@
         </div>
         <div data-role="content">
             <div id="UiContenedorListaDeClientes" style="display: none">
-                <ul data-role="listview"
-                    id="uiListaClientesABordo"
-                    data-inset="true"
-                    data-filter="false"
-                    data-filter-placeholder="Buscar cliente..."
-                    data-mini="true"></ul>
+                <ul data-role="listview" id="uiListaClientesABordo" data-inset="true" data-filter="false" data-filter-placeholder="Buscar cliente..." data-mini="true"></ul>
                 <p id="UiNotificacionClientes" style="display: none">No se han encontrado coincidencias para el criterio proporcionado, por favor verifique y vuelva a intentar.</p>
             </div>
         </div>
@@ -3501,11 +3192,7 @@
                     <li class="ui-li-divider title" data-theme="b" style="text-align: center; text-shadow: none" id="etiquetaPrincipalCombos">Listado De Documentos Draft</li>
                 </ul>
                 <br />
-                <ul data-role="listview"
-                    id="uiListaSkuBonificacionCombo"
-                    data-inset="false"
-                    data-divider-theme="b"
-                    data-count-theme="b"></ul>
+                <ul data-role="listview" id="uiListaSkuBonificacionCombo" data-inset="false" data-divider-theme="b" data-count-theme="b"></ul>
             </div>
         </div>
     </div>
@@ -3584,10 +3271,7 @@
                             <input type="text" id="UiModificacionDeClienteTxtNombreDeFacturacion" data-clear-btn="true" placeholder="...">
                         </li>
                         <li class="ui-field-contain">
-                            <div data-role="collapsible" data-content-theme="a"
-                                 data-inset="true" data-mini="true" data-theme="b"
-                                 class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                                 data-expanded-icon="carat-u" Width="100%">
+                            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" Width="100%">
                                 <h5>Etiquetas</h5>
                                 <ul data-role="listview" id="UiModificacionDeClienteListaEtiquetas" data-inset="true" data-theme="c"></ul>
                             </div>
@@ -3657,11 +3341,7 @@
             </div>
         </div>
         <div data-role="content">
-            <ul data-role="listview"
-                id=""
-                data-inset="true"
-                data-filter="false"
-                data-mini="true">
+            <ul data-role="listview" id="" data-inset="true" data-filter="false" data-mini="true">
                 <li>
                     <table>
                         <tr>
@@ -3685,14 +3365,12 @@
         <div data-role="navbar" class="ui-state-persist">
             <ul>
                 <li>
-                    <a href="#" id="UiBotonAtrasFormaDePago" style="text-align: center; background-color: #2E2E2E;" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-back">
+                    <a href="#" id="UiBotonAtrasFormaDePago" style="text-align: center; background-color: #2E2E2E;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-back">
                         <FONT color="#FFFFFF">Atras</FONT>
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="UiBotonAceptarFormaDePago" style="text-align: center; background-color: #2E2E2E;" data-theme="b"
-                       class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                    <a href="#" id="UiBotonAceptarFormaDePago" style="text-align: center; background-color: #2E2E2E;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                         <FONT color="#FFFFFF">Aceptar</FONT>
                     </a>
                 </li>
@@ -3720,14 +3398,12 @@
                 <li class="ui-field-contain" data-theme="a" style="text-align: center">
                     <div class="ui-grid-block">
                         <div class="ui-block-b">
-                            <a href="#" id="UiBotonImagenFrontal" style="text-align: center"
-                               class="ui-btn ui-btn-c ui-icon-camera ui-corner-all ui-shadow ui-btn-icon-top ui-alt-icon ui-nodisc-icon">
+                            <a href="#" id="UiBotonImagenFrontal" style="text-align: center" class="ui-btn ui-btn-c ui-icon-camera ui-corner-all ui-shadow ui-btn-icon-top ui-alt-icon ui-nodisc-icon">
                                 Imagen Frontal
                             </a>
                         </div>
                         <div class="ui-block-d">
-                            <a href="#" id="UiBotonImagenTrasera" style="text-align: center"
-                               class="ui-btn ui-btn-c ui-icon-camera ui-corner-all ui-shadow ui-btn-icon-top ui-alt-icon ui-nodisc-icon">
+                            <a href="#" id="UiBotonImagenTrasera" style="text-align: center" class="ui-btn ui-btn-c ui-icon-camera ui-corner-all ui-shadow ui-btn-icon-top ui-alt-icon ui-nodisc-icon">
                                 Imagen Trasera
                             </a>
                         </div>
@@ -3782,12 +3458,7 @@
                     </tr>
                 </table>
             </form>
-            <ul data-role="listview"
-                id="uiListaSkusDeInventarioPorZona"
-                data-inset="true"
-                data-filter="true"
-                data-input="#uiBtnConsultarInventarioDeSkuPorZona"
-                data-mini="true"></ul>
+            <ul data-role="listview" id="uiListaSkusDeInventarioPorZona" data-inset="true" data-filter="true" data-input="#uiBtnConsultarInventarioDeSkuPorZona" data-mini="true"></ul>
         </div>
     </div>
     <div data-role="page" id="UiPaginaSeleccionDeImpresora" data-close-btn="right">
@@ -3796,22 +3467,17 @@
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#"
-                           id="UiBotonRefrescarListado"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-refresh">
+                        <a href="#" id="UiBotonRefrescarListado" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-refresh">
                             Refrescar Listado
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                           id="UiBotonProbarImpresora"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-info">
+                        <a href="#" id="UiBotonProbarImpresora" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-info">
                             Probar impresora
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="UiBotonGuardarImpresora"
-                           class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-save">
+                        <a href="#" id="UiBotonGuardarImpresora" class="ui-btn ui-btn-icon-top ui-nodisc-icon menupanel ui-icon-save">
                             Guardar impresora
                         </a>
                     </li>
@@ -3823,11 +3489,7 @@
             <p></p>
             <div class="ui-corner-all custom-corners" data-theme="b">
                 <div id="UiContenedorImpresorasDisponibles" style="display: block;" data-theme="b">
-                    <ul data-role="listview"
-                        id="UiListaDeImpresorasDisponibles"
-                        data-inset="false"
-                        data-divider-theme="b"
-                        data-count-theme="b"></ul>
+                    <ul data-role="listview" id="UiListaDeImpresorasDisponibles" data-inset="false" data-divider-theme="b" data-count-theme="b"></ul>
                 </div>
                 <!--<div class="ui-field-contain">
 
@@ -3838,31 +3500,24 @@
     </div>
     <div data-role="page" id="UiUserSignaturPage" data-add-back-btn="true" data-theme="a">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto fa batteryclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass"
-                 style="background-color: transparent; border-style: none"></div>
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass"
-                 style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
             <div data-role="navbar" class="ui-state-persist">
                 <ul>
                     <li>
-                        <a href="#" id="UiCancerlarFirma" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-back">
+                        <a href="#" id="UiCancerlarFirma" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-back">
                             Cancelar
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="UiLimpiarFirmaEnPantallaDeFirma" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-edit">
+                        <a href="#" id="UiLimpiarFirmaEnPantallaDeFirma" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-edit">
                             <span>Limpiar firma</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="UiGuardarFirma" style="text-align: center"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
+                        <a href="#" id="UiGuardarFirma" style="text-align: center" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-check">
                             Guardar
                         </a>
                     </li>
@@ -3903,8 +3558,7 @@
             <div>
                 <ul data-role="listview" id="UiListaFormaDePago" data-inset="true" data-theme="c">
                     <li class="ui-li-divider title" data-theme="b">
-                        <a href="#" id="UiBotonFormaDePago" style="text-align: center; background-color: #2E2E2E; color: white;" data-theme="b"
-                           class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-money">
+                        <a href="#" id="UiBotonFormaDePago" style="text-align: center; background-color: #2E2E2E; color: white;" data-theme="b" class="small-roboto ui-btn ui-btn-icon-top ui-nodisc-icon ui-icon-money">
                             Efectivo
                         </a>
                     </li>
@@ -3945,10 +3599,7 @@
                 </ul>
             </div>
 
-            <div data-role="collapsible" data-content-theme="a"
-                 data-inset="true" data-mini="true" data-theme="b"
-                 class="ui-nodisc-icon" data-collapsed-icon="carat-d"
-                 data-expanded-icon="carat-u">
+            <div data-role="collapsible" data-content-theme="a" data-inset="true" data-mini="true" data-theme="b" class="ui-nodisc-icon" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
                 <h5>Orden de Venta</h5>
                 <ul data-role="listview" id="UiListaSkuResumen" data-inset="true" data-theme="c"></ul>
             </div>
@@ -3957,11 +3608,7 @@
                 <p></p>
                 <div class="ui-corner-all custom-corners" data-theme="b">
                     <div id="UiContenedorImpresorasDisponibles" style="display: block;" data-theme="b">
-                        <ul data-role="listview"
-                            id="UiListaDeImpresorasDisponibles"
-                            data-inset="false"
-                            data-divider-theme="b"
-                            data-count-theme="b"></ul>
+                        <ul data-role="listview" id="UiListaDeImpresorasDisponibles" data-inset="false" data-divider-theme="b" data-count-theme="b"></ul>
                     </div>
                 </div>
             </div>
@@ -4030,15 +3677,8 @@
             <label style="text-align: center; font-weight: bold;">Promociones</label>
         </div>
         <div data-role="content">
-            <div data-collapsed-icon="carat-d"
-                data-expanded-icon="carat-u"
-                data-inset="false"
-                data-role="collapsible-set"
-                data-theme="a"
-                data-content-theme="a"
-                class="ui-alt-icon ui-nodisc-icon"
-                id="UiContenedorDePromociones">
-               <form class="ui-filterable">
+            <div data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-inset="false" data-role="collapsible-set" data-theme="a" data-content-theme="a" class="ui-alt-icon ui-nodisc-icon" id="UiContenedorDePromociones">
+                <form class="ui-filterable">
                     <div is="collapsible" data-role="collapsible" id="Acordion">
                         <h5>Descuentos por Escala<span is="span" class="ui-li-count" id="Cant">1</span></h5>
                         <table class="tablePromo" style="width: 100%">
@@ -4078,83 +3718,83 @@
                                 <td class="filaPromo">Italy</td>
                             </tr>
                         </table>
-                    </div>                   
-               </form>
-           </div>            
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <div is="page" data-role="page" id="UiPaginaAvanceDeRuta" data-close-btn="right" data-add-back-btn="true" data-theme="a">
         <div is="header" data-role="header" data-theme="b">
-          <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
-          <div is="dragable" class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
-          <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
+            <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left networkclass" style="background-color: transparent; border-style: none"></div>
+            <div is="dragable" class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left loggedclass" style="background-color: transparent; border-style: none"></div>
         </div>
         <div is="content" data-role="content">
-          <ul is="listview" data-role="listview" data-inset="true" data-theme="c">
-            <li is="listview-li" class="ui-li-divider title" data-theme="b">
-              <table>
-                <tbody>
-                  <tr>
-                    <td style="width: 25%;font-size: 1em;">Avance de Ruta</td>
-                  </tr>
-                </tbody>
-              </table>
-            </li>
-            <li is="listview-li" class="ui-field-contain">
-                <span is="span" id="UiEtiquetaDeTituloTotalDePedidos" class="medium">Total CD(7):</span>
-                <span class="ui-li-count" id="UiEtiquetaARTotalDePedidos" style="align-content: center">0</span>
-              </li>
-              <li is="listview-li" class="ui-field-contain">
-                  <span is="span" class="medium">Total:</span>
-                  <span class="ui-li-count" id="UiEtiquetaARTotalDePedidosSinDescuento" style="align-content: center">0</span>
-              </li>
-            <li is="listview-li" class="ui-field-contain">
-              <span is="span" class="medium">Clientes Visitados:</span>
-              <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalClientesVisitados" style="text-align: right">0</span>
-            </li>
-            <li is="listview-li" class="ui-field-contain">
-              <span is="span" class="medium">Tareas sin Gestión:</span>
-              <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalTareasSinGestion" style="text-align: right">0</span>
-            </li>
-            <li is="listview-li" class="ui-field-contain">
-              <span is="span" class="medium">Tareas Fuera del plan:</span>
-              <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalDeTareasFueraPlanDeRuta" style="text-align: right">0</span>
-            </li>
-            <li is="listview-li" class="ui-field-contain">
-              <span is="span" class="medium">Clientes Nuevos:</span>
-              <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalClientesNuevos" style="text-align: right">0</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div is="page" data-role="page" id="UiSurveyPage" data-theme="a" data-cache="false">
-        <div is="header" data-role="header" data-theme="b">
-          <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
-          <div is="dragable" class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
-          <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
-          <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
-          <div is="navbar" data-role="navbar" class="ui-state-persist">
-            <ul id="UiSurveyPageHeaderOpts">
-              <li is="navbtn" id="UiBtnCancelClientSurveyContainer">
-                <a is="button" href="#" id="UiBtnCancelClientSurvey" style="text-align: center; font-size: 1em;" class="ui-btn ui-btn-b">Cancelar</a>
-              </li>
-              <li is="navbtn" id="UiBtnSaveClientSurveyContainer">
-                <a is="button" href="#" id="UiBtnSaveClientSurvey" style="text-align: center; font-size: 1em;" class="ui-btn ui-btn-b">Finalizar</a>
-              </li>
+            <ul is="listview" data-role="listview" data-inset="true" data-theme="c">
+                <li is="listview-li" class="ui-li-divider title" data-theme="b">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="width: 25%;font-size: 1em;">Avance de Ruta</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li is="listview-li" class="ui-field-contain">
+                    <span is="span" id="UiEtiquetaDeTituloTotalDePedidos" class="medium">Total CD(7):</span>
+                    <span class="ui-li-count" id="UiEtiquetaARTotalDePedidos" style="align-content: center">0</span>
+                </li>
+                <li is="listview-li" class="ui-field-contain">
+                    <span is="span" class="medium">Total:</span>
+                    <span class="ui-li-count" id="UiEtiquetaARTotalDePedidosSinDescuento" style="align-content: center">0</span>
+                </li>
+                <li is="listview-li" class="ui-field-contain">
+                    <span is="span" class="medium">Clientes Visitados:</span>
+                    <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalClientesVisitados" style="text-align: right">0</span>
+                </li>
+                <li is="listview-li" class="ui-field-contain">
+                    <span is="span" class="medium">Tareas sin Gestión:</span>
+                    <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalTareasSinGestion" style="text-align: right">0</span>
+                </li>
+                <li is="listview-li" class="ui-field-contain">
+                    <span is="span" class="medium">Tareas Fuera del plan:</span>
+                    <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalDeTareasFueraPlanDeRuta" style="text-align: right">0</span>
+                </li>
+                <li is="listview-li" class="ui-field-contain">
+                    <span is="span" class="medium">Clientes Nuevos:</span>
+                    <span class="ui-li-count" class="medium" id="UiEtiquetaARTotalClientesNuevos" style="text-align: right">0</span>
+                </li>
             </ul>
-          </div>
-          <div is="dragable" style="margin-top: 0.5em; margin-bottom: 0.5em; text-align: center;">
-            <span is="span" style="text-align: center; word-wrap:break-word;" id="UiSurveyName">Nombre de encuesta</span>
-          </div>
+        </div>
+    </div>
+    <div is="page" data-role="page" id="UiSurveyPage" data-theme="a" data-cache="false">
+        <div is="header" data-role="header" data-theme="b">
+            <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left  networkclass" style="background-color: transparent; border-style: none"></div>
+            <div is="dragable" class="small-roboto fa batteryclass" style="background-color: transparent; border-style: none"></div>
+            <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-user ui-btn-icon-left  loggedclass" style="background-color: transparent; border-style: none"></div>
+            <div is="dragable" class="small-roboto ui-btn ui-nodisc-icon ui-icon-print ui-btn-icon-left printerclass" style="background-color: transparent; border-style: none"></div>
+            <div is="navbar" data-role="navbar" class="ui-state-persist">
+                <ul id="UiSurveyPageHeaderOpts">
+                    <li is="navbtn" id="UiBtnCancelClientSurveyContainer">
+                        <a is="button" href="#" id="UiBtnCancelClientSurvey" style="text-align: center; font-size: 1em;" class="ui-btn ui-btn-b">Cancelar</a>
+                    </li>
+                    <li is="navbtn" id="UiBtnSaveClientSurveyContainer">
+                        <a is="button" href="#" id="UiBtnSaveClientSurvey" style="text-align: center; font-size: 1em;" class="ui-btn ui-btn-b">Finalizar</a>
+                    </li>
+                </ul>
+            </div>
+            <div is="dragable" style="margin-top: 0.5em; margin-bottom: 0.5em; text-align: center;">
+                <span is="span" style="text-align: center; word-wrap:break-word;" id="UiSurveyName">Nombre de encuesta</span>
+            </div>
         </div>
         <div is="content" data-role="content">
-          <div is="dragable" id="UiSurveyContentContainer" style="overflow-x: hidden; overflow-y: hidden; margin-top: 0.5em;">
-            <ol id="UiSurveyQuestionsContainer"></ol>
-          </div>
+            <div is="dragable" id="UiSurveyContentContainer" style="overflow-x: hidden; overflow-y: hidden; margin-top: 0.5em;">
+                <ol id="UiSurveyQuestionsContainer"></ol>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <!-- Modulo de pagos -->
+    <!-- Modulo de pagos -->
 
     <div data-role="page" id="UiOverdueInvoicePaymentPage" data-theme="a">
         <div data-role="header" data-theme="b">
@@ -4196,8 +3836,7 @@
             </table>
             <hr />
             <br />
-            <ul data-role="listview" id="UlDetailOverdueInvoices"
-                data-inset="false" data-divider-theme="b" data-count-theme="b"></ul>
+            <ul data-role="listview" id="UlDetailOverdueInvoices" data-inset="false" data-divider-theme="b" data-count-theme="b"></ul>
         </div>
         <div data-role="footer" data-position="fixed" data-theme="b">
             <span style="text-align:left; font-weight: bold;float: left" id="UiContainerOfMinimumPercentagePayment">
@@ -4305,28 +3944,17 @@
             <div data-role="collapsible-set" data-mini="true">
                 <div data-role="collapsible" data-theme="b" data-content-theme="a" data-mini="true" data-collapsed="false" id="InfoCashContainer">
                     <h3>Efectivo <span id="UiLblCashPayedAmount" style="float: right;">Q000.00</span> </h3>
-                    <ul data-role="listview" id="UiCashDetail" data-split-icon="delete"
-                        data-divider-theme="b"
-                        data-theme="a"
-                        data-split-theme="b"></ul>
+                    <ul data-role="listview" id="UiCashDetail" data-split-icon="delete" data-divider-theme="b" data-theme="a" data-split-theme="b"></ul>
                 </div>
 
                 <div data-role="collapsible" data-theme="b" data-content-theme="a" data-mini="true" data-collapsed="true" id="InfoDepositsContainer">
                     <h3>Depositos <span id="UiLblDepositsPayedAmount" style="float: right;">Q000.00</span> </h3>
-                    <ul data-role="listview" id="UiDepositsDetail" data-split-icon="delete"
-                        data-count-theme="b"
-                        data-divider-theme="b"
-                        data-theme="a"
-                        data-split-theme="b"></ul>
+                    <ul data-role="listview" id="UiDepositsDetail" data-split-icon="delete" data-count-theme="b" data-divider-theme="b" data-theme="a" data-split-theme="b"></ul>
                 </div>
 
                 <div data-role="collapsible" data-theme="b" data-content-theme="a" data-mini="true" data-collapsed="true" id="InfoBankChecksContainer">
                     <h3>Cheques <span id="UiLblBankChecksPayedAmount" style="float: right;">Q000.00</span> </h3>
-                    <ul data-role="listview" id="UiBanckCheksDetail" data-split-icon="delete"
-                        data-count-theme="b"
-                        data-divider-theme="b"
-                        data-theme="a"
-                        data-split-theme="b"></ul>
+                    <ul data-role="listview" id="UiBanckCheksDetail" data-split-icon="delete" data-count-theme="b" data-divider-theme="b" data-theme="a" data-split-theme="b"></ul>
                 </div>
             </div>
         </div>
@@ -4340,14 +3968,11 @@
 
     <div data-role="page" id="UiPaymentListPage">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left"
-                 style="background-color: #181C18"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left" style="background-color: #181C18"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-eye ui-btn-icon-left"
-                 style="background-color: #181C18"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-eye ui-btn-icon-left" style="background-color: #181C18"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-gear ui-btn-icon-left"
-                 style="background-color: #181C18"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-gear ui-btn-icon-left" style="background-color: #181C18"></div>
 
             <div data-role="navbar" data-position="fixed">
                 <ul>
@@ -4371,13 +3996,7 @@
                     </tr>
                 </table>
             </form>
-            <ul data-role="listview"
-                data-inset="false"
-                data-filter="true"
-                data-dividertheme="b"
-                data-count-theme="b"
-                data-input="#UiTxtPaymentFilter"
-                id="UiPaymentsList"></ul>
+            <ul data-role="listview" data-inset="false" data-filter="true" data-dividertheme="b" data-count-theme="b" data-input="#UiTxtPaymentFilter" id="UiPaymentsList"></ul>
         </div>
         <div data-role="footer" data-position="fixed" data-theme="b">
             <span style="text-align: center; font-weight: bold; float: right;">
@@ -4389,20 +4008,16 @@
 
     <div data-role="page" id="UiPaymentDetailPage">
         <div data-role="header" data-theme="b">
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left"
-                 style="background-color: #181C18"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-cloud ui-btn-icon-left" style="background-color: #181C18"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-eye ui-btn-icon-left"
-                 style="background-color: #181C18"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-eye ui-btn-icon-left" style="background-color: #181C18"></div>
 
-            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-gear ui-btn-icon-left"
-                 style="background-color: #181C18"></div>
+            <div class="small-roboto ui-btn ui-nodisc-icon ui-icon-gear ui-btn-icon-left" style="background-color: #181C18"></div>
 
             <div data-role="navbar" data-position="fixed">
                 <ul>
                     <li>
-                        <a href="#" class="ui-btn ui-btn-b ui-btn-icon-top ui-icon-back ui-nodisc-icon" style="text-align: center;"
-                           id="UiBtnBackFromPaymentDetailPage">Regresar</a>
+                        <a href="#" class="ui-btn ui-btn-b ui-btn-icon-top ui-icon-back ui-nodisc-icon" style="text-align: center;" id="UiBtnBackFromPaymentDetailPage">Regresar</a>
                     </li>
                 </ul>
                 <label style="text-align: center; font-weight: bold; margin-top:0.5em">Facturas Canceladas</label>
@@ -4411,24 +4026,20 @@
         </div>
         <div data-role="content">
             <p></p>
-            <ul data-role="listview"
-                data-inset="false"
-                data-filter="false"
-                data-dividertheme="b"
-                data-count-theme="b"
-                id="UiListOfInvoicesPaid"></ul>
+            <ul data-role="listview" data-inset="false" data-filter="false" data-dividertheme="b" data-count-theme="b" id="UiListOfInvoicesPaid"></ul>
         </div>
         <div data-role="footer" data-position="fixed" data-theme="b">
             <span style="text-align: center; font-weight: bold; float: right;" id="UiLblPaymentAmountInfo"></span>
         </div>
     </div>
 
-      <!-- Finaliza modulo de pagos -->
+    <!-- Finaliza modulo de pagos -->
 
 </body>
+
 </html>
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         document.addEventListener("deviceready", onDeviceReady, false);
         document.addEventListener("online", DeviceIsOnline, false);
         document.addEventListener("offline", DeviceIsOffline, false);
