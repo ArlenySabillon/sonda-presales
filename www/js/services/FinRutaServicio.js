@@ -295,7 +295,8 @@ function ObtenerProductosDeOrdenesDeVenta(callback, errCallBack) {
       sql += " d.SKU, s.SKU_NAME, SUM(d.QTY) QTY, SUM(d.TOTAL_LINE) TOTAL";
       sql += " FROM SALES_ORDER_DETAIL d INNER JOIN SKU_PRESALE s";
       sql += " ON d.SKU = s.SKU";
-      sql += " AND s.WAREHOUSE = '" + localStorage.getItem("PRESALE_WHS") + "'";
+      // Filtro para que no tome skus de bodegas que no pertenecen al usuario
+      // sql += " AND s.WAREHOUSE = '" + localStorage.getItem("PRESALE_WHS") + "'";
       sql += " GROUP BY s.SKU,s.SKU_NAME";
 
       tx.executeSql(
