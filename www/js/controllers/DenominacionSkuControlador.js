@@ -365,6 +365,8 @@ var DenominacionSkuControlador = (function () {
         var _this = this;
         try {
             if (this.paquetes) {
+                var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
+                uiTextoCantidadUnidadMedida.focus();
                 this.establecerPaqueteSeleccionado(this.paquetes[this.paquetes.length - 1].codePackUnit, function (resultado) {
                     notify(resultado.mensaje);
                 }, function () {
