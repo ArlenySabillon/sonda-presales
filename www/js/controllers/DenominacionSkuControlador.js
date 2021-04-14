@@ -370,6 +370,9 @@ var DenominacionSkuControlador = (function () {
                 this.establecerPaqueteSeleccionado(this.paquetes[this.paquetes.length - 1].codePackUnit, function (resultado) {
                     notify(resultado.mensaje);
                 }, function () {
+                    //limpia el filtro de sku
+                    var uiTxtFilterListSkusPage = $("#uiTxtFilterListSkusPage");
+                    uiTxtFilterListSkusPage.val("");
                     _this.cargarDatosDelPaqueteSeleccionado();
                 });
             }
