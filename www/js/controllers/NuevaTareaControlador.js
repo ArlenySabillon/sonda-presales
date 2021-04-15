@@ -167,6 +167,7 @@ var NuevaTareaControlador = (function () {
             const unicos = [];
             for (var _i = 0, clientes_1 = clientes; _i < clientes_1.length; _i++) {
                 const valor = clientes_1[_i].clientId;
+                //Se valida que no se dupliquen los clientes cuando crashea la app con un array y la funcion IndexOf
                 if(unicos.indexOf(valor) < 0){
                     unicos.push(valor);
                     var clienteTemp = clientes_1[_i];
