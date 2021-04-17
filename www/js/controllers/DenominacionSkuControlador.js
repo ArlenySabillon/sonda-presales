@@ -371,7 +371,7 @@ var DenominacionSkuControlador = (function () {
                     notify(resultado.mensaje);
                 }, function () {
                     //limpia el filtro de sku
-                    if(localStorage.getItem("SELLER_OWNER") === "Diprocom"){
+                    if(localStorage.getItem("FILTER_SKU") === "Si"){
                         var uiTxtFilterListSkusPage = $("#uiTxtFilterListSkusPage");
                         uiTxtFilterListSkusPage.val("");
                     }
