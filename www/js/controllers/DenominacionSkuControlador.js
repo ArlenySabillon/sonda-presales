@@ -371,8 +371,10 @@ var DenominacionSkuControlador = (function () {
                     notify(resultado.mensaje);
                 }, function () {
                     //limpia el filtro de sku
-                    var uiTxtFilterListSkusPage = $("#uiTxtFilterListSkusPage");
-                    uiTxtFilterListSkusPage.val("");
+                    if(localStorage.getItem("FILTER_SKU") === "Si"){
+                        var uiTxtFilterListSkusPage = $("#uiTxtFilterListSkusPage");
+                        uiTxtFilterListSkusPage.val("");
+                    }
                     _this.cargarDatosDelPaqueteSeleccionado();
                 });
             }
