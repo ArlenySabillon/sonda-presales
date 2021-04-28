@@ -49,8 +49,8 @@ function getConf(callback) {
 
             reader.onloadend = function(e) {
                 if (this.result == '') {
-                    writeLog(`{"url": "http://13.82.139.26:8083/"}`)
-                    callback({ "url": "http://13.82.139.26:8083/" });
+                    writeLog(`{"url": "http://192.168.0.78:8083/"}`)
+                    callback({ "url": "http://192.168.0.78:8083/" });
                 } else {
                     callback(JSON.parse(this.result));
                 }
