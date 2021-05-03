@@ -302,7 +302,7 @@ function ObtenerProductosDeOrdenesDeVenta(callback, errCallBack) {
 function ObtenerClientesDeOrdenesDeVenta(callback, errCallBack) {
     SONDA_DB_Session.transaction(
         function(tx) {
-            var sql = "SELECT";
+            var sql = "SELECT DISTINCT";
             sql += " h.SALES_ORDER_ID, c.CLIENT_ID, c.CLIENT_NAME, h.TOTAL_AMOUNT";
             sql += " FROM SALES_ORDER_HEADER h, CLIENTS c";
             sql += " WHERE h.CLIENT_ID = c.CLIENT_ID";
@@ -331,7 +331,7 @@ function ObtenerOrdenesDeVentaSincronizadas(
     SONDA_DB_Session.transaction(
         function(tx) {
             var sql =
-                "SELECT H.SALES_ORDER_ID, H.SALES_ORDER_ID_BO, H.DOC_SERIE, H.DOC_NUM, COUNT(D.SKU) AS DETAIL_NUM";
+                "SELECT DISTINCT H.SALES_ORDER_ID, H.SALES_ORDER_ID_BO, H.DOC_SERIE, H.DOC_NUM, COUNT(D.SKU) AS DETAIL_NUM";
             sql += " FROM SALES_ORDER_HEADER H";
             sql +=
                 " INNER JOIN SALES_ORDER_DETAIL D ON (H.SALES_ORDER_ID = D.SALES_ORDER_ID AND H.DOC_SERIE = D.DOC_SERIE AND H.DOC_NUM = D.DOC_NUM)";
