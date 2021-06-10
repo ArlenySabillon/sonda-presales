@@ -1,4 +1,4 @@
-﻿var mensajero;
+var mensajero;
 var gMaxImpresiones = 5;
 var pictureSource; // picture source
 var destinationType; // sets the format of returned value
@@ -94,7 +94,7 @@ var default_image;
 var SondaServerURL = "";
 
 var currentBranch = "cendalzaRoute";
-var SondaVersion = "2021.05.03";
+var SondaVersion = "2021.05.22";
 var SondaServerOptions = {
     reconnect: true,
     "max reconnection attempts": 60000

@@ -1,13 +1,10 @@
 {
     "name": "mobility.sonda.route",
-    "version": "2021.05.03",
+    "version": "2021.05.22",
     "displayName": "SondaRoute",
     "cordova": {
-        "platforms": [
-            "android"
-        ],
+        "platforms": [],
         "plugins": {
-            "com.phonegap.plugins.barcodescanner": {},
             "cordova-plugin-android-gpsdetect": {},
             "cordova-plugin-battery-status": {},
             "cordova-plugin-camera": {},
@@ -26,7 +23,6 @@
             "cordova-plugin-whitelist": {},
             "cordova-plugin-x-toast": {},
             "cordova.plugins.diagnostic": {},
-            "de.appplant.cordova.plugin.badge": {},
             "es6-promise-plugin": {},
             "uk.co.workingedge.phonegap.plugin.launchnavigator": {},
             "cordova-plugin-badge": {},
@@ -35,8 +31,7 @@
         }
     },
     "dependencies": {
-        "com.phonegap.plugins.barcodescanner": "2.0.1",
-        "cordova-android": "^6.2.3",
+        "cordova-android": "^9.0.0",
         "cordova-plugin-android-gpsdetect": "0.0.3",
         "cordova-plugin-badge": "^0.8.8",
         "cordova-plugin-battery-status": "^1.1.2",
@@ -58,7 +53,6 @@
         "cordova-plugin-whitelist": "^1.3.4",
         "cordova-plugin-x-toast": "^2.6.0",
         "cordova.plugins.diagnostic": "^3.4.2",
-        "de.appplant.cordova.plugin.badge": "^0.7.1",
         "es6-promise-plugin": "^3.0.2",
         "phonegap-plugin-barcodescanner": "^6.0.8",
         "uk.co.workingedge.phonegap.plugin.launchnavigator": "^2.9.7"
