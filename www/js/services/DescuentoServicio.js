@@ -533,6 +533,7 @@ var DescuentoServicio = (function () {
                     skuAAgregar.codeFamilySku = sku.codeFamilySku;
                     skuAAgregar.total = 0;
                     skuAAgregar.isUniqueDiscountScale = sku.isUniqueDiscountScale;
+                    skuAAgregar.qty = 0;
                     listaDeSoloTotalesYFamilias.push(skuAAgregar);
                 }
                 else {
@@ -728,7 +729,7 @@ var DescuentoServicio = (function () {
                 });
                 listaDePaquetes.map(function (paquete) {
                     if (paquete.qty !== 0) {
-                        var total = _this.obtenerTotalConDescueto(paquete.price * paquete.qty, 0, paquete.discountType);
+                        var total = _this.obtenerTotalConDescueto(paquete.qty, 0, paquete.discountType);
                         var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
                             return familia.codeFamilySku === paquete.codeFamily;
                         });
@@ -747,8 +748,9 @@ var DescuentoServicio = (function () {
                                 var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
                                     return familia.codeFamilySku === sku.codeFamilySku;
                                 });
-                                if (resultadoFamilia) {
+                                if (resultadoFamilia && listaDePaquetes.length == 0) {
                                     resultadoFamilia.total += sku.total;
+                                    resultadoFamilia.qty += sku.qty;
                                 }
                             }
                         });
@@ -758,7 +760,7 @@ var DescuentoServicio = (function () {
                                 var resultadoFamilia = listaDeSoloTotalesYFamilias.find(function (familia) {
                                     return familia.codeFamilySku === paquete.codeFamily;
                                 });
-                                if (resultadoFamilia) {
+                                if (resultadoFamilia && !paquete) {
                                     resultadoFamilia.total += total;
                                 }
                             }
@@ -768,17 +770,20 @@ var DescuentoServicio = (function () {
                 listaDeSoloTotalesYFamilias.map(function (familia) {
                     if (!familia.isUniqueDiscountScale) {
                         var descuentoPorMontoGeneralYFamilia_2 = listaDescuentoPorMontoGeneralYFamilia.find(function (descuento) {
+                            if (familia.qty !== 0) {
+                                return (descuento.codeFamily === familia.codeFamilySku &&
+                                    descuento.lowAmount <= familia.qty &&
+                                    descuento.highAmount >= familia.qty);
+                            }
                             return (descuento.codeFamily === familia.codeFamilySku &&
                                 descuento.lowAmount <= familia.total &&
                                 descuento.highAmount >= familia.total);
                         });
                         if (descuentoPorMontoGeneralYFamilia_2) {
-                            var resultadoDescuento = listaDescuentoPorMontoGeneralYFamiliaARetornar.find(function (descuento) {
-                                return (descuento.promoId ===
-                                    descuentoPorMontoGeneralYFamilia_2.promoId);
-                            });
-                            if (!resultadoDescuento) {
-                                listaDescuentoPorMontoGeneralYFamiliaARetornar.push(descuentoPorMontoGeneralYFamilia_2);
+                            listaDescuentoPorMontoGeneralYFamiliaARetornar.push(descuentoPorMontoGeneralYFamilia_2);
+
+                            if (listaDescuentoPorMontoGeneralYFamiliaARetornar.length == listaDeSoloTotalesYFamilias.length) {
+                                return (descuentoPorMontoGeneralYFamilia_2.promoId);
                             }
                         }
                     }

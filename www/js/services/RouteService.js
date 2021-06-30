@@ -428,6 +428,12 @@ function AddToRule(data) {
   pSql += " , '" + data.row.CODE + "'";
   pSql += " , '" + data.row.EVENT_ORDER + "'";
   pSql += " )";
+  
+  if(data.row.NAME_EVENT === "Limpiar Filtro Sku" && data.row.ENABLED === "Si"){
+    localStorage.setItem('FILTER_SKU', data.row.ENABLED);
+  }else{
+    localStorage.setItem('FILTER_SKU', "No");
+  }
   window.gInsertsInitialRoute.push(pSql);
 }
 
