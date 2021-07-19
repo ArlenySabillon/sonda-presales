@@ -94,7 +94,7 @@ var default_image;
 var SondaServerURL = "";
 
 var currentBranch = "cendalzaRoute";
-var SondaVersion = "2021.07.07";
+var SondaVersion = "2021.07.19";
 var SondaServerOptions = {
     reconnect: true,
     "max reconnection attempts": 60000
@@ -658,14 +658,23 @@ function notify(pMessage) {
 }
 
 function MakeACall(pPhoneNumber) {
-    phonedialer.dial(
-        pPhoneNumber,
-        function(err) {
-            if (err === "empty") notify("Unknown phone number");
-            else notify("Dialer Error:" + err);
-        },
-        function(success) {}
-    );
+    window.plugins.CallNumber.callNumber(onSuccess, onError, pPhoneNumber, true);
+    // phonedialer.dial(
+    //     pPhoneNumber,
+    //     function(err) {
+    //         if (err === "empty") notify("Unknown phone number");
+    //         else notify("Dialer Error:" + err);
+    //     },
+    //     function(success) {}
+    // );
+}
+
+function onSuccess(result) {
+    console.log("Success:" + result);
+}
+
+function onError(result) {
+    console.log("Error:" + result);
 }
 
 function gettask(taskid) {
@@ -4806,9 +4815,9 @@ function navigateto() {
         var pUrl = gtaskgps.split(",");
 
         //launchnavigator.navigateByLatLon(pUrl[0], pUrl[1], function(){}, function(err){});
-        var pGPS = "waze://?ll=" + pUrl[0] + "," + pUrl[1] + "&navigate=yes";
+        var pGPS = `https://www.waze.com/ul?ll=${pUrl}&navigate=yes`;
 
-        WazeLink.open(pGPS);
+        window.open(encodeURI(pGPS), '_blank', 'location=yes')
     } catch (e) {
         notify(e.message);
     }
