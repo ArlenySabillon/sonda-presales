@@ -1610,6 +1610,20 @@ var GlobalUtilsServicio = (function() {
                         break;
                 }
             });
+
+            socketIo.on("invalid_user", function(data) {
+                my_dialog("", "", "close");
+                notify("Usuario no encontrado: " + data.loginid);
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                return;
+            });
+            socketIo.on("invalid_pass", function(data) {
+                my_dialog("", "", "close");
+                notify("contraseña incorrecta para: " + data.loginid);
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                return;
+            });
+
         } catch (e) {
             notify("Error al intentar delegar sockets: " + e.message);
         }
