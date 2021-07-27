@@ -730,7 +730,7 @@ function ActualizarEtiqutaPorClienteHandHeld(etiquetaPorCliente) {
                 var sql = "SELECT DISTINCT *";
                 sql += " FROM SALES_ORDER_HEADER ";
                 if (usaFiltro) {
-                    sql += " WHERE IS_POSTED IN (0,-1)";
+                    sql += " WHERE IS_POSTED IN (0,1)";
                     sql += " AND substr(CLIENT_ID,1,1 ) <> '-'";
                     sql += " AND IFNULL(TASK_ID_BO,0) > 0";
                     //sql += " AND IS_DRAFT = 0";

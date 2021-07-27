@@ -1385,7 +1385,7 @@ var GlobalUtilsServicio = (function() {
                 SONDA_DB_Session.transaction(
                     function(tx) {
                         var sql = "UPDATE SALES_ORDER_HEADER";
-                        sql += " SET IS_POSTED = -1";
+                        sql += " SET IS_POSTED = 1";
                         sql += " WHERE"; //se implementó el control de errores dentro del APK
                         sql += " SALES_ORDER_ID =" + data.SalesOrderId;
 
