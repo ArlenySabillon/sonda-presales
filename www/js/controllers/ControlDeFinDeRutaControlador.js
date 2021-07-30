@@ -26,17 +26,7 @@ var ControlDeFinDeRutaControlador = (function() {
             if (gIsOnline === SiNo.Si) {
                 navigator.notification.confirm("¿Está seguro de finalizar ruta?", function(buttonIndex) {
                     if (buttonIndex === 2) {
-                        localStorage.setItem("APP_IS_READY", "0");
-                        my_dialog("Por favor espere...", "Finalizando ruta", "open");
-                        var data = {
-                            routeid: gCurrentRoute,
-                            default_warehouse: gDefaultWhs,
-                            dbuser: gdbuser,
-                            dbuserpass: gdbuserpass,
-                            optionPrint: SiNo.Si
-                        };
-                        socket.emit("SetActiveRoute", data);
-                        EnviarBorradoresDeBonificaciones(OrigenDeEnvioDeBorradoresDeBonificacion.FinDeRuta);
+                        este.onConfirmFinish();
                     }
                 }, "Sonda\u00AE Ruta " + SondaVersion, ["No", "Si"]);
             } else {
@@ -44,6 +34,21 @@ var ControlDeFinDeRutaControlador = (function() {
             }
         });
     };
+
+    ControlDeFinDeRutaControlador.prototype.onConfirmFinish = function() {
+        localStorage.setItem("APP_IS_READY", "0");
+        my_dialog("Por favor espere...", "Finalizando ruta", "open");
+        var data = {
+            routeid: gCurrentRoute,
+            default_warehouse: gDefaultWhs,
+            dbuser: gdbuser,
+            dbuserpass: gdbuserpass,
+            optionPrint: SiNo.Si
+        };
+        socket.emit("SetActiveRoute", data);
+        EnviarBorradoresDeBonificaciones(OrigenDeEnvioDeBorradoresDeBonificacion.FinDeRuta);
+    }
+
     ControlDeFinDeRutaControlador.prototype.generarListadoDeDocumentos = function(documentosDeFinDeRuta) {
         var contenedorDeTablaDeInformacionDeFinDeRuta = $("#ContenedorDeTablaDeInformacionDeFinDeRuta");
         try {

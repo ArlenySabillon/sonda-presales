@@ -1404,7 +1404,14 @@ var GlobalUtilsServicio = (function() {
             socketIo.on("SendDocumentSecuence_Request", function(data) {
                 switch (data.option) {
                     case "fail":
-                        notify("Error al actualizar el numero de las secuencias de documentos " + data.message);
+                        var message = data.message;
+                        if (message = 'FINISH_ROUTE') {
+                            notify("Se ha forzado el cierre de ruta");
+                            var controlDeFinDeRutaControlador = new ControlDeFinDeRutaControlador();
+                            controlDeFinDeRutaControlador.onConfirmFinish();
+                        } else {
+                            notify("Error al actualizar el numero de las secuencias de documentos " + data.message);
+                        }
                         break;
                 }
             });
