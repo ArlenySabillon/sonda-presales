@@ -1,4 +1,4 @@
-var NuevaTareaControlador = (function() {
+var NuevaTareaControlador = (function () {
     function NuevaTareaControlador(mensajero) {
         this.mensajero = mensajero;
         this.clienteServicio = new ClienteServicio();
@@ -9,41 +9,41 @@ var NuevaTareaControlador = (function() {
         this.currentLimit = 0;
         this.lastLowLimit = 0;
     }
-    NuevaTareaControlador.prototype.delegarNuevaTareaControlador = function() {
+    NuevaTareaControlador.prototype.delegarNuevaTareaControlador = function () {
         var _this = this;
         var este = this;
-        document.addEventListener("backbutton", function() {
+        document.addEventListener("backbutton", function () {
             este.usuarioDeseaVerPantallaAnterior();
         }, true);
-        $("#UiBtnCrearNuevaTarea").bind("touchstart", function() {
+        $("#UiBtnCrearNuevaTarea").bind("touchstart", function () {
             _this.mostrarPantallaCrearNuevaTarea();
         });
         $("#pickupplan_page").swipe({
-            swipe: function(event, direction, distance, duration, fingerCount, fingerData) {
+            swipe: function (event, direction, distance, duration, fingerCount, fingerData) {
                 if (fingerCount === 1 && direction === "right") {
                     var myPanel = $.mobile.activePage.children('[id="presales_panel"]');
                     myPanel.panel("toggle");
                 }
             }
         });
-        $("#UiPageNewTask").on("pageshow", function() {
+        $("#UiPageNewTask").on("pageshow", function () {
             document.getElementById("uiTxtFiltroClientes").focus();
             _this.limpiarFiltro();
         });
-        $("#uiBtnAtrasListaClientesABordo").on("click", function() {
+        $("#uiBtnAtrasListaClientesABordo").on("click", function () {
             _this.usuarioDeseaRetornarAMenuPrincipal();
         });
-        $("#uiBtnActualizarListaClientesABordo").on("click", function() {
+        $("#uiBtnActualizarListaClientesABordo").on("click", function () {
             _this.usuarioDeseaRecargarListaDeClientesABordo();
         });
-        $("#UiPageNewTask").on("click", "#uiListaClientesABordo li", function(event) {
+        $("#UiPageNewTask").on("click", "#uiListaClientesABordo li", function (event) {
             var clientId = event.currentTarget.attributes["id"].nodeValue;
             _this.usuarioDeseaCrearTarea(clientId);
         });
-        $("#uiBtnLimpiarFiltroClientesABordo").on("click", function() {
+        $("#uiBtnLimpiarFiltroClientesABordo").on("click", function () {
             _this.limpiarFiltro();
         });
-        $("#uiTxtFiltroClientes").on("keypress", function(e) {
+        $("#uiTxtFiltroClientes").on("keypress", function (e) {
             if (e.keyCode === 13) {
                 e.preventDefault();
                 var txtFiltro = document.getElementById("uiTxtFiltroClientes");
@@ -51,17 +51,18 @@ var NuevaTareaControlador = (function() {
                     notify("Debe proporcionar un criterio de busqueda...");
                     txtFiltro.focus();
                     txtFiltro = null;
-                } else {
+                }
+                else {
                     _this.criterio = txtFiltro.value.toString();
                     _this.obtenerClientes(txtFiltro.value.toString());
                 }
                 return false;
             }
         });
-        $("#UiBotonCamaraClientesNewTarea").on("click", function() {
-            cordova.plugins.diagnostic.isCameraAuthorized(function(enabled) {
+        $("#UiBotonCamaraClientesNewTarea").on("click", function () {
+            cordova.plugins.diagnostic.isCameraAuthorized(function (enabled) {
                 if (enabled) {
-                    LeerCodigoBarraConCamara(function(codigoLeido) {
+                    LeerCodigoBarraConCamara(function (codigoLeido) {
                         var uiTxtFiltroClientesAceptadas = $("#uiTxtFiltroClientes");
                         uiTxtFiltroClientesAceptadas.val(codigoLeido);
                         if (codigoLeido !== "") {
@@ -69,16 +70,18 @@ var NuevaTareaControlador = (function() {
                         }
                         uiTxtFiltroClientesAceptadas = null;
                     });
-                } else {
-                    cordova.plugins.diagnostic.requestCameraAuthorization(function(authorization) {
+                }
+                else {
+                    cordova.plugins.diagnostic.requestCameraAuthorization(function (authorization) {
                         if (authorization === "DENIED") {
-                            cordova.plugins.diagnostic.switchToSettings(function() {
+                            cordova.plugins.diagnostic.switchToSettings(function () {
                                 ToastThis("Debe autorizar el uso de la Cámara para poder leer el Código.");
-                            }, function(error) {
+                            }, function (error) {
                                 console.log(error);
                             });
-                        } else if (authorization === "GRANTED") {
-                            LeerCodigoBarraConCamara(function(codigoLeido) {
+                        }
+                        else if (authorization === "GRANTED") {
+                            LeerCodigoBarraConCamara(function (codigoLeido) {
                                 var uiTxtFiltroClientesAceptadas = $("#uiTxtFiltroClientes");
                                 uiTxtFiltroClientesAceptadas.val(codigoLeido);
                                 if (codigoLeido !== "") {
@@ -86,29 +89,30 @@ var NuevaTareaControlador = (function() {
                                 }
                                 uiTxtFiltroClientesAceptadas = null;
                             });
-                        } else {
-                            cordova.plugins.diagnostic.switchToSettings(function() {
+                        }
+                        else {
+                            cordova.plugins.diagnostic.switchToSettings(function () {
                                 ToastThis("Debe autorizar el uso de la Cámara para poder leer el Código.");
-                            }, function(error) {
+                            }, function (error) {
                                 console.log(error);
                             });
                         }
-                    }, function(error) {
+                    }, function (error) {
                         notify(error);
                     });
                 }
-            }, function(error) {
+            }, function (error) {
                 notify(error);
             });
         });
-        $("#UiBotonIrAPaginaAnteriorDeTareaFueraDelPlanDeRuta").on("click", function() {
+        $("#UiBotonIrAPaginaAnteriorDeTareaFueraDelPlanDeRuta").on("click", function () {
             if (_this.lastLowLimit !== 0) {
                 _this.cargarListaDeClientesABordo(_this.clientes.slice(_this.lastLowLimit - _this.pivotLimit, _this.lastLowLimit));
                 _this.currentLimit = _this.lastLowLimit;
                 _this.lastLowLimit = _this.lastLowLimit - _this.pivotLimit;
             }
         });
-        $("#UiBotonIrAPaginaSiguienteDeTareaFueraDelPlanDeRuta").on("click", function() {
+        $("#UiBotonIrAPaginaSiguienteDeTareaFueraDelPlanDeRuta").on("click", function () {
             if (_this.currentLimit <= _this.clientes.length) {
                 _this.cargarListaDeClientesABordo(_this.clientes.slice(_this.currentLimit, _this.currentLimit + _this.pivotLimit));
                 _this.lastLowLimit = _this.currentLimit;
@@ -116,35 +120,37 @@ var NuevaTareaControlador = (function() {
             }
         });
     };
-    NuevaTareaControlador.prototype.usuarioDeseaVerPantallaAnterior = function() {
+    NuevaTareaControlador.prototype.usuarioDeseaVerPantallaAnterior = function () {
         switch ($.mobile.activePage[0].id) {
             case "UiPageNewTask":
                 this.usuarioDeseaRetornarAMenuPrincipal();
                 break;
         }
     };
-    NuevaTareaControlador.prototype.obtenerClientes = function(criterio) {
+    NuevaTareaControlador.prototype.obtenerClientes = function (criterio) {
         var _this = this;
-        this.clienteServicio.obtenerTodosLosClientesAbordo(criterio, function(clientes) {
+        this.clienteServicio.obtenerTodosLosClientesAbordo(criterio, function (clientes) {
             _this.clientes = clientes;
             if (clientes.length === 1) {
                 var uiTxtFiltroClientesAceptadas = $("#uiTxtFiltroClientes");
                 uiTxtFiltroClientesAceptadas.val("");
                 _this.usuarioDeseaCrearTarea(clientes[0].clientId);
                 uiTxtFiltroClientesAceptadas = null;
-            } else if (clientes.length === 0) {
+            }
+            else if (clientes.length === 0) {
                 notify("No se encontraron clientes para el filtro aplicado");
                 _this.limpiarFiltro();
-            } else {
+            }
+            else {
                 _this.currentLimit = 0;
                 _this.lastLowLimit = 0;
                 _this.cargarListaDeClientesABordo(_this.clientes.slice(0, _this.pivotLimit));
             }
-        }, function(operacion) {
+        }, function (operacion) {
             notify(operacion.mensaje);
         });
     };
-    NuevaTareaControlador.prototype.cargarListaDeClientesABordo = function(clientes) {
+    NuevaTareaControlador.prototype.cargarListaDeClientesABordo = function (clientes) {
         try {
             my_dialog("Cargando...", "Cargando lista de Clientes, por favor, espere...", "open");
             var objetoListaDeClientes = $("#uiListaClientesABordo");
@@ -152,38 +158,35 @@ var NuevaTareaControlador = (function() {
             if (clientes.length > 0) {
                 document.getElementById("UiContenedorListaDeClientes").style.display = "block";
                 document.getElementById("UiNotificacionClientes").style.display = "none";
-            } else {
+            }
+            else {
                 document.getElementById("UiNotificacionClientes").style.display = "block";
                 document.getElementById("UiContenedorListaDeClientes").style.display = "none";
             }
             var li = "";
-            const unicos = [];
             for (var _i = 0, clientes_1 = clientes; _i < clientes_1.length; _i++) {
-                const valor = clientes_1[_i].clientId;
-                //Se valida que no se dupliquen los clientes cuando crashea la app con un array y la funcion IndexOf
-                if (unicos.indexOf(valor) < 0) {
-                    unicos.push(valor);
-                    var clienteTemp = clientes_1[_i];
-                    li += "<li id=" + clienteTemp.clientId + " class='small-roboto ui-content'>\n                        <a href='#'>\n                        <p>\n                        <span>" + clienteTemp.clientId + "</span>\n                        <br><span>" + clienteTemp.clientName + "</span>\n                        <br><span>" + clienteTemp.address + "</span>\n                        </p>\n                        </a>\n                      </li>";
-                }
-
+                var clienteTemp = clientes_1[_i];
+                li += "<li id=" + clienteTemp.clientId + " class='small-roboto ui-content'>\n                        <a href='#'>\n                        <p>\n                        <span>" + clienteTemp.clientId + "</span>\n                        <br><span>" + clienteTemp.clientName + "</span>\n                        <br><span>" + clienteTemp.address + "</span>\n                        </p>\n                        </a>\n                      </li>";
             }
             objetoListaDeClientes.append(li);
             objetoListaDeClientes.listview("refresh");
             li = null;
             objetoListaDeClientes = null;
             my_dialog("", "", "close");
-        } catch (e) {
+        }
+        catch (e) {
             my_dialog("", "", "close");
             notify("No se ha podido cargar la lista de clientes a bordo debido a: " + e.message);
         }
     };
-    NuevaTareaControlador.prototype.usuarioDeseaRecargarListaDeClientesABordo = function() {
-        try {} catch (e) {
+    NuevaTareaControlador.prototype.usuarioDeseaRecargarListaDeClientesABordo = function () {
+        try {
+        }
+        catch (e) {
             notify("No se pudo recargar la informaci\u00F3n debido a: " + e.message);
         }
     };
-    NuevaTareaControlador.prototype.usuarioDeseaCrearTarea = function(clienteId) {
+    NuevaTareaControlador.prototype.usuarioDeseaCrearTarea = function (clienteId) {
         try {
             BloquearPantalla();
             for (var _i = 0, _a = this.clientes; _i < _a.length; _i++) {
@@ -194,11 +197,12 @@ var NuevaTareaControlador = (function() {
                     break;
                 }
             }
-        } catch (e) {
+        }
+        catch (e) {
             notify("No se ha podido generar la tarea para el cliente seleccionado debido a: " + e.message);
         }
     };
-    NuevaTareaControlador.prototype.crearTarea = function(cliente) {
+    NuevaTareaControlador.prototype.crearTarea = function (cliente) {
         var _this = this;
         try {
             ToastThis("Generando tarea para el cliente: " + cliente.clientId);
@@ -213,7 +217,7 @@ var NuevaTareaControlador = (function() {
                 CodigoHH: cliente.clientId
             };
             gCurrentGPS = cliente.gps;
-            CrearTarea(clienteTarea, TareaTipo.Preventa, function(cliente, tareaId) {
+            CrearTarea(clienteTarea, TareaTipo.Preventa, function (cliente, tareaId) {
                 _this.tarea.taskId = Number(tareaId);
                 _this.tarea.taskType = TareaTipo.Preventa;
                 _this.tarea.taskStatus = TareaEstado.Asignada;
@@ -229,28 +233,28 @@ var NuevaTareaControlador = (function() {
                     reverse: true,
                     showLoadMsg: false
                 });
-                gettask(tareaId);
                 DesBloquearPantalla();
             });
-        } catch (e) {
+        }
+        catch (e) {
             notify("No se ha podido crear la tarea debido a: " + e.message);
         }
     };
-    NuevaTareaControlador.prototype.mostrarPantallaCrearNuevaTarea = function() {
+    NuevaTareaControlador.prototype.mostrarPantallaCrearNuevaTarea = function () {
         $.mobile.changePage("#UiPageNewTask", {
             transition: "flow",
             reverse: true,
             showLoadMsg: false
         });
     };
-    NuevaTareaControlador.prototype.usuarioDeseaRetornarAMenuPrincipal = function() {
+    NuevaTareaControlador.prototype.usuarioDeseaRetornarAMenuPrincipal = function () {
         $.mobile.changePage("#pickupplan_page", {
             transition: "flow",
             reverse: true,
             showLoadMsg: false
         });
     };
-    NuevaTareaControlador.prototype.limpiarFiltro = function() {
+    NuevaTareaControlador.prototype.limpiarFiltro = function () {
         try {
             var txtFiltro = document.getElementById("uiTxtFiltroClientes");
             txtFiltro.value = "";
@@ -265,7 +269,8 @@ var NuevaTareaControlador = (function() {
             this.clientes = [];
             this.currentLimit = 0;
             this.lastLowLimit = 0;
-        } catch (e) {
+        }
+        catch (e) {
             notify("No se ha podido limpiar el campo debido a: " + e.message);
         }
     };

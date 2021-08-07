@@ -1,16 +1,15 @@
-var SkuServicio = (function () {
-    function SkuServicio() {
-    }
-    SkuServicio.prototype.obtenerFamiliaSku = function (callback, callbackError) {
-        SONDA_DB_Session.transaction(function (tx) {
+var SkuServicio = (function() {
+    function SkuServicio() {}
+    SkuServicio.prototype.obtenerFamiliaSku = function(callback, callbackError) {
+        SONDA_DB_Session.transaction(function(tx) {
             var sql = "SELECT FAMILY_SKU ";
             sql += " ,CODE_FAMILY_SKU";
             sql += " ,DESCRIPTION_FAMILY_SKU";
             sql += " ,ORDER_SKU";
             sql += " FROM FAMILY_SKU";
-            tx.executeSql(sql, [], function (tx1, results) {
+            tx.executeSql(sql, [], function(tx1, results) {
                 callback(results);
-            }, function (tx2, err) {
+            }, function(tx2, err) {
                 if (err.code !== 0) {
                     callbackError({
                         codigo: err.code,
@@ -18,15 +17,15 @@ var SkuServicio = (function () {
                     });
                 }
             });
-        }, function (err) {
+        }, function(err) {
             callbackError({
                 codigo: err.code,
                 mensaje: "Error al obtener familias de skus: " + err.message
             });
         });
     };
-    SkuServicio.prototype.obtenerSkuParaVenta = function (cliente, sku, configuracionDecimales, callback, callbackError) {
-        SONDA_DB_Session.transaction(function (tx) {
+    SkuServicio.prototype.obtenerSkuParaVenta = function(cliente, sku, configuracionDecimales, callback, callbackError) {
+        SONDA_DB_Session.transaction(function(tx) {
             var sql = " SELECT DISTINCT ";
             sql += " A.SKU";
             sql += " ,A.SKU_NAME ";
@@ -58,7 +57,7 @@ var SkuServicio = (function () {
                 sql += "AND A.CODE_FAMILY_SKU = '" + sku.codeFamilySku + "'";
             }
             sql += "ORDER BY A.SKU_NAME ";
-            tx.executeSql(sql, [], function (tx1, results) {
+            tx.executeSql(sql, [], function(tx1, results) {
                 if (results.rows.length >= 1) {
                     var listaSkusTemp = [];
                     for (var i = 0; i < results.rows.length; i++) {
@@ -79,8 +78,7 @@ var SkuServicio = (function () {
                         listaSkusTemp.push(sku);
                     }
                     callback(listaSkusTemp);
-                }
-                else {
+                } else {
                     var operacion = new Operacion();
                     operacion.resultado = ResultadoOperacionTipo.Error;
                     operacion.codigo = 0;
@@ -88,15 +86,15 @@ var SkuServicio = (function () {
                     callbackError(operacion);
                 }
             });
-        }, function (err) {
+        }, function(err) {
             callbackError({
                 codigo: -1,
                 mensaje: "Error al obtener sku para venta: " + err.message
             });
         });
     };
-    SkuServicio.prototype.obtenerSkuParaPreVenta = function (cliente, sku, configuracionDecimales, opcionDeOrdenamiento, tipoDeOrdenamiento, callback, callbackError) {
-        SONDA_DB_Session.transaction(function (tx) {
+    SkuServicio.prototype.obtenerSkuParaPreVenta = function(cliente, sku, configuracionDecimales, opcionDeOrdenamiento, tipoDeOrdenamiento, filtro, callback, callbackError) {
+        SONDA_DB_Session.transaction(function(tx) {
             var sql = " SELECT DISTINCT";
             sql += " SP.SKU";
             sql += " ,SP.SKU_NAME";
@@ -123,8 +121,8 @@ var SkuServicio = (function () {
                 " INNER JOIN PACK_CONVERSION PC ON (PC.CODE_SKU = PLS.CODE_SKU AND PC.CODE_PACK_UNIT_FROM = PLS.CODE_PACK_UNIT)";
             sql +=
                 " LEFT JOIN ITEM_HISTORY IH ON(IH.CODE_SKU = SP.SKU AND IH.CODE_CUSTOMER = '" + cliente.clientId + "' AND DOC_TYPE = '" +
-                    TIpoDeDocumento.PreVenta +
-                    "' )";
+                TIpoDeDocumento.PreVenta +
+                "' )";
             sql += " WHERE PLS.CODE_PRICE_LIST = '" + cliente.priceListId + "'";
             sql += " AND SP.WAREHOUSE = '" + localStorage.getItem("PRESALE_WHS") + "'";
             sql += " AND PLS.PRIORITY = 0 AND LOW_LIMIT = 1 AND PC.[ORDER] = 1";
@@ -134,9 +132,14 @@ var SkuServicio = (function () {
             if (sku.codeFamilySku !== "ALL") {
                 sql += " AND SP.CODE_FAMILY_SKU = '" + sku.codeFamilySku + "'";
             }
+            if (filtro.length > 0) {
+                sql += " AND (SP.SKU LIKE '%" + filtro + "%'";
+                sql += " OR SP.SKU_NAME LIKE '%" + filtro + "%')";
+            }
             sql += " ORDER BY " + opcionDeOrdenamiento + " " + tipoDeOrdenamiento;
+            sql += " LIMIT 100";
             console.log(sql);
-            tx.executeSql(sql, [], function (tx1, results) {
+            tx.executeSql(sql, [], function(tx1, results) {
                 var listaSkusTemp = [];
                 for (var i = 0; i < results.rows.length; i++) {
                     var skuTemp = results.rows.item(i);
@@ -164,15 +167,15 @@ var SkuServicio = (function () {
                 }
                 callback(listaSkusTemp);
             });
-        }, function (err) {
+        }, function(err) {
             callbackError({
                 codigo: err.code,
                 mensaje: "Error al obtener sku para preventa: " + err.message
             });
         });
     };
-    SkuServicio.prototype.obtenerSkuParaTomaInventario = function (codeFamilySku, callback, callbackError) {
-        SONDA_DB_Session.transaction(function (tx) {
+    SkuServicio.prototype.obtenerSkuParaTomaInventario = function(codeFamilySku, callback, callbackError) {
+        SONDA_DB_Session.transaction(function(tx) {
             var sql = "SELECT DISTINCT";
             sql += " SP.SKU";
             sql += " ,SP.SKU_NAME ";
@@ -195,7 +198,7 @@ var SkuServicio = (function () {
                 sql += " WHERE SP.CODE_FAMILY_SKU = '" + codeFamilySku + "'";
                 sql += " OR B.CODE_FAMILY_SKU = '" + codeFamilySku + "'";
             }
-            tx.executeSql(sql, [], function (tx1, results) {
+            tx.executeSql(sql, [], function(tx1, results) {
                 var listaSkuTemp = [];
                 for (var i = 0; i < results.rows.length; i++) {
                     var skuTemp = results.rows.item(i);
@@ -207,7 +210,7 @@ var SkuServicio = (function () {
                     listaSkuTemp.push(sku);
                 }
                 callback(listaSkuTemp);
-            }, function (tx2, err) {
+            }, function(tx2, err) {
                 if (err.code !== 0) {
                     callbackError({
                         codigo: err.code,
@@ -215,14 +218,14 @@ var SkuServicio = (function () {
                     });
                 }
             });
-        }, function (err) {
+        }, function(err) {
             callbackError({
                 codigo: err.code,
                 mensaje: "Error al obtener familias de skus: " + err.message
             });
         });
     };
-    SkuServicio.prototype.obtenerSkuDesdeServidor = function (sku, callbackError) {
+    SkuServicio.prototype.obtenerSkuDesdeServidor = function(sku, callbackError) {
         try {
             var data = {
                 sku: sku,
@@ -232,24 +235,22 @@ var SkuServicio = (function () {
             };
             if (gIsOnline === EstaEnLinea.Si) {
                 socket.emit("GetSkuByFilterForTakeInventory", data);
-            }
-            else {
+            } else {
                 var option = new Operacion();
                 option.codigo = -1;
                 option.mensaje =
                     "Debe estar en linea para buscar el SKU en el Servidor.";
                 callbackError(option);
             }
-        }
-        catch (e) {
+        } catch (e) {
             var exception = new Operacion();
             exception.codigo = -1;
             exception.mensaje = e.message;
             callbackError(exception);
         }
     };
-    SkuServicio.prototype.obtenerSkuPorUnidad = function (sku, callback, callbackError) {
-        SONDA_DB_Session.transaction(function (tx) {
+    SkuServicio.prototype.obtenerSkuPorUnidad = function(sku, callback, callbackError) {
+        SONDA_DB_Session.transaction(function(tx) {
             var sql = " SELECT DISTINCT ";
             sql += " SP.SKU";
             sql += ", SP.SKU_NAME";
@@ -258,25 +259,25 @@ var SkuServicio = (function () {
             sql += ", SP.DIFFERENCE";
             sql += ", SP.CODE_FAMILY_SKU";
             sql += " FROM SKU_PRESALE SP";
-        }, function (err) {
+        }, function(err) {
             callbackError({
                 codigo: err.code,
                 mensaje: "Error al obtener sku por unidad: " + err.message
             });
         });
     };
-    SkuServicio.prototype.verificarCantidadDeSkusDisponiblesParaCliente = function (cliente, callBack, errorCallBack) {
-        SONDA_DB_Session.transaction(function (tx) {
-            var sql = " SELECT SKUPS.SKU ";
+    SkuServicio.prototype.verificarCantidadDeSkusDisponiblesParaCliente = function(cliente, callBack, errorCallBack) {
+        SONDA_DB_Session.transaction(function(tx) {
+            var sql = " SELECT PLSKU.CODE_SKU ";
             sql += " FROM CLIENTS C ";
             sql +=
                 " INNER JOIN PRICE_LIST_BY_SKU_PACK_SCALE PLSKU ON PLSKU.CODE_PRICE_LIST = CAST(C.PRICE_LIST_ID as text)";
-            sql += " INNER JOIN SKU_PRESALE SKUPS ON SKUPS.SKU = PLSKU.CODE_SKU";
+            //sql += " INNER JOIN SKU_PRESALE SKUPS ON SKUPS.SKU = PLSKU.CODE_SKU";
             sql += " WHERE C.CLIENT_ID = '" + cliente.clientId + "'";
-            tx.executeSql(sql, [], function (tx1, results) {
+            tx.executeSql(sql, [], function(tx1, results) {
                 var clienteResp = cliente;
                 callBack(results.rows.length, clienteResp);
-            }, function (tx2, err) {
+            }, function(tx2, err) {
                 if (err.code !== 0) {
                     errorCallBack({
                         codigo: err.code,
@@ -284,15 +285,15 @@ var SkuServicio = (function () {
                     });
                 }
             });
-        }, function (err) {
+        }, function(err) {
             errorCallBack({
                 codigo: err.code,
                 mensaje: "Error al verificar cantidad de sku disponibles para cliente: " + err.message
             });
         });
     };
-    SkuServicio.prototype.obtenerCatalogoDeProductos = function (cliente, sku, configuracionDecimales, callback, errorCallBack, opcionDeOrdenamiento, tipoDeOrdenamiento) {
-        SONDA_DB_Session.transaction(function (tx) {
+    SkuServicio.prototype.obtenerCatalogoDeProductos = function(cliente, sku, configuracionDecimales, callback, errorCallBack, opcionDeOrdenamiento, tipoDeOrdenamiento) {
+        SONDA_DB_Session.transaction(function(tx) {
             var sql = [];
             sql.push(" SELECT DISTINCT");
             sql.push(" SP.SKU");
@@ -314,11 +315,10 @@ var SkuServicio = (function () {
             }
             if (opcionDeOrdenamiento && tipoDeOrdenamiento) {
                 sql.push(" ORDER BY " + opcionDeOrdenamiento + " " + tipoDeOrdenamiento);
-            }
-            else {
+            } else {
                 sql.push(" ORDER BY SP.SKU_NAME ASC ");
             }
-            tx.executeSql(sql.join(""), [], function (_tx1, results) {
+            tx.executeSql(sql.join(""), [], function(_tx1, results) {
                 if (results.rows.length >= 1) {
                     var listaTemporalDeProductos = [];
                     for (var i = 0; i < results.rows.length; i++) {
@@ -334,8 +334,7 @@ var SkuServicio = (function () {
                         listaTemporalDeProductos.push(producto);
                     }
                     callback(listaTemporalDeProductos);
-                }
-                else {
+                } else {
                     var operacion = new Operacion();
                     operacion.resultado = ResultadoOperacionTipo.Error;
                     operacion.codigo = 0;
@@ -343,7 +342,7 @@ var SkuServicio = (function () {
                     errorCallBack(operacion);
                 }
             });
-        }, function (err) {
+        }, function(err) {
             errorCallBack({
                 codigo: -1,
                 mensaje: "Error al obtener el catálogo de productos debido a: " + err.message

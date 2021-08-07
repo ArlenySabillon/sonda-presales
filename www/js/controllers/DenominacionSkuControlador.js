@@ -1,4 +1,4 @@
-var DenominacionSkuControlador = (function() {
+var DenominacionSkuControlador = (function () {
     function DenominacionSkuControlador(mensajero) {
         this.mensajero = mensajero;
         this.sku = new Sku();
@@ -37,14 +37,14 @@ var DenominacionSkuControlador = (function() {
         this.precioEspecialServicio = new PrecioEspecialServicio();
         this.imagenDeSkuServicio = new ImagenDeSkuServicio();
     }
-    DenominacionSkuControlador.prototype.delegarDenominacionSkuControlador = function() {
+    DenominacionSkuControlador.prototype.delegarDenominacionSkuControlador = function () {
         var _this = this;
         var este = this;
-        document.addEventListener("backbutton", function() {
+        document.addEventListener("backbutton", function () {
             este.usuarioEstaRegresandoAPantallaAnterior = true;
             este.mostrarPantallaAnterior();
         }, true);
-        $(document).on("pagebeforechange", function(event, data) {
+        $(document).on("pagebeforechange", function (event, data) {
             if (data.toPage === "skucant_page") {
                 este.cliente = data.options.data.cliente;
                 este.tarea = data.options.data.tarea;
@@ -60,74 +60,64 @@ var DenominacionSkuControlador = (function() {
                 $.mobile.changePage("#skucant_page");
             }
         });
-        $("#UiBotonListadoDeUnidadesDeMedida").bind("touchstart", function() {
+        $("#UiBotonListadoDeUnidadesDeMedida").bind("touchstart", function () {
             este.usuarioSeleccionoPaquete();
         });
-        $("#UiBotonAceptarCantidadSku").bind("touchstart", function() {
+        $("#UiBotonAceptarCantidadSku").bind("touchstart", function () {
             BloquearPantalla();
-            este.usuarioCambioCantidaDePaquete(function() {
+            este.usuarioCambioCantidaDePaquete(function () {
                 este.estaValidandoElDescuento = true;
-                este.validarBonificacionesIngresadas(function() {
-                    este.validarIngresoDeDescuento(function(resultado) {
+                este.validarBonificacionesIngresadas(function () {
+                    este.validarIngresoDeDescuento(function (resultado) {
                         notify(resultado.mensaje);
                         DesBloquearPantalla();
                         este.estaValidandoElDescuento = false;
-                    }, function() {
+                    }, function () {
                         este.estaValidandoElDescuento = false;
-                        este.usuarioDeseaAceptarElSku();
+                        var to = setTimeout(function () {
+                            clearTimeout(to);
+                            este.usuarioDeseaAceptarElSku();
+                        }, 300);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     notify(resultado.mensaje);
                     DesBloquearPantalla();
                 });
             });
         });
-        $("#UiTextoCantidadUnidadMedida").on("focusout", function() {
+        $("#UiTextoCantidadUnidadMedida").on("focusout", function () {
             if (!este.usuarioEstaRegresandoAPantallaAnterior) {
                 if (!este.estaValidandoElDescuento) {
-                    este.usuarioCambioCantidaDePaquete(function() {
-                        este.validarBonificacionesIngresadas(function() {
-                            este.validarIngresoDeDescuento(function(resultado) {
-                                console.log("valida descuento")
+                    este.usuarioCambioCantidaDePaquete(function () {
+                        este.validarBonificacionesIngresadas(function () {
+                            este.validarIngresoDeDescuento(function (resultado) {
                                 notify(resultado.mensaje);
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             notify(resultado.mensaje);
                         });
                     });
                 }
             }
         });
-        $("#skucant_page").bind("swiperight", function() {
+        $("#skucant_page").bind("swiperight", function () {
             este.usuarioDeseaVerResumenDelSku();
         });
-        $("#UiTextoDescuentoSku").on("focusout", function() {
-            este.validarIngresoDeDescuento(function() {
+        $("#UiTextoDescuentoSku").on("focusout", function () {
+            este.validarIngresoDeDescuento(function () {
                 DesBloquearPantalla();
             });
         });
-        $("#UiTextoCantidadUnidadMedida").on("keypress", function(e) {
+        $("#UiTextoCantidadUnidadMedida").on("keypress", function (e) {
             if (e.keyCode === 13) {
-                BloquearPantalla();
-                este.usuarioCambioCantidaDePaquete(function() {
-                    este.estaValidandoElDescuento = true;
-                    este.validarBonificacionesIngresadas(function() {
-                        este.validarIngresoDeDescuento(function(resultado) {
-                            notify(resultado.mensaje);
-                            DesBloquearPantalla();
-                            este.estaValidandoElDescuento = false;
-                        }, function() {
-                            este.estaValidandoElDescuento = false;
-                            este.usuarioDeseaAceptarElSku();
-                        });
-                    }, function(resultado) {
-                        notify(resultado.mensaje);
-                        DesBloquearPantalla();
-                    });
-                });
+                e.preventDefault();
+                var UiBotonAceptarCantidadSku = $("#UiBotonAceptarCantidadSku");
+                UiBotonAceptarCantidadSku.focus();
+                UiBotonAceptarCantidadSku.trigger("touchstart");
+                UiBotonAceptarCantidadSku = null;
             }
         });
-        $("#UiTxtPrecioNegociadoConCliente").on("focusout", function(e) {
+        $("#UiTxtPrecioNegociadoConCliente").on("focusout", function (e) {
             e.preventDefault();
             if (!este.usuarioEstaRegresandoAPantallaAnterior) {
                 if (!este.estaValidandoElDescuento) {
@@ -139,28 +129,28 @@ var DenominacionSkuControlador = (function() {
                         precioNegociadoConCliente_1.focus();
                         return false;
                     }
-                    este.obtenerPaqueteSeleccionado(function(paqueteSeleccionado) {
+                    este.obtenerPaqueteSeleccionado(function (paqueteSeleccionado) {
                         if (paqueteSeleccionado.originalPrice >
                             parseFloat(precioNegociadoConCliente_1.val())) {
                             notify("El precio negociado no puede ser menor a " + este.configuracionDeDecimales.currencySymbol + paqueteSeleccionado.originalPrice);
                             return;
                         }
-                        este.usuarioCambioCantidaDePaquete(function() {
-                            este.validarBonificacionesIngresadas(function() {
-                                este.validarIngresoDeDescuento(function(resultado) {
+                        este.usuarioCambioCantidaDePaquete(function () {
+                            este.validarBonificacionesIngresadas(function () {
+                                este.validarIngresoDeDescuento(function (resultado) {
                                     notify(resultado.mensaje);
                                 });
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 notify(resultado.mensaje);
                             });
                         });
-                    }, function(resultado) {
+                    }, function (resultado) {
                         notify(resultado.mensaje);
                     });
                 }
             }
         });
-        $("#skucant_page").on("click", "#UiSkuImageContainer div", function(e) {
+        $("#skucant_page").on("click", "#UiSkuImageContainer div", function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
             var identificadorDeImagen = e.currentTarget.attributes["id"].nodeValue;
@@ -173,7 +163,7 @@ var DenominacionSkuControlador = (function() {
             }
         });
     };
-    DenominacionSkuControlador.prototype.cargarPantalla = function() {
+    DenominacionSkuControlador.prototype.cargarPantalla = function () {
         var _this = this;
         try {
             this.listadoDeImagenesDeProductoSeleccionado.length = 0;
@@ -181,134 +171,139 @@ var DenominacionSkuControlador = (function() {
             var uiEtiquetaCodigoYNombreDeSku = $("#UiEtiquetaCodigoYNombreDeSku");
             uiEtiquetaCodigoYNombreDeSku.text(this.sku.sku + "/" + this.sku.skuDescription);
             uiEtiquetaCodigoYNombreDeSku = null;
-            this.obtenerAutorizacionDeModificacionDePrecioDeProducto(function() {
-                _this.generarListadoDePaquetes(function() {
-                    _this.obtenerHistoricodePromo(function() {
-                        _this.obtenerOrdenParaAplicarDescuentos(function() {
-                            _this.cargarBonificaciones(function() {
-                                _this.cargarDescuentos(function() {
-                                    _this.cargarPreciosEspeciales(function() {
+            this.obtenerAutorizacionDeModificacionDePrecioDeProducto(function () {
+                _this.generarListadoDePaquetes(function () {
+                    _this.obtenerHistoricodePromo(function () {
+                        _this.obtenerOrdenParaAplicarDescuentos(function () {
+                            _this.cargarBonificaciones(function () {
+                                _this.cargarDescuentos(function () {
+                                    _this.cargarPreciosEspeciales(function () {
                                         if (_this.estaAgregandoSku) {
                                             _this.seleccionarPrimerPaquete();
-                                            _this.prepararImagenesDeProducto(function() {
-                                                my_dialog("", "", "close");
+                                            _this.prepararImagenesDeProducto(function () {
+                                                _this.cargarControlesDeDescuento(function () {
+                                                    my_dialog("", "", "close");
+                                                }, function (resultado) { });
                                             });
-                                        } else {
-                                            _this.cargarListaSkuAPaquetes(function() {
-                                                _this.procesarPaquetes(function(paquetes) {
+                                        }
+                                        else {
+                                            _this.cargarListaSkuAPaquetes(function () {
+                                                _this.procesarPaquetes(function (paquetes) {
                                                     _this.paquetes = paquetes;
-                                                    _this.paquetes.forEach(function(paquete) {
+                                                    _this.paquetes.forEach(function (paquete) {
                                                         paquete.codeFamily = _this.sku.codeFamilySku;
                                                     });
-                                                    _this.cargarListaDeSkuBonficadas(function() {
-                                                        _this.obtenerBonificacionesDelPaqueteSeleccionado(function(listaBonificaciones) {
-                                                            _this.cargarControlesBonificaciones(listaBonificaciones, function() {
-                                                                _this.cargarControlesDeDescuento(function() {
-                                                                    _this.obtenerTotalDePaquetesConDescuentoAplicados(function(total) {
+                                                    _this.cargarListaDeSkuBonficadas(function () {
+                                                        _this.obtenerBonificacionesDelPaqueteSeleccionado(function (listaBonificaciones) {
+                                                            _this.cargarControlesBonificaciones(listaBonificaciones, function () {
+                                                                _this.cargarControlesDeDescuento(function () {
+                                                                    _this.obtenerTotalDePaquetesConDescuentoAplicados(function (total) {
                                                                         _this.tarea.salesOrderTotal -= total;
-                                                                        _this.cargarDatosDelPaqueteSeleccionado(function() {
-                                                                            _this.prepararImagenesDeProducto(function() {
+                                                                        _this.cargarDatosDelPaqueteSeleccionado(function () {
+                                                                            _this.prepararImagenesDeProducto(function () {
                                                                                 my_dialog("", "", "close");
                                                                             });
                                                                         });
-                                                                    }, function(resultado) {
+                                                                    }, function (resultado) {
                                                                         my_dialog("", "", "close");
                                                                         notify(resultado.mensaje);
                                                                     });
-                                                                }, function(resultado) {
+                                                                }, function (resultado) {
                                                                     my_dialog("", "", "close");
                                                                     notify(resultado.mensaje);
                                                                 });
-                                                            }, function(resultado) {
+                                                            }, function (resultado) {
                                                                 notify(resultado.mensaje);
                                                             });
-                                                        }, function(resultado) {
+                                                        }, function (resultado) {
                                                             notify(resultado.mensaje);
                                                         });
-                                                    }, function(resultado) {
+                                                    }, function (resultado) {
                                                         my_dialog("", "", "close");
                                                         notify(resultado.mensaje);
                                                     });
-                                                }, function(resultado) {
+                                                }, function (resultado) {
                                                     notify(resultado.mensaje);
                                                 });
-                                            }, function(resultado) {
+                                            }, function (resultado) {
                                                 my_dialog("", "", "close");
                                                 notify(resultado.mensaje);
                                             });
                                         }
-                                    }, function(resultado) {
+                                    }, function (resultado) {
                                         my_dialog("", "", "close");
                                         notify(resultado.mensaje);
                                     });
-                                }, function(resultado) {
+                                }, function (resultado) {
                                     my_dialog("", "", "close");
                                     notify(resultado.mensaje);
                                 });
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 my_dialog("", "", "close");
                                 notify(resultado.mensaje);
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             my_dialog("", "", "close");
                             notify(resultado.mensaje);
                         });
-                    }, function(resultado) {
+                    }, function (resultado) {
                         my_dialog("", "", "close");
                         notify(resultado.mensaje);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     my_dialog("", "", "close");
                     notify(resultado.mensaje);
                 });
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             my_dialog("", "", "close");
             notify("Error al cargar la pantalla: " + ex.message);
         }
     };
-    DenominacionSkuControlador.prototype.generarListadoDePaquetes = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.generarListadoDePaquetes = function (callback, errCallback) {
         var _this = this;
         try {
-            this.paqueteServicio.obtenerDenominacionesPorSku(this.sku, this.configuracionDeDecimales, this.cliente, true, function(paquetes) {
-                _this.historicoDeArticuloServicio.colocarSugerenciaDeVentaAPaquetes(TIpoDeDocumento.PreVenta, _this.cliente, _this.sku, paquetes, _this.configuracionDeDecimales, function(paquetesSugeridos) {
+            this.paqueteServicio.obtenerDenominacionesPorSku(this.sku, this.configuracionDeDecimales, this.cliente, true, function (paquetes) {
+                _this.historicoDeArticuloServicio.colocarSugerenciaDeVentaAPaquetes(TIpoDeDocumento.PreVenta, _this.cliente, _this.sku, paquetes, _this.configuracionDeDecimales, function (paquetesSugeridos) {
                     _this.paquetes = paquetesSugeridos;
-                    _this.paquetes.forEach(function(paquete) {
+                    _this.paquetes.forEach(function (paquete) {
                         paquete.codeFamily = _this.sku.codeFamilySku;
                     });
-                    _this.procesarPaquetes(function(paquetes) {
-                        _this.paquetes = paquetes.filter(function(paquete) {
+                    _this.procesarPaquetes(function (paquetes) {
+                        _this.paquetes = paquetes.filter(function (paquete) {
                             return paquete.price !== -1;
                         });
-                        _this.limpiarControles(function() {
+                        _this.limpiarControles(function () {
                             callback();
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al generar listado de paquetes: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.procesarPaquetes = function(callback, errCallback) {
-        this.precioSkuServicio.obtenerPreciosDePaquetes(this.cliente, this.sku, this.paquetes, this.configuracionDeDecimales, function(paquetes) {
+    DenominacionSkuControlador.prototype.procesarPaquetes = function (callback, errCallback) {
+        this.precioSkuServicio.obtenerPreciosDePaquetes(this.cliente, this.sku, this.paquetes, this.configuracionDeDecimales, function (paquetes) {
             callback(paquetes);
-        }, function(resultado) {
+        }, function (resultado) {
             errCallback({ codigo: -1, mensaje: resultado.mensaje });
         });
     };
-    DenominacionSkuControlador.prototype.limpiarControles = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.limpiarControles = function (callback, errCallback) {
         try {
             var uiTotalCantidadSkus = $("#UiTotalCantidadSkus");
             uiTotalCantidadSkus.text(DarFormatoAlMonto(format_number(0, this.configuracionDeDecimales.defaultDisplayDecimals)));
@@ -321,13 +316,10 @@ var DenominacionSkuControlador = (function() {
             uiEtiquetaDescuentoSkuMaximo.text("Descuento 0%");
             uiEtiquetaDescuentoSkuMaximo = null;
             var uiTextoDescuentoSku = $("#UiTextoDescuentoSku");
-            uiTextoDescuentoSku.val("")
-            "";
             uiTextoDescuentoSku.text("");
             uiTextoDescuentoSku = null;
             var uiLiDescuentoSkuMaximo = $("#UiLiDescuentoSkuMaximo");
             uiLiDescuentoSkuMaximo.hide();
-            uiLiDescuentoSkuMaximo.css("display", "block");
             uiLiDescuentoSkuMaximo = null;
             var uiEtiquetaPrecioUnidadMedida = $("#UiEtiquetaPrecioUnidadMedida");
             uiEtiquetaPrecioUnidadMedida.text("Precio: " + DarFormatoAlMonto(format_number(0, this.configuracionDeDecimales.defaultDisplayDecimals)));
@@ -353,39 +345,34 @@ var DenominacionSkuControlador = (function() {
             uiTxtPrecioNegociadoConCliente.val(format_number(0, this.configuracionDeDecimales.defaultDisplayDecimals));
             uiTxtPrecioNegociadoConCliente = null;
             callback();
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al limpiar los controles: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.seleccionarPrimerPaquete = function() {
+    DenominacionSkuControlador.prototype.seleccionarPrimerPaquete = function () {
         var _this = this;
         try {
             if (this.paquetes) {
-                var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
-                uiTextoCantidadUnidadMedida.focus();
-                this.establecerPaqueteSeleccionado(this.paquetes[this.paquetes.length - 1].codePackUnit, function(resultado) {
+                this.establecerPaqueteSeleccionado(this.paquetes[this.paquetes.length - 1].codePackUnit, function (resultado) {
                     notify(resultado.mensaje);
-                }, function() {
-                    //limpia el filtro de sku
-                    if (localStorage.getItem("FILTER_SKU") === "Si") {
-                        var uiTxtFilterListSkusPage = $("#uiTxtFilterListSkusPage");
-                        uiTxtFilterListSkusPage.val("");
-                    }
+                }, function () {
                     _this.cargarDatosDelPaqueteSeleccionado();
                 });
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             notify("Error al seleccionar el primer paquete: " + ex.message);
         }
     };
-    DenominacionSkuControlador.prototype.cargarListaSkuAPaquetes = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.cargarListaSkuAPaquetes = function (callback, errCallback) {
         var _this = this;
         try {
-            this.paquetes.forEach(function(paquete) {
-                var resultadoDeBusqueda = _this.listaDeSku.filter(function(sku) {
+            this.paquetes.forEach(function (paquete) {
+                var resultadoDeBusqueda = _this.listaDeSku.filter(function (sku) {
                     return sku.codePackUnit === paquete.codePackUnit;
                 });
                 if (resultadoDeBusqueda && resultadoDeBusqueda.length > 0) {
@@ -394,41 +381,42 @@ var DenominacionSkuControlador = (function() {
                     paquete.discountType = resultadoDeBusqueda[0].discountType;
                     if (paquete.codePackUnit ===
                         resultadoDeBusqueda[0].unidadMedidaSeleccionada) {
-                        _this.establecerPaqueteSeleccionado(resultadoDeBusqueda[0].unidadMedidaSeleccionada, function(resultado) {
+                        _this.establecerPaqueteSeleccionado(resultadoDeBusqueda[0].unidadMedidaSeleccionada, function (resultado) {
                             errCallback(resultado);
-                        }, function() {
+                        }, function () {
                             callback();
                         });
                     }
                 }
                 resultadoDeBusqueda = null;
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al cargar listado de sku a paquetes: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.establecerPaqueteSeleccionado = function(codePackUnit, errCallback, callback) {
+    DenominacionSkuControlador.prototype.establecerPaqueteSeleccionado = function (codePackUnit, errCallback, callback) {
         var _this = this;
         try {
             this.sku.unidadMedidaSeleccionada = codePackUnit;
             this.paqueteSeleccionadoActual.packUnit = codePackUnit === "" ? 0 : 1;
             this.paqueteSeleccionadoActual.codePackUnit = codePackUnit;
             this.paqueteSeleccionadoActual.isSaleByMultiple = false;
-            this.ventasPorMultiploServicio.verificarVentasPorMultiploSkuUm(this.cliente, this.sku, function(skuMultiplo) {
+            this.ventasPorMultiploServicio.verificarVentasPorMultiploSkuUm(this.cliente, this.sku, function (skuMultiplo) {
                 if (skuMultiplo.apply) {
                     var promoParaValidar_1 = new Promo();
                     promoParaValidar_1.promoId = skuMultiplo.promoId;
                     promoParaValidar_1.promoName = skuMultiplo.promoName;
                     promoParaValidar_1.frequency = skuMultiplo.frequency;
                     var resultadoDePromoHistorico = _this
-                        .listaHistoricoDePromos.find(function(promo) {
-                            return promo.promoId === skuMultiplo.promoId;
-                        });
+                        .listaHistoricoDePromos.find(function (promo) {
+                        return promo.promoId === skuMultiplo.promoId;
+                    });
                     if (resultadoDePromoHistorico) {
-                        _this.promoServicio.validarSiAplicaPromo(promoParaValidar_1, resultadoDePromoHistorico, function(aplicaPromo) {
+                        _this.promoServicio.validarSiAplicaPromo(promoParaValidar_1, resultadoDePromoHistorico, function (aplicaPromo) {
                             if (aplicaPromo) {
                                 _this.paqueteSeleccionadoActual.isSaleByMultiple = true;
                                 _this.paqueteSeleccionadoActual.multiple =
@@ -436,16 +424,18 @@ var DenominacionSkuControlador = (function() {
                                 promoParaValidar_1.apply = true;
                                 _this.paqueteSeleccionadoActual.promoVentaPorMultiplo = promoParaValidar_1;
                                 promoParaValidar_1 = null;
-                            } else {
+                            }
+                            else {
                                 _this.paqueteSeleccionadoActual.promoVentaPorMultiplo = new Promo();
                             }
                             if (callback) {
                                 callback();
                             }
-                        }, function(resultado) {
+                        }, function (resultado) {
                             notify(resultado.mensaje);
                         });
-                    } else {
+                    }
+                    else {
                         _this.paqueteSeleccionadoActual.isSaleByMultiple = true;
                         _this.paqueteSeleccionadoActual.multiple = skuMultiplo.multiple;
                         promoParaValidar_1.apply = true;
@@ -454,120 +444,126 @@ var DenominacionSkuControlador = (function() {
                             callback();
                         }
                     }
-                } else {
+                }
+                else {
                     if (callback) {
                         callback();
                     }
                 }
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al establecer el paquete seleccionado: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.usuarioCambioCantidaDePaquete = function(callback) {
+    DenominacionSkuControlador.prototype.usuarioCambioCantidaDePaquete = function (callback) {
         var _this = this;
         try {
             var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
-            var cantidad = parseFloat(uiTextoCantidadUnidadMedida.val() === "" ?
-                0 :
-                uiTextoCantidadUnidadMedida.val());
+            var cantidad = parseFloat(uiTextoCantidadUnidadMedida.val() === ""
+                ? 0
+                : uiTextoCantidadUnidadMedida.val());
             uiTextoCantidadUnidadMedida = null;
             if (cantidad > 0) {
-                this.validarSiCambioLaCantidad(function(esIgualLaCantidad) {
+                this.validarSiCambioLaCantidad(function (esIgualLaCantidad) {
                     if (esIgualLaCantidad &&
                         !_this.usuarioPuedeModificarPrecioDeProducto) {
                         if (callback) {
                             callback();
                         }
-                    } else {
-                        _this.obtenerPaqueteSeleccionado(function(paquete) {
+                    }
+                    else {
+                        _this.obtenerPaqueteSeleccionado(function (paquete) {
                             var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
-                            var cantidad = parseFloat(uiTextoCantidadUnidadMedida.val() === "" ?
-                                0 :
-                                uiTextoCantidadUnidadMedida.val());
+                            var cantidad = parseFloat(uiTextoCantidadUnidadMedida.val() === ""
+                                ? 0
+                                : uiTextoCantidadUnidadMedida.val());
                             uiTextoCantidadUnidadMedida = null;
                             paquete.qty =
                                 cantidad *
-                                (_this.paqueteSeleccionadoActual.isSaleByMultiple ?
-                                    _this.paqueteSeleccionadoActual.multiple :
-                                    1);
+                                    (_this.paqueteSeleccionadoActual.isSaleByMultiple
+                                        ? _this.paqueteSeleccionadoActual.multiple
+                                        : 1);
                             paquete.promoVentaPorMultiplo = _this.paqueteSeleccionadoActual.promoVentaPorMultiplo;
-                            _this.validarSiCambioElPrecioDelPaquete(function() {
+                            _this.validarSiCambioElPrecioDelPaquete(function () {
                                 if (callback) {
                                     callback();
                                 }
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 notify(resultado.mensaje);
                                 DesBloquearPantalla();
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             notify(resultado.mensaje);
                             DesBloquearPantalla();
                         });
                     }
-                }, function(resultado) {
+                }, function (resultado) {
                     notify(resultado.mensaje);
                     DesBloquearPantalla();
                 });
-            } else {
+            }
+            else {
                 notify("La cantidad tiene que ser mayor a cero.");
                 DesBloquearPantalla();
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             notify("Error al cambar cantidad de paquete: " + ex.messages);
             DesBloquearPantalla();
         }
     };
-    DenominacionSkuControlador.prototype.validarSiCambioElPrecioDelPaquete = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.validarSiCambioElPrecioDelPaquete = function (callback, errCallback) {
         var _this = this;
         try {
-            this.procesarPaquetes(function(paquetes) {
+            this.procesarPaquetes(function (paquetes) {
                 _this.paquetes = paquetes;
-                _this.paquetes.forEach(function(paquete) {
+                _this.paquetes.forEach(function (paquete) {
                     paquete.codeFamily = _this.sku.codeFamilySku;
                 });
-                _this.obtenerBonificacionesDelPaqueteSeleccionado(function(listaBonificaciones) {
-                    _this.cargarControlesBonificaciones(listaBonificaciones, function() {
-                        _this.cargarControlesDeDescuento(function() {
-                            _this.validarIngresoDeDescuento(function(resultado) {
+                _this.obtenerBonificacionesDelPaqueteSeleccionado(function (listaBonificaciones) {
+                    _this.cargarControlesBonificaciones(listaBonificaciones, function () {
+                        _this.cargarControlesDeDescuento(function () {
+                            _this.validarIngresoDeDescuento(function (resultado) {
                                 notify(resultado.mensaje);
-                            }, function() {
-                                _this.cargarDatosDelPaqueteSeleccionado(function() {
+                            }, function () {
+                                _this.cargarDatosDelPaqueteSeleccionado(function () {
                                     callback();
                                 });
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             notify(resultado.mensaje);
                         });
-                    }, function(resultado) {
+                    }, function (resultado) {
                         notify(resultado.mensaje);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     notify(resultado.mensaje);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar si cambio el precio del paquete: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.usuarioSeleccionoPaquete = function() {
+    DenominacionSkuControlador.prototype.usuarioSeleccionoPaquete = function () {
         var _this = this;
         try {
             if (!this.paquetes) {
                 return;
             }
             var listaDeUnidadesDeMedida_1 = [];
-            this.paquetes.forEach(function(p) {
+            this.paquetes.forEach(function (p) {
                 return listaDeUnidadesDeMedida_1.push({
                     text: p.descriptionPackUnit,
                     value: p.codePackUnit
@@ -579,61 +575,62 @@ var DenominacionSkuControlador = (function() {
                 doneButtonLabel: "Ok",
                 cancelButtonLabel: "Cancelar"
             };
-            ShowListPicker(configOptions, function(item) {
-                _this.validarBonificacionesIngresadas(function() {
-                    _this.validarIngresoDeDescuento(function(resultado) {
+            ShowListPicker(configOptions, function (item) {
+                _this.validarBonificacionesIngresadas(function () {
+                    _this.validarIngresoDeDescuento(function (resultado) {
                         notify(resultado.mensaje);
                         DesBloquearPantalla();
-                    }, function() {
-                        _this.establecerPaqueteSeleccionado(item, function(resultado) {
+                    }, function () {
+                        _this.establecerPaqueteSeleccionado(item, function (resultado) {
                             notify(resultado.mensaje);
-                        }, function() {
+                        }, function () {
                             var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
                             uiTextoCantidadUnidadMedida.focus();
                             uiTextoCantidadUnidadMedida.trigger("keyup");
                             uiTextoCantidadUnidadMedida = null;
-                            _this.obtenerBonificacionesDelPaqueteSeleccionado(function(listaBonificaciones) {
-                                _this.cargarControlesBonificaciones(listaBonificaciones, function() {
-                                    _this.cargarControlesDeDescuento(function() {
+                            _this.obtenerBonificacionesDelPaqueteSeleccionado(function (listaBonificaciones) {
+                                _this.cargarControlesBonificaciones(listaBonificaciones, function () {
+                                    _this.cargarControlesDeDescuento(function () {
                                         _this.cargarDatosDelPaqueteSeleccionado();
-                                    }, function(resultado) {
+                                    }, function (resultado) {
                                         notify(resultado.mensaje);
                                         DesBloquearPantalla();
                                     });
-                                }, function(resultado) {
+                                }, function (resultado) {
                                     notify(resultado.mensaje);
                                 });
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 notify(resultado.mensaje);
                             });
                         });
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     notify(resultado.mensaje);
                 });
             });
             configOptions = null;
             listaDeUnidadesDeMedida_1 = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             notify("Error al seleccionar la unidad de medida: " + ex.message);
         }
     };
-    DenominacionSkuControlador.prototype.cargarDatosDelPaqueteSeleccionado = function(callback) {
+    DenominacionSkuControlador.prototype.cargarDatosDelPaqueteSeleccionado = function (callback) {
         var _this = this;
         try {
-            this.obtenerPaqueteSeleccionado(function(paquete) {
+            this.obtenerPaqueteSeleccionado(function (paquete) {
                 var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
-                var cantidad = _this.paqueteSeleccionadoActual.isSaleByMultiple ?
-                    paquete.qty / _this.paqueteSeleccionadoActual.multiple :
-                    paquete.qty;
-                uiTextoCantidadUnidadMedida.val(paquete.qty === 0 ?
-                    "" :
-                    format_number(cantidad, _this.configuracionDeDecimales.defaultDisplayDecimals));
+                var cantidad = _this.paqueteSeleccionadoActual.isSaleByMultiple
+                    ? paquete.qty / _this.paqueteSeleccionadoActual.multiple
+                    : paquete.qty;
+                uiTextoCantidadUnidadMedida.val(paquete.qty === 0
+                    ? ""
+                    : format_number(cantidad, _this.configuracionDeDecimales.defaultDisplayDecimals));
                 if (paquete.lastQtySold && paquete.lastQtySold > 0) {
                     var uiEtiquetaFechaUltimaCompra = $("#UiEtiquetaFechaUltimaCompra");
-                    uiEtiquetaFechaUltimaCompra.text("\u00DAltima compra: (" + (paquete.lastSaleDate && paquete.lastSaleDate.indexOf("T") !== -1 ?
-                        paquete.lastSaleDate.split("T")[0] :
-                        "N/A") + ")");
+                    uiEtiquetaFechaUltimaCompra.text("\u00DAltima compra: (" + (paquete.lastSaleDate && paquete.lastSaleDate.indexOf("T") !== -1
+                        ? paquete.lastSaleDate.split("T")[0]
+                        : "N/A") + ")");
                     uiEtiquetaFechaUltimaCompra = null;
                     var uiEtiquetaCantidadUltimaCompra = $("#UiEtiquetaCantidadUltimaCompra");
                     uiEtiquetaCantidadUltimaCompra.text(format_number(paquete.lastQtySold, _this.configuracionDeDecimales.defaultDisplayDecimals));
@@ -647,7 +644,8 @@ var DenominacionSkuControlador = (function() {
                     var uiLiUltimoPedidoUnidadMedida = $("#UiLiUltimoPedidoUnidadMedida");
                     uiLiUltimoPedidoUnidadMedida.show();
                     uiLiUltimoPedidoUnidadMedida = null;
-                } else {
+                }
+                else {
                     _this.limpiarInformacionDeHistoricoDeSku();
                 }
                 uiTextoCantidadUnidadMedida = null;
@@ -658,7 +656,8 @@ var DenominacionSkuControlador = (function() {
                 if (_this.paqueteSeleccionadoActual.isSaleByMultiple) {
                     uiEtiquetaUnidadesTotales.css("display", "block");
                     uiEtiquetaUnidadesTotales.text("Cantidad Total: " + format_number(cantidad * _this.paqueteSeleccionadoActual.multiple, _this.configuracionDeDecimales.defaultDisplayDecimals));
-                } else {
+                }
+                else {
                     uiEtiquetaUnidadesTotales.css("display", "none");
                 }
                 cantidad = null;
@@ -667,10 +666,11 @@ var DenominacionSkuControlador = (function() {
                 var uiTxtPrecioNegociadoConCliente = $("#UiTxtPrecioNegociadoConCliente");
                 if (_this.usuarioPuedeModificarPrecioDeProducto) {
                     uiEtiquetaPrecioOriginalDePaqueteSeleccionado.text("M\u00EDnimo " + _this.configuracionDeDecimales.currencySymbol + format_number(paquete.originalPrice, _this.configuracionDeDecimales.defaultDisplayDecimals));
-                    uiTxtPrecioNegociadoConCliente.val(format_number(paquete.price < paquete.originalPrice ?
-                        paquete.originalPrice :
-                        paquete.price, _this.configuracionDeDecimales.defaultDisplayDecimals));
-                } else {
+                    uiTxtPrecioNegociadoConCliente.val(format_number(paquete.price < paquete.originalPrice
+                        ? paquete.originalPrice
+                        : paquete.price, _this.configuracionDeDecimales.defaultDisplayDecimals));
+                }
+                else {
                     uiEtiquetaPrecioOriginalDePaqueteSeleccionado.text("");
                     uiTxtPrecioNegociadoConCliente.val(0);
                 }
@@ -681,8 +681,8 @@ var DenominacionSkuControlador = (function() {
                 var uiEtiquetaTotalUnidadMedida = $("#UiEtiquetaTotalUnidadMedida");
                 uiEtiquetaTotalUnidadMedida.text("Total: " + DarFormatoAlMonto(format_number(paquete.price * paquete.qty, _this.configuracionDeDecimales.defaultDisplayDecimals)));
                 uiEtiquetaTotalUnidadMedida = null;
-                _this.obtenerTotalDePaquetesConDescuentoAplicados(function(total) {
-                    _this.ObtenerTotalDeLaOrden(function(totalConDes) {
+                _this.obtenerTotalDePaquetesConDescuentoAplicados(function (total) {
+                    _this.ObtenerTotalDeLaOrden(function (totalConDes) {
                         var uiTotalCantidadSkus = $("#UiTotalCantidadSkus");
                         var totalDeLaOrden = totalConDes + total;
                         var uiEtiquetaTotalCdUnidadMedida = $("#UiEtiquetaTotalCDUnidadMedida");
@@ -691,35 +691,38 @@ var DenominacionSkuControlador = (function() {
                         if (totalDeLaOrden >=
                             _this.tarea.discountPerGeneralAmountLowLimit &&
                             _this.tarea.discountPerGeneralAmountHighLimit >=
-                            totalDeLaOrden) {
+                                totalDeLaOrden) {
                             uiTotalCantidadSkus.text(DarFormatoAlMonto(format_number(totalDeLaOrden -
                                 totalDeLaOrden *
-                                (_this.cliente.appliedDiscount / 100), _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                                    (_this.cliente.appliedDiscount / 100), _this.configuracionDeDecimales.defaultDisplayDecimals)));
                             if (callback) {
                                 callback();
                             }
-                        } else {
+                        }
+                        else {
                             if (totalDeLaOrden > 0) {
-                                _this.obtenerDescuentoPorMontoGeneral(totalDeLaOrden, function() {
+                                _this.obtenerDescuentoPorMontoGeneral(totalDeLaOrden, function () {
                                     if (_this.descuentoPorMontoGeneral.apply) {
                                         if (_this.seAplicaElDescuentoModificado(_this.cliente.discount, _this.cliente.appliedDiscount, _this.descuentoPorMontoGeneral.discount)) {
                                             uiTotalCantidadSkus.text(DarFormatoAlMonto(format_number(totalDeLaOrden -
                                                 totalDeLaOrden *
-                                                (_this.cliente.appliedDiscount / 100), _this.configuracionDeDecimales
+                                                    (_this.cliente.appliedDiscount / 100), _this.configuracionDeDecimales
                                                 .defaultDisplayDecimals)));
-                                        } else {
+                                        }
+                                        else {
                                             uiTotalCantidadSkus.text(DarFormatoAlMonto(format_number(totalDeLaOrden -
                                                 totalDeLaOrden *
-                                                (_this.descuentoPorMontoGeneral
-                                                    .discount /
-                                                    100), _this.configuracionDeDecimales
+                                                    (_this.descuentoPorMontoGeneral
+                                                        .discount /
+                                                        100), _this.configuracionDeDecimales
                                                 .defaultDisplayDecimals)));
                                         }
                                         uiTotalCantidadSkus = null;
                                         if (callback) {
                                             callback();
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         uiTotalCantidadSkus.text(DarFormatoAlMonto(format_number(totalDeLaOrden, _this.configuracionDeDecimales
                                             .defaultDisplayDecimals)));
                                         uiTotalCantidadSkus = null;
@@ -727,10 +730,11 @@ var DenominacionSkuControlador = (function() {
                                             callback();
                                         }
                                     }
-                                }, function(resultado) {
+                                }, function (resultado) {
                                     notify(resultado.mensaje);
                                 });
-                            } else {
+                            }
+                            else {
                                 uiTotalCantidadSkus.text(DarFormatoAlMonto(format_number(0, _this.configuracionDeDecimales.defaultDisplayDecimals)));
                                 uiTotalCantidadSkus = null;
                                 if (callback) {
@@ -738,124 +742,132 @@ var DenominacionSkuControlador = (function() {
                                 }
                             }
                         }
-                    }, function(resultado) {
+                    }, function (resultado) {
                         notify(resultado.mensaje);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     notify(resultado.mensaje);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 notify(resultado.mensaje);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             notify("Error al cargar datos del paquete seleccionado: " + ex.message);
         }
     };
-    DenominacionSkuControlador.prototype.obtenerPaqueteSeleccionado = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerPaqueteSeleccionado = function (callback, errCallback) {
         var _this = this;
         try {
-            var resultadoDeBusqueda = this.paquetes.filter(function(paquete) {
+            var resultadoDeBusqueda = this.paquetes.filter(function (paquete) {
                 return (paquete.codePackUnit === _this.paqueteSeleccionadoActual.codePackUnit);
             });
             if (resultadoDeBusqueda && resultadoDeBusqueda.length > 0) {
                 callback(resultadoDeBusqueda[0]);
-            } else {
+            }
+            else {
                 callback(null);
             }
             resultadoDeBusqueda = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener el paquete seleccionado: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.usuarioDeseaAceptarElSku = function() {
+    DenominacionSkuControlador.prototype.usuarioDeseaAceptarElSku = function () {
         var _this = this;
         try {
-            this.validarElIngresoDeCantidadesDePaquetes(function() {
-                _this.obtenerPaqueteProcesadosEnSku(function(listaDeSku) {
+            this.validarElIngresoDeCantidadesDePaquetes(function () {
+                _this.obtenerPaqueteProcesadosEnSku(function (listaDeSku) {
                     if (gIsOnline === EstaEnLinea.No) {
-                        _this.tareaServicio.obtenerRegla("AplicarReglasComerciales", function(listaDeReglasAplicarReglasComerciales) {
+                        _this.tareaServicio.obtenerRegla("AplicarReglasComerciales", function (listaDeReglasAplicarReglasComerciales) {
                             if (listaDeReglasAplicarReglasComerciales.length > 0 &&
                                 listaDeReglasAplicarReglasComerciales[0].enabled.toUpperCase() ===
-                                "SI") {
-                                _this.clienteServicio.validarCuentaCorriente(_this.cliente, listaDeSku, _this.tarea.salesOrderType, _this.configuracionDeDecimales, function() {
-                                    _this.publicarEntidades(listaDeSku, function() {
+                                    "SI") {
+                                _this.clienteServicio.validarCuentaCorriente(_this.cliente, listaDeSku, _this.tarea.salesOrderType, _this.configuracionDeDecimales, function () {
+                                    _this.publicarEntidades(listaDeSku, function () {
                                         DesBloquearPantalla();
                                         window.history.back();
-                                    }, function(resultado) {
+                                    }, function (resultado) {
                                         DesBloquearPantalla();
                                         notify(resultado.mensaje);
                                     });
-                                }, function(resultado) {
-                                    DesBloquearPantalla();
-                                    notify(resultado.mensaje);
-                                });
-                            } else {
-                                _this.publicarEntidades(listaDeSku, function() {
-                                    DesBloquearPantalla();
-                                    window.history.back();
-                                }, function(resultado) {
+                                }, function (resultado) {
                                     DesBloquearPantalla();
                                     notify(resultado.mensaje);
                                 });
                             }
-                        }, function(resultado) {
+                            else {
+                                _this.publicarEntidades(listaDeSku, function () {
+                                    DesBloquearPantalla();
+                                    window.history.back();
+                                }, function (resultado) {
+                                    DesBloquearPantalla();
+                                    notify(resultado.mensaje);
+                                });
+                            }
+                        }, function (resultado) {
                             DesBloquearPantalla();
                             notify(resultado.mensaje);
                             my_dialog("", "", "closed");
                         });
-                    } else {
-                        _this.publicarEntidades(listaDeSku, function() {
+                    }
+                    else {
+                        _this.publicarEntidades(listaDeSku, function () {
                             DesBloquearPantalla();
                             window.history.back();
-                        }, function(resultado) {
+                        }, function (resultado) {
                             DesBloquearPantalla();
                             notify(resultado.mensaje);
                         });
                     }
-                }, function(resultado) {
+                }, function (resultado) {
                     notify(resultado.mensaje);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 DesBloquearPantalla();
                 notify(resultado.mensaje);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             notify(ex.message);
         }
     };
-    DenominacionSkuControlador.prototype.validarElIngresoDeCantidadesDePaquetes = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.validarElIngresoDeCantidadesDePaquetes = function (callback, errCallback) {
         try {
-            var resultadoDeBusqueda = this.paquetes.filter(function(paquete) {
+            var resultadoDeBusqueda = this.paquetes.filter(function (paquete) {
                 return paquete.qty !== 0;
             });
             if (resultadoDeBusqueda && resultadoDeBusqueda.length > 0) {
                 callback();
-            } else {
+            }
+            else {
                 errCallback({
                     codigo: -1,
                     mensaje: "Debe ingresar la cantidad del SKU seleccionado..."
                 });
             }
             resultadoDeBusqueda = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar el ingreso de la cantidad: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerPaqueteProcesadosEnSku = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerPaqueteProcesadosEnSku = function (callback, errCallback) {
         var _this = this;
         try {
-            var resultadoDeBusqueda = this.paquetes.filter(function(paquete) {
+            var resultadoDeBusqueda = this.paquetes.filter(function (paquete) {
                 return paquete.qty !== 0;
             });
             if (resultadoDeBusqueda && resultadoDeBusqueda.length > 0) {
                 var listaDeSku_1 = [];
-                resultadoDeBusqueda.forEach(function(paquete) {
+                resultadoDeBusqueda.forEach(function (paquete) {
                     var sku = new Sku();
                     sku.sku = _this.sku.sku;
                     sku.skuName = _this.sku.skuName;
@@ -906,74 +918,79 @@ var DenominacionSkuControlador = (function() {
                 callback(listaDeSku_1);
                 listaDeSku_1 = null;
                 resultadoDeBusqueda = null;
-            } else {
+            }
+            else {
                 resultadoDeBusqueda = null;
                 errCallback({
                     codigo: -1,
                     mensaje: "No se encontraron paquetes mayor a cero."
                 });
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener paquetes procesados en sku: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.paqueteTieneDescuentoAplicado = function(paquete) {
+    DenominacionSkuControlador.prototype.paqueteTieneDescuentoAplicado = function (paquete) {
         return paquete.appliedDiscount !== 0;
     };
-    DenominacionSkuControlador.prototype.validarSiCambioLaCantidad = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.validarSiCambioLaCantidad = function (callback, errCallback) {
         var _this = this;
         try {
-            this.obtenerPaqueteSeleccionado(function(paquete) {
+            this.obtenerPaqueteSeleccionado(function (paquete) {
                 var uiTextoCantidadUnidadMedida = $("#UiTextoCantidadUnidadMedida");
-                var cantidad = parseFloat(uiTextoCantidadUnidadMedida.val() === "" ?
-                    0 :
-                    uiTextoCantidadUnidadMedida.val());
+                var cantidad = parseFloat(uiTextoCantidadUnidadMedida.val() === ""
+                    ? 0
+                    : uiTextoCantidadUnidadMedida.val());
                 uiTextoCantidadUnidadMedida = null;
                 cantidad =
                     cantidad *
-                    (_this.paqueteSeleccionadoActual.isSaleByMultiple ?
-                        _this.paqueteSeleccionadoActual.multiple :
-                        1);
+                        (_this.paqueteSeleccionadoActual.isSaleByMultiple
+                            ? _this.paqueteSeleccionadoActual.multiple
+                            : 1);
                 if (cantidad === paquete.qty) {
                     callback(true);
-                } else {
+                }
+                else {
                     callback(false);
                 }
-            }, function(resultado) {
+            }, function (resultado) {
                 notify(resultado.mensaje);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener total de paquetes: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerTotalDePaquetesSinDescuentoAplicados = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerTotalDePaquetesSinDescuentoAplicados = function (callback, errCallback) {
         try {
             var total_1 = 0;
-            this.paquetes.forEach(function(paquete) {
+            this.paquetes.forEach(function (paquete) {
                 if (paquete.qty !== 0) {
                     total_1 += paquete.qty * paquete.price;
                 }
             });
             callback(total_1);
             total_1 = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener total de paquetes: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerTotalDePaquetesConDescuentoAplicados = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerTotalDePaquetesConDescuentoAplicados = function (callback, errCallback) {
         var _this = this;
         try {
             var total_2 = 0;
-            this.paquetes.forEach(function(paquete) {
+            this.paquetes.forEach(function (paquete) {
                 if (paquete.qty !== 0) {
                     var totalPaquete = paquete.price * paquete.qty;
                     var sku = new Sku();
@@ -988,83 +1005,87 @@ var DenominacionSkuControlador = (function() {
             });
             callback(total_2);
             total_2 = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener total de paquetes: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.publicarEntidades = function(listaDeSku, callback, errCallback) {
+    DenominacionSkuControlador.prototype.publicarEntidades = function (listaDeSku, callback, errCallback) {
         var _this = this;
         try {
-            this.publicarTarea(function() {
-                _this.publicarListaSku(listaDeSku, function() {
-                    _this.publicarAgregarOQuitarDeListaSkuMensaje(listaDeSku, function() {
+            this.publicarTarea(function () {
+                _this.publicarListaSku(listaDeSku, function () {
+                    _this.publicarAgregarOQuitarDeListaSkuMensaje(listaDeSku, function () {
                         callback();
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al publicar entidades: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.publicarTarea = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.publicarTarea = function (callback, errCallback) {
         var _this = this;
         try {
-            this.obtenerTotalDePaquetesConDescuentoAplicados(function(total) {
-                _this.ObtenerTotalDeLaOrden(function(totalConDes) {
+            this.obtenerTotalDePaquetesConDescuentoAplicados(function (total) {
+                _this.ObtenerTotalDeLaOrden(function (totalConDes) {
                     var msg = new TareaMensaje(_this);
                     _this.tarea.salesOrderTotal = totalConDes + total;
                     msg.tarea = _this.tarea;
                     _this.mensajero.publish(msg, getType(TareaMensaje));
                     callback();
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback({
                         codigo: -1,
                         mensaje: resultado.mensaje
                     });
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback({ codigo: -1, mensaje: resultado.mensaje });
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al publicar tarea: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.publicarListaSku = function(listaSku, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.publicarListaSku = function (listaSku, callBack, errCallback) {
         var _this = this;
         try {
-            this.obtenerListaDeSkuDeBonificacionesParaPublicar(function(listadoDeSkuParaBonificar) {
+            this.obtenerListaDeSkuDeBonificacionesParaPublicar(function (listadoDeSkuParaBonificar) {
                 var msg = new ListaSkuMensaje(_this);
                 msg.listaSku = listaSku;
                 msg.listaDeSkuParaBonificacion = listadoDeSkuParaBonificar;
                 _this.mensajero.publish(msg, getType(ListaSkuMensaje));
                 msg = null;
                 callBack();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al publicar listado de sku: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.publicarAgregarOQuitarDeListaSkuMensaje = function(listaSku, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.publicarAgregarOQuitarDeListaSkuMensaje = function (listaSku, callBack, errCallback) {
         try {
             var msg = new AgregarOQuitarDeListaSkuMensaje(this);
             msg.listaSku = listaSku;
@@ -1073,48 +1094,49 @@ var DenominacionSkuControlador = (function() {
             this.mensajero.publish(msg, getType(AgregarOQuitarDeListaSkuMensaje));
             msg = null;
             callBack();
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al publicar agregar o quitar de lista sku: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.mostrarPantallaAnterior = function() {
+    DenominacionSkuControlador.prototype.mostrarPantallaAnterior = function () {
         var _this = this;
         switch ($.mobile.activePage[0].id) {
             case "skucant_page":
-                this.imagenDeSkuServicio.limpiarContenedorDeImagenesDeProducto(false, function() {
+                this.imagenDeSkuServicio.limpiarContenedorDeImagenesDeProducto(false, function () {
                     _this.listadoDeImagenesDeProductoSeleccionado.length = 0;
                     window.history.back();
                 });
                 break;
         }
     };
-    DenominacionSkuControlador.prototype.usuarioDeseaVerResumenDelSku = function() {
+    DenominacionSkuControlador.prototype.usuarioDeseaVerResumenDelSku = function () {
         var _this = this;
         var myPanel = $.mobile.activePage.children('[id="UiPanelIzquierdoPaginaDenominacion"]');
         myPanel.panel("toggle");
         myPanel = null;
-        this.validarBonificacionesIngresadas(function() {
-            _this.validarIngresoDeDescuento(function(resultado) {
+        this.validarBonificacionesIngresadas(function () {
+            _this.validarIngresoDeDescuento(function (resultado) {
                 notify(resultado.mensaje);
                 DesBloquearPantalla();
-            }, function() {
+            }, function () {
                 _this.cargarResumenDelSku();
             });
-        }, function(resultado) {
+        }, function (resultado) {
             notify(resultado.mensaje);
         });
     };
-    DenominacionSkuControlador.prototype.cargarResumenDelSku = function() {
+    DenominacionSkuControlador.prototype.cargarResumenDelSku = function () {
         try {
             if (!this.paquetes) {
                 return;
             }
             var uiListaResumenUnidadMedida = $("#UiListaResumenUnidadMedida");
             uiListaResumenUnidadMedida.children().remove("li");
-            var _loop_1 = function(paquete) {
+            var _loop_1 = function (paquete) {
                 if (paquete.qty !== 0) {
                     var total = paquete.qty * paquete.price;
                     var totalConDescuentoPorEscala = 0;
@@ -1125,9 +1147,9 @@ var DenominacionSkuControlador = (function() {
                             break;
                         case TiposDeDescuento.Monetario.toString():
                             total =
-                                trunc_number(total, this_1.configuracionDeDecimales.defaultCalculationsDecimals) < paquete.appliedDiscount ?
-                                0 :
-                                trunc_number(total - paquete.appliedDiscount, this_1.configuracionDeDecimales.defaultCalculationsDecimals);
+                                trunc_number(total, this_1.configuracionDeDecimales.defaultCalculationsDecimals) < paquete.appliedDiscount
+                                    ? 0
+                                    : trunc_number(total - paquete.appliedDiscount, this_1.configuracionDeDecimales.defaultCalculationsDecimals);
                             break;
                     }
                     totalConDescuentoPorEscala = total;
@@ -1136,14 +1158,14 @@ var DenominacionSkuControlador = (function() {
                             case TiposDeDescuento.Porcentaje.toString():
                                 total = trunc_number(total -
                                     (this_1.descuentoPorMontoGeneralYFamilia.discount * total) /
-                                    100, this_1.configuracionDeDecimales.defaultCalculationsDecimals);
+                                        100, this_1.configuracionDeDecimales.defaultCalculationsDecimals);
                                 break;
                             case TiposDeDescuento.Monetario.toString():
                                 total =
-                                    trunc_number(total, this_1.configuracionDeDecimales.defaultCalculationsDecimals) < this_1.descuentoPorMontoGeneralYFamilia.discount ?
-                                    0 :
-                                    trunc_number(total - this_1.descuentoPorMontoGeneralYFamilia.discount, this_1.configuracionDeDecimales
-                                        .defaultCalculationsDecimals);
+                                    trunc_number(total, this_1.configuracionDeDecimales.defaultCalculationsDecimals) < this_1.descuentoPorMontoGeneralYFamilia.discount
+                                        ? 0
+                                        : trunc_number(total - this_1.descuentoPorMontoGeneralYFamilia.discount, this_1.configuracionDeDecimales
+                                            .defaultCalculationsDecimals);
                                 break;
                         }
                     }
@@ -1156,10 +1178,10 @@ var DenominacionSkuControlador = (function() {
                                 break;
                             case TiposDeDescuento.Monetario.toString():
                                 total =
-                                    trunc_number(total, this_1.configuracionDeDecimales.defaultCalculationsDecimals) < this_1.descuentoPorFamiliaYTipoPago.discount ?
-                                    0 :
-                                    trunc_number(total - this_1.descuentoPorFamiliaYTipoPago.discount, this_1.configuracionDeDecimales
-                                        .defaultCalculationsDecimals);
+                                    trunc_number(total, this_1.configuracionDeDecimales.defaultCalculationsDecimals) < this_1.descuentoPorFamiliaYTipoPago.discount
+                                        ? 0
+                                        : trunc_number(total - this_1.descuentoPorFamiliaYTipoPago.discount, this_1.configuracionDeDecimales
+                                            .defaultCalculationsDecimals);
                                 break;
                         }
                     }
@@ -1220,7 +1242,7 @@ var DenominacionSkuControlador = (function() {
                     li += "</li>";
                     uiListaResumenUnidadMedida.append(li);
                     uiListaResumenUnidadMedida.listview("refresh");
-                    var listadoDeBonificacionesFiltradas = this_1.listaDeBonificaciones.filter(function(bonificacion) {
+                    var listadoDeBonificacionesFiltradas = this_1.listaDeBonificaciones.filter(function (bonificacion) {
                         return (bonificacion.codePackUnit === paquete.codePackUnit &&
                             bonificacion.bonusQty > 0);
                     });
@@ -1238,7 +1260,7 @@ var DenominacionSkuControlador = (function() {
                         uiListaResumenUnidadMedida.append(li);
                         uiListaResumenUnidadMedida.listview("refresh");
                         uiListaResumenUnidadMedida.trigger("create");
-                        listadoDeBonificacionesFiltradas.forEach(function(bonificacion) {
+                        listadoDeBonificacionesFiltradas.forEach(function (bonificacion) {
                             var uiListaBonificacionResumenUnidadMedida = $("#UiListaBonificacionResumenUnidadMedida" + paquete.codePackUnit);
                             var listaDeLi = [];
                             listaDeLi.push("<li class='ui-field - contain' data-theme='a' style='text- align: left'>");
@@ -1261,27 +1283,28 @@ var DenominacionSkuControlador = (function() {
                 _loop_1(paquete);
             }
             uiListaResumenUnidadMedida = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             notify("Error al cargar la informacion: " + ex.message);
         }
     };
-    DenominacionSkuControlador.prototype.cargarBonificaciones = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.cargarBonificaciones = function (callBack, errCallback) {
         var _this = this;
         try {
-            this.obtenerSiElUsuarioPudeModificarBonificaciones(function() {
-                _this.bonoServicio.obtenerBonificacionPorEscalaPorCliente(_this.cliente, _this.sku, function(listaDeBonificacionesPorEscala) {
-                    _this.validarSiAplicaLaBonificaciones(listaDeBonificacionesPorEscala, 0, true, function(listaDeBonificacionesPorEscalaParaAplicar) {
+            this.obtenerSiElUsuarioPudeModificarBonificaciones(function () {
+                _this.bonoServicio.obtenerBonificacionPorEscalaPorCliente(_this.cliente, _this.sku, function (listaDeBonificacionesPorEscala) {
+                    _this.validarSiAplicaLaBonificaciones(listaDeBonificacionesPorEscala, 0, true, function (listaDeBonificacionesPorEscalaParaAplicar) {
                         _this.listaDeBonificaciones = [];
-                        listaDeBonificacionesPorEscalaParaAplicar.map(function(bonificacion) {
+                        listaDeBonificacionesPorEscalaParaAplicar.map(function (bonificacion) {
                             var resultadoDeBonificacionDeBusqueda = _this
-                                .listaDeBonificaciones.find(function(bonificacionExistente) {
-                                    return (bonificacion.codePackUnit ===
-                                        bonificacionExistente.codePackUnit &&
-                                        bonificacion.codeSkuBonus ===
+                                .listaDeBonificaciones.find(function (bonificacionExistente) {
+                                return (bonificacion.codePackUnit ===
+                                    bonificacionExistente.codePackUnit &&
+                                    bonificacion.codeSkuBonus ===
                                         bonificacionExistente.codeSkuBonus &&
-                                        bonificacion.codePackUnitBonues ===
+                                    bonificacion.codePackUnitBonues ===
                                         bonificacionExistente.codePackUnitBonues);
-                                });
+                            });
                             if (resultadoDeBonificacionDeBusqueda) {
                                 var escalaDeBono = new EscalaDeBono();
                                 escalaDeBono.lowLimit = bonificacion.lowLimitTemp;
@@ -1292,7 +1315,8 @@ var DenominacionSkuControlador = (function() {
                                 escalaDeBono.promoType = bonificacion.promoTypeScale;
                                 escalaDeBono.frequency = bonificacion.frequencyScale;
                                 resultadoDeBonificacionDeBusqueda.escalas.push(escalaDeBono);
-                            } else {
+                            }
+                            else {
                                 var escalaDeBono = new EscalaDeBono();
                                 escalaDeBono.lowLimit = bonificacion.lowLimitTemp;
                                 escalaDeBono.highLimit = bonificacion.highLimitTemp;
@@ -1317,18 +1341,18 @@ var DenominacionSkuControlador = (function() {
                             }
                             resultadoDeBonificacionDeBusqueda = null;
                         });
-                        _this.bonoServicio.obtenerBonoPorMultiploPorCliente(_this.cliente, _this.sku, function(listaDeBonosPorMultiplo) {
-                            _this.validarSiAplicaLaBonificaciones(listaDeBonosPorMultiplo, 0, false, function(listaDeBonosPorMultiploParaAplicar) {
-                                listaDeBonosPorMultiploParaAplicar.map(function(bonificacion) {
+                        _this.bonoServicio.obtenerBonoPorMultiploPorCliente(_this.cliente, _this.sku, function (listaDeBonosPorMultiplo) {
+                            _this.validarSiAplicaLaBonificaciones(listaDeBonosPorMultiplo, 0, false, function (listaDeBonosPorMultiploParaAplicar) {
+                                listaDeBonosPorMultiploParaAplicar.map(function (bonificacion) {
                                     var resultadoDeBonificacionDeBusqueda = _this
-                                        .listaDeBonificaciones.find(function(bonificacionExistente) {
-                                            return (bonificacion.codePackUnit ===
-                                                bonificacionExistente.codePackUnit &&
-                                                bonificacion.codeSkuBonus ===
+                                        .listaDeBonificaciones.find(function (bonificacionExistente) {
+                                        return (bonificacion.codePackUnit ===
+                                            bonificacionExistente.codePackUnit &&
+                                            bonificacion.codeSkuBonus ===
                                                 bonificacionExistente.codeSkuBonus &&
-                                                bonificacion.codePackUnitBonues ===
+                                            bonificacion.codePackUnitBonues ===
                                                 bonificacionExistente.codePackUnitBonues);
-                                        });
+                                    });
                                     if (resultadoDeBonificacionDeBusqueda) {
                                         resultadoDeBonificacionDeBusqueda.tipoDeBonificacion =
                                             TipoDeBonificacion.Ambos;
@@ -1344,7 +1368,8 @@ var DenominacionSkuControlador = (function() {
                                             bonificacion.promoTypeMultiple;
                                         resultadoDeBonificacionDeBusqueda.frequencyMultiple =
                                             bonificacion.frequencyMultiple;
-                                    } else {
+                                    }
+                                    else {
                                         bonificacion.lowLimitTemp = 0;
                                         bonificacion.highLimitTemp = 0;
                                         bonificacion.bonusQtyTemp = 0;
@@ -1356,70 +1381,74 @@ var DenominacionSkuControlador = (function() {
                                     resultadoDeBonificacionDeBusqueda = null;
                                 });
                                 callBack();
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 errCallback(resultado);
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al cargar las bonificaciones: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerSiElUsuarioPudeModificarBonificaciones = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerSiElUsuarioPudeModificarBonificaciones = function (callback, errCallback) {
         var _this = this;
         try {
             this.usuarioPuedeModificarBonificacion = false;
-            this.tareaServicio.obtenerRegla("ModificacionBonificacionMovil", function(listaDeReglas) {
+            this.tareaServicio.obtenerRegla("ModificacionBonificacionMovil", function (listaDeReglas) {
                 if (listaDeReglas.length >= 1) {
                     _this.usuarioPuedeModificarBonificacion =
                         listaDeReglas[0].enabled.toUpperCase() === "SI";
                 }
                 callback();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (err) {
+        }
+        catch (err) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar si modifica bonificacion: " + err.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerBonificacionesDelPaqueteSeleccionado = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerBonificacionesDelPaqueteSeleccionado = function (callBack, errCallback) {
         var _this = this;
         try {
-            var resultadoDeBonificacionDeBusqueda = this.listaDeBonificaciones.filter(function(bonificacionExistente) {
+            var resultadoDeBonificacionDeBusqueda = this.listaDeBonificaciones.filter(function (bonificacionExistente) {
                 return (_this.paqueteSeleccionadoActual.codePackUnit ===
                     bonificacionExistente.codePackUnit);
             });
             if (resultadoDeBonificacionDeBusqueda &&
                 resultadoDeBonificacionDeBusqueda.length > 0) {
                 callBack(resultadoDeBonificacionDeBusqueda);
-            } else {
+            }
+            else {
                 callBack([]);
             }
             resultadoDeBonificacionDeBusqueda = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar si el paquete tiene bonificaciones: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.cargarControlesBonificaciones = function(listaBonificaciones, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.cargarControlesBonificaciones = function (listaBonificaciones, callBack, errCallback) {
         var _this = this;
         try {
             var uiAcordionDeBonificacionesUnidadMedida = $("#UiAcordionDeBonificacionesUnidadMedida");
@@ -1428,8 +1457,8 @@ var DenominacionSkuControlador = (function() {
             var uiListaDeBonificacionesUnidadMedida = $("#UiListaDeBonificacionesUnidadMedida");
             uiListaDeBonificacionesUnidadMedida.children().remove("li");
             uiListaDeBonificacionesUnidadMedida = null;
-            this.obtenerPaqueteSeleccionado(function(paquete) {
-                listaBonificaciones.map(function(bonificacion) {
+            this.obtenerPaqueteSeleccionado(function (paquete) {
+                listaBonificaciones.map(function (bonificacion) {
                     bonificacion.bonusQtyTemp = 0;
                     if (_this.tipoDeBonificacionEsPorMultiploOMultiploYEscala(bonificacion)) {
                         bonificacion.bonusQtyTemp = _this.obtenerValorDeBonoMultiplo(bonificacion.multiplo, paquete.qty, bonificacion.bonusQtyMultiplo);
@@ -1440,7 +1469,7 @@ var DenominacionSkuControlador = (function() {
                     bonificacion.promoNameScale = "";
                     bonificacion.promoTypeScale = "";
                     bonificacion.frequencyScale = "";
-                    var escalasFiltradas = bonificacion.escalas.find(function(escala) {
+                    var escalasFiltradas = bonificacion.escalas.find(function (escala) {
                         return (escala.lowLimit <= paquete.qty &&
                             paquete.qty <= escala.highLimit);
                     });
@@ -1469,7 +1498,8 @@ var DenominacionSkuControlador = (function() {
                                 }
                             }
                             liParaAgregar.push("<input type='number' class='validarEnteros' id='UiTextoBonificacion" + bonificacion.codeSkuBonus + bonificacion.codePackUnitBonues + "' data-clear-btn='true' placeholder='Cantidad' value='" + (bonificacion.bonusQty <= 0 ? "" : bonificacion.bonusQty) + "' />");
-                        } else {
+                        }
+                        else {
                             bonificacion.bonusQty = bonificacion.bonusQtyTemp;
                         }
                         liParaAgregar.push("</li>");
@@ -1478,51 +1508,54 @@ var DenominacionSkuControlador = (function() {
                         uiListaDeBonificacionesUnidadMedida_1.trigger("create");
                         uiListaDeBonificacionesUnidadMedida_1 = null;
                         liParaAgregar = null;
-                    } else {
+                    }
+                    else {
                         bonificacion.bonusQty = -1;
                     }
                 });
                 callBack();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al establecer bonificaciones: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.tipoDeBonificacionEsPorMultiploOMultiploYEscala = function(bonificacion) {
+    DenominacionSkuControlador.prototype.tipoDeBonificacionEsPorMultiploOMultiploYEscala = function (bonificacion) {
         return (bonificacion.tipoDeBonificacion === TipoDeBonificacion.PorMultiplo ||
             bonificacion.tipoDeBonificacion === TipoDeBonificacion.Ambos);
     };
-    DenominacionSkuControlador.prototype.validarBonificacionesIngresadas = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.validarBonificacionesIngresadas = function (callBack, errCallback) {
         var _this = this;
         try {
             if (this.usuarioPuedeModificarBonificacion) {
-                this.obtenerBonificacionesDelPaqueteSeleccionado(function(listaBonificaciones) {
-                    _this.obtenerPaqueteSeleccionado(function(paquete) {
+                this.obtenerBonificacionesDelPaqueteSeleccionado(function (listaBonificaciones) {
+                    _this.obtenerPaqueteSeleccionado(function (paquete) {
                         var hayIngresosQueSobrepesanLoMaximo = false;
-                        listaBonificaciones.map(function(bonificacion) {
+                        listaBonificaciones.map(function (bonificacion) {
                             var validarBonificacion = false;
                             if (bonificacion.tipoDeBonificacion ===
                                 TipoDeBonificacion.PorMultiplo ||
                                 bonificacion.tipoDeBonificacion === TipoDeBonificacion.Ambos) {
                                 validarBonificacion = true;
                             }
-                            var escalasFiltradas = bonificacion.escalas.find(function(escala) {
+                            var escalasFiltradas = bonificacion.escalas.find(function (escala) {
                                 return (escala.lowLimit <= paquete.qty &&
                                     paquete.qty <= escala.highLimit);
                             });
                             if (escalasFiltradas || validarBonificacion) {
                                 var uiEtiquetaTotalUnidadMedida = $("#UiTextoBonificacion" + bonificacion.codeSkuBonus + bonificacion.codePackUnitBonues);
-                                var cantidadDeBonificacion = uiEtiquetaTotalUnidadMedida.val() === "" ?
-                                    0 :
-                                    uiEtiquetaTotalUnidadMedida.val();
+                                var cantidadDeBonificacion = uiEtiquetaTotalUnidadMedida.val() === ""
+                                    ? 0
+                                    : uiEtiquetaTotalUnidadMedida.val();
                                 if (cantidadDeBonificacion > bonificacion.bonusQtyTemp) {
                                     hayIngresosQueSobrepesanLoMaximo = true;
-                                } else {
+                                }
+                                else {
                                     bonificacion.bonusQty = cantidadDeBonificacion;
                                 }
                                 cantidadDeBonificacion = null;
@@ -1535,29 +1568,32 @@ var DenominacionSkuControlador = (function() {
                                 codigo: -1,
                                 mensaje: "Hay bonificaciones que sobrepasan lo máximo establecido."
                             });
-                        } else {
+                        }
+                        else {
                             callBack();
                         }
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            } else {
+            }
+            else {
                 callBack();
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar bonificaciones ingresadas: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerListaDeSkuDeBonificacionesParaPublicar = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerListaDeSkuDeBonificacionesParaPublicar = function (callBack, errCallback) {
         var _this = this;
         try {
-            var listaFiltrada = this.listaDeBonificaciones.reduce(function(listaRecorrida, bonificacion) {
+            var listaFiltrada = this.listaDeBonificaciones.reduce(function (listaRecorrida, bonificacion) {
                 if (bonificacion.bonusQty > 0) {
                     var skuParaBonificacion = new Sku();
                     skuParaBonificacion.sku = bonificacion.codeSkuBonus;
@@ -1597,40 +1633,42 @@ var DenominacionSkuControlador = (function() {
             }, []);
             callBack(listaFiltrada);
             listaFiltrada = null;
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar bonificaciones ingresadas: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.promoDeEscalaSeAgregaALaBonificacion = function(bonificacion) {
+    DenominacionSkuControlador.prototype.promoDeEscalaSeAgregaALaBonificacion = function (bonificacion) {
         return bonificacion.promoIdScale !== 0;
     };
-    DenominacionSkuControlador.prototype.cargarListaDeSkuBonficadas = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.cargarListaDeSkuBonficadas = function (callBack, errCallback) {
         var _this = this;
         try {
-            this.listaDeSkuDeBonificacion.map(function(skuBonificado) {
+            this.listaDeSkuDeBonificacion.map(function (skuBonificado) {
                 var resultadoBonificacion = _this
-                    .listaDeBonificaciones.find(function(bonificacion) {
-                        return (bonificacion.codePackUnit === skuBonificado.parentCodePackUnit &&
-                            bonificacion.codeSkuBonus === skuBonificado.sku &&
-                            bonificacion.codePackUnitBonues === skuBonificado.codePackUnit);
-                    });
+                    .listaDeBonificaciones.find(function (bonificacion) {
+                    return (bonificacion.codePackUnit === skuBonificado.parentCodePackUnit &&
+                        bonificacion.codeSkuBonus === skuBonificado.sku &&
+                        bonificacion.codePackUnitBonues === skuBonificado.codePackUnit);
+                });
                 if (resultadoBonificacion) {
                     resultadoBonificacion.bonusQty = skuBonificado.qty;
                 }
                 resultadoBonificacion = null;
             });
             callBack();
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al cargar lista de sku bonificadas: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerValorDeBonoMultiplo = function(multiplo, cantidad, cantidadBono) {
+    DenominacionSkuControlador.prototype.obtenerValorDeBonoMultiplo = function (multiplo, cantidad, cantidadBono) {
         if (multiplo === 1) {
             return cantidad * cantidadBono;
         }
@@ -1646,78 +1684,81 @@ var DenominacionSkuControlador = (function() {
             if (multiplo * indice <= cantidad &&
                 cantidad <= multiplo * (indice + 1) - 1) {
                 encontroCantidad = true;
-            } else {
+            }
+            else {
                 indice++;
             }
         }
         return cantidadBono * indice;
     };
-    DenominacionSkuControlador.prototype.obtenerSiElUsuarioPudeModificarDescuentos = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerSiElUsuarioPudeModificarDescuentos = function (callback, errCallback) {
         var _this = this;
         try {
             this.usuarioPuedeModificarDescuentos = false;
-            this.tareaServicio.obtenerRegla("ModificacionDescuentoMovil", function(listaDeReglas) {
+            this.tareaServicio.obtenerRegla("ModificacionDescuentoMovil", function (listaDeReglas) {
                 if (listaDeReglas.length >= 1) {
                     _this.usuarioPuedeModificarDescuentos =
                         listaDeReglas[0].enabled.toUpperCase() === "SI";
                 }
                 callback();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (err) {
+        }
+        catch (err) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar si modifica bonificacion: " + err.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.cargarDescuentos = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.cargarDescuentos = function (callback, errCallback) {
         var _this = this;
         try {
-            this.obtenerSiElUsuarioPudeModificarDescuentos(function() {
-                _this.descuentoServicio.obtenerDescuentosPorClienteSku(_this.cliente, _this.sku, function(listaDeDescuento) {
-                    _this.validarSiAplicaElDescuento(listaDeDescuento, 0, function(listaDeDescuentoParaAplicar) {
+            this.obtenerSiElUsuarioPudeModificarDescuentos(function () {
+                _this.descuentoServicio.obtenerDescuentosPorClienteSku(_this.cliente, _this.sku, function (listaDeDescuento) {
+                    _this.validarSiAplicaElDescuento(listaDeDescuento, 0, function (listaDeDescuentoParaAplicar) {
                         _this.listaDeDescuento = listaDeDescuentoParaAplicar;
-                        _this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function() {
+                        _this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function () {
                             callback();
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener descuentos: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago = function (callback, errCallback) {
         var _this = this;
         try {
             this.descuentoPorMontoGeneralYFamilia = new DescuentoPorMontoGeneralYFamilia();
             this.descuentoPorFamiliaYTipoPago = new DescuentoPorFamiliaYTipoPago();
-            this.descuentoServicio.obtenerDescuentos(this.paquetes, this.listaDeSkuOrdenDeVenta, this.cliente, this.listaHistoricoDePromos, function(listaDescuentoPorMontoGeneralYFamilia, listaDescuentoPorFamiliaYTipoPago) {
-                _this.obtenerPaqueteSeleccionado(function(paquete) {
+            this.descuentoServicio.obtenerDescuentos(this.paquetes, this.listaDeSkuOrdenDeVenta, this.cliente, this.listaHistoricoDePromos, function (listaDescuentoPorMontoGeneralYFamilia, listaDescuentoPorFamiliaYTipoPago) {
+                _this.obtenerPaqueteSeleccionado(function (paquete) {
                     var aplicarDescuentos = true;
                     if (paquete) {
                         aplicarDescuentos = paquete.specialPrice.applyDiscount;
                     }
                     var esDescuentoUnicoDeEscala = true;
-                    _this.paquetes.map(function(paquete) {
+                    _this.paquetes.map(function (paquete) {
                         if (!paquete.isUniqueDiscountScale) {
                             esDescuentoUnicoDeEscala = paquete.isUniqueDiscountScale;
                         }
                     });
-                    var resultadoDescuentoMontoGeneralYFamilia = listaDescuentoPorMontoGeneralYFamilia.find(function(descuento) {
+                    var resultadoDescuentoMontoGeneralYFamilia = listaDescuentoPorMontoGeneralYFamilia.find(function (descuento) {
                         return _this.sku.codeFamilySku === descuento.codeFamily;
                     });
                     if (resultadoDescuentoMontoGeneralYFamilia &&
@@ -1725,7 +1766,7 @@ var DenominacionSkuControlador = (function() {
                         aplicarDescuentos) {
                         _this.descuentoPorMontoGeneralYFamilia = resultadoDescuentoMontoGeneralYFamilia;
                     }
-                    var resultadoDescuentoPorFamiliaYTipoPago = listaDescuentoPorFamiliaYTipoPago.find(function(descuento) {
+                    var resultadoDescuentoPorFamiliaYTipoPago = listaDescuentoPorFamiliaYTipoPago.find(function (descuento) {
                         return _this.sku.codeFamilySku === descuento.codeFamily;
                     });
                     if (resultadoDescuentoPorFamiliaYTipoPago &&
@@ -1778,23 +1819,24 @@ var DenominacionSkuControlador = (function() {
                         uiEtiquetaDescuentoPorTipoPagoMaximo_1 = null;
                     }
                     callback();
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener descuentos por familias: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.validarIngresoDeDescuento = function(errCallback, callBack) {
+    DenominacionSkuControlador.prototype.validarIngresoDeDescuento = function (errCallback, callBack) {
         var _this = this;
         try {
-            this.obtenerPaqueteSeleccionado(function(paquete) {
+            this.obtenerPaqueteSeleccionado(function (paquete) {
                 paquete.appliedDiscount = 0;
                 paquete.promoDescuento = new Promo();
                 var elDescuentoIngresadoSobrepasaLoMaximo = false;
@@ -1802,59 +1844,62 @@ var DenominacionSkuControlador = (function() {
                 paquete.price =
                     paquete.basePrice > 0 ? paquete.basePrice : paquete.price;
                 var resultadoDescuento = _this
-                    .listaDeDescuento.find(function(descuento) {
-                        return (_this.paqueteSeleccionadoActual.codePackUnit ===
-                            descuento.codePackUnit &&
-                            (descuento.lowLimit <= paquete.qty &&
-                                paquete.qty <= descuento.highLimit));
-                    });
+                    .listaDeDescuento.find(function (descuento) {
+                    return (_this.paqueteSeleccionadoActual.codePackUnit ===
+                        descuento.codePackUnit &&
+                        (descuento.lowLimit <= paquete.qty &&
+                            paquete.qty <= descuento.highLimit));
+                });
                 var restultadoPrecioEspecial = _this
-                    .listaDePreciosEspeciales.find(function(precioEspecial) {
-                        return (_this.paqueteSeleccionadoActual.codePackUnit ===
-                            precioEspecial.codePackUnit &&
-                            (precioEspecial.lowLimit <= paquete.qty &&
-                                paquete.qty <= precioEspecial.highLimit));
-                    });
+                    .listaDePreciosEspeciales.find(function (precioEspecial) {
+                    return (_this.paqueteSeleccionadoActual.codePackUnit ===
+                        precioEspecial.codePackUnit &&
+                        (precioEspecial.lowLimit <= paquete.qty &&
+                            paquete.qty <= precioEspecial.highLimit));
+                });
                 if (restultadoPrecioEspecial) {
                     paquete.basePrice = paquete.price;
                     if (_this.usuarioPuedeModificarPrecioDeProducto) {
                         var uiTxtPrecioNegociadoConCliente = $("#UiTxtPrecioNegociadoConCliente");
                         paquete.price =
                             uiTxtPrecioNegociadoConCliente.val() === "" ||
-                            isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
-                            parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0 ?
-                            paquete.price :
-                            parseFloat(uiTxtPrecioNegociadoConCliente.val());
+                                isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
+                                parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0
+                                ? paquete.price
+                                : parseFloat(uiTxtPrecioNegociadoConCliente.val());
                         uiTxtPrecioNegociadoConCliente = null;
-                    } else {
+                    }
+                    else {
                         paquete.price = restultadoPrecioEspecial.specialPrice;
                     }
                     paquete.originalPrice = restultadoPrecioEspecial.specialPrice;
                     paquete.specialPrice = restultadoPrecioEspecial;
-                } else {
+                }
+                else {
                     if (_this.usuarioPuedeModificarPrecioDeProducto) {
                         var uiTxtPrecioNegociadoConCliente = $("#UiTxtPrecioNegociadoConCliente");
                         paquete.price =
                             uiTxtPrecioNegociadoConCliente.val() === "" ||
-                            isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
-                            parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0 ?
-                            paquete.price :
-                            parseFloat(uiTxtPrecioNegociadoConCliente.val());
+                                isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
+                                parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0
+                                ? paquete.price
+                                : parseFloat(uiTxtPrecioNegociadoConCliente.val());
                         uiTxtPrecioNegociadoConCliente = null;
                     }
                 }
                 if (resultadoDescuento && paquete.specialPrice.applyDiscount) {
                     if (_this.usuarioPuedeModificarDescuentos) {
                         var uiTextoDescuentoSku = $("#UiTextoDescuentoSku");
-                        var cantidadDeDescuento = uiTextoDescuentoSku.val() === "" ?
-                            0 :
-                            parseFloat(uiTextoDescuentoSku.val());
+                        var cantidadDeDescuento = uiTextoDescuentoSku.val() === ""
+                            ? 0
+                            : parseFloat(uiTextoDescuentoSku.val());
                         if (cantidadDeDescuento > resultadoDescuento.discount) {
                             elDescuentoIngresadoSobrepasaLoMaximo = true;
                             var uiListaSkuMedidas = $("#UiTextoDescuentoSku");
                             uiListaSkuMedidas.focus();
                             uiListaSkuMedidas = null;
-                        } else {
+                        }
+                        else {
                             resultadoDescuento.qty = cantidadDeDescuento;
                             paquete.appliedDiscount = cantidadDeDescuento;
                             paquete.discountType = resultadoDescuento.discountType;
@@ -1862,7 +1907,8 @@ var DenominacionSkuControlador = (function() {
                         }
                         cantidadDeDescuento = null;
                         uiTextoDescuentoSku = null;
-                    } else {
+                    }
+                    else {
                         paquete.appliedDiscount = resultadoDescuento.qty;
                         paquete.discountType = resultadoDescuento.discountType;
                         paquete.isUniqueDiscountScale = resultadoDescuento.isUnique;
@@ -1871,7 +1917,7 @@ var DenominacionSkuControlador = (function() {
                     paquete.promoDescuento.promoName = resultadoDescuento.promoName;
                     paquete.promoDescuento.promoType = resultadoDescuento.promoType;
                     paquete.promoDescuento.frequency = resultadoDescuento.frequency;
-                    _this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function() {
+                    _this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function () {
                         var totalDescuento = paquete.qty * paquete.price;
                         var sku = new Sku();
                         sku.total = paquete.price * paquete.qty;
@@ -1887,16 +1933,18 @@ var DenominacionSkuControlador = (function() {
                                 codigo: -1,
                                 mensaje: "El descuento sobrepasa lo máximo establecido."
                             });
-                        } else {
+                        }
+                        else {
                             if (callBack) {
                                 callBack();
                             }
                         }
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                } else {
-                    _this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function() {
+                }
+                else {
+                    _this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function () {
                         var totalDescuento = paquete.qty * paquete.price;
                         var sku = new Sku();
                         sku.total = paquete.price * paquete.qty;
@@ -1915,28 +1963,30 @@ var DenominacionSkuControlador = (function() {
                                 codigo: -1,
                                 mensaje: "El descuento sobrepasa lo máximo establecido."
                             });
-                        } else {
+                        }
+                        else {
                             if (callBack) {
                                 callBack();
                             }
                         }
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
                 }
                 resultadoDescuento = null;
                 restultadoPrecioEspecial = null;
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al establecer bonificaciones: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.cargarControlesDeDescuento = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.cargarControlesDeDescuento = function (callBack, errCallback) {
         var _this = this;
         try {
             var uiListViewDescuento = $("#UiLiDescuentoSkuMaximo");
@@ -1945,62 +1995,64 @@ var DenominacionSkuControlador = (function() {
             var uiEtiquetaTotalCdUnidadMedida = $("#UiEtiquetaTotalCDUnidadMedida");
             uiEtiquetaTotalCdUnidadMedida.css("display", "none");
             uiEtiquetaTotalCdUnidadMedida = null;
-            this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function() {
-                _this.obtenerPaqueteSeleccionado(function(paquete) {
+            this.cargarDescuentosPorMontoGeneralYFamiliaYTipoPago(function () {
+                _this.obtenerPaqueteSeleccionado(function (paquete) {
                     var restultadoPrecioEspecial = _this
-                        .listaDePreciosEspeciales.find(function(precioEspecial) {
-                            return (_this.paqueteSeleccionadoActual.codePackUnit ===
-                                precioEspecial.codePackUnit &&
-                                (precioEspecial.lowLimit <= paquete.qty &&
-                                    paquete.qty <= precioEspecial.highLimit));
-                        });
+                        .listaDePreciosEspeciales.find(function (precioEspecial) {
+                        return (_this.paqueteSeleccionadoActual.codePackUnit ===
+                            precioEspecial.codePackUnit &&
+                            (precioEspecial.lowLimit <= paquete.qty &&
+                                paquete.qty <= precioEspecial.highLimit));
+                    });
                     if (restultadoPrecioEspecial) {
                         paquete.basePrice = paquete.price;
                         if (_this.usuarioPuedeModificarPrecioDeProducto) {
                             var uiTxtPrecioNegociadoConCliente = $("#UiTxtPrecioNegociadoConCliente");
                             paquete.price =
                                 uiTxtPrecioNegociadoConCliente.val() === "" ||
-                                isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
-                                parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0 ?
-                                paquete.price :
-                                parseFloat(uiTxtPrecioNegociadoConCliente.val());
+                                    isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
+                                    parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0
+                                    ? paquete.price
+                                    : parseFloat(uiTxtPrecioNegociadoConCliente.val());
                             uiTxtPrecioNegociadoConCliente = null;
-                        } else {
+                        }
+                        else {
                             paquete.price = restultadoPrecioEspecial.specialPrice;
                         }
                         paquete.originalPrice = restultadoPrecioEspecial.specialPrice;
                         paquete.specialPrice = restultadoPrecioEspecial;
-                    } else {
+                    }
+                    else {
                         if (_this.usuarioPuedeModificarPrecioDeProducto) {
                             var uiTxtPrecioNegociadoConCliente = $("#UiTxtPrecioNegociadoConCliente");
                             paquete.price =
                                 uiTxtPrecioNegociadoConCliente.val() === "" ||
-                                isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
-                                parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0 ?
-                                paquete.price :
-                                parseFloat(uiTxtPrecioNegociadoConCliente.val());
+                                    isNaN(parseFloat(uiTxtPrecioNegociadoConCliente.val())) ||
+                                    parseFloat(uiTxtPrecioNegociadoConCliente.val()) === 0
+                                    ? paquete.price
+                                    : parseFloat(uiTxtPrecioNegociadoConCliente.val());
                             uiTxtPrecioNegociadoConCliente = null;
                         }
                     }
                     if (paquete.specialPrice.applyDiscount) {
                         var resultadoDeDescuento_1 = _this
-                            .listaDeDescuento.find(function(descuento) {
-                                return (_this.paqueteSeleccionadoActual.codePackUnit ===
-                                    descuento.codePackUnit &&
-                                    (descuento.lowLimit <= paquete.qty &&
-                                        paquete.qty <= descuento.highLimit));
-                            });
+                            .listaDeDescuento.find(function (descuento) {
+                            return (_this.paqueteSeleccionadoActual.codePackUnit ===
+                                descuento.codePackUnit &&
+                                (descuento.lowLimit <= paquete.qty &&
+                                    paquete.qty <= descuento.highLimit));
+                        });
                         if (resultadoDeDescuento_1) {
-                            var resultadoListaDeDescuento = _this.listaDeDescuento.filter(function(descuento) {
+                            var resultadoListaDeDescuento = _this.listaDeDescuento.filter(function (descuento) {
                                 return (_this.paqueteSeleccionadoActual.codePackUnit ===
                                     descuento.codePackUnit &&
                                     (descuento.lowLimit !== resultadoDeDescuento_1.lowLimit &&
                                         resultadoDeDescuento_1.highLimit !==
-                                        descuento.highLimit));
+                                            descuento.highLimit));
                             });
                             if (resultadoListaDeDescuento &&
                                 resultadoListaDeDescuento.length > 0) {
-                                resultadoListaDeDescuento.map(function(descuento) {
+                                resultadoListaDeDescuento.map(function (descuento) {
                                     descuento.qty = -1;
                                 });
                             }
@@ -2028,17 +2080,18 @@ var DenominacionSkuControlador = (function() {
                                     SiNo.Si.toString()) {
                                     if (resultadoDeDescuento_1.qty === -1) {
                                         resultadoDeDescuento_1.qty =
-                                            paquete.appliedDiscount > 0 ?
-                                            paquete.appliedDiscount :
-                                            resultadoDeDescuento_1.discount;
+                                            paquete.appliedDiscount > 0
+                                                ? paquete.appliedDiscount
+                                                : resultadoDeDescuento_1.discount;
                                     }
                                 }
                                 var uiTextoDescuentoSku_1 = $("#UiTextoDescuentoSku");
-                                uiTextoDescuentoSku_1.val(resultadoDeDescuento_1.qty > 0 ?
-                                    resultadoDeDescuento_1.qty :
-                                    "");
+                                uiTextoDescuentoSku_1.val(resultadoDeDescuento_1.qty > 0
+                                    ? resultadoDeDescuento_1.qty
+                                    : "");
                                 uiTextoDescuentoSku_1 = null;
-                            } else {
+                            }
+                            else {
                                 resultadoDeDescuento_1.qty = resultadoDeDescuento_1.discount;
                             }
                             var totalDescuento = paquete.qty * paquete.price;
@@ -2053,11 +2106,12 @@ var DenominacionSkuControlador = (function() {
                             uiEtiquetaTotalCdUnidadMedida_1.css("display", "inline");
                             uiEtiquetaTotalCdUnidadMedida_1.text("Total CD: " + DarFormatoAlMonto(format_number(totalDescuento, _this.configuracionDeDecimales.defaultDisplayDecimals)));
                             uiEtiquetaTotalCdUnidadMedida_1 = null;
-                            // var uiTextoDescuentoSku = $("#UiTextoDescuentoSku");
-                            // uiTextoDescuentoSku.val(resultadoDeDescuento_1.discount);
-                            // uiTextoDescuentoSku = null;
-                            // uiDivIngresoDescuentoSku = null;
-                        } else {
+                            var uiTextoDescuentoSku = $("#UiTextoDescuentoSku");
+                            uiTextoDescuentoSku.val(resultadoDeDescuento_1.discount);
+                            uiTextoDescuentoSku = null;
+                            uiDivIngresoDescuentoSku = null;
+                        }
+                        else {
                             var totalDescuento = paquete.qty * paquete.price;
                             var sku = new Sku();
                             sku.total = paquete.price * paquete.qty;
@@ -2074,312 +2128,335 @@ var DenominacionSkuControlador = (function() {
                         }
                         resultadoDeDescuento_1 = null;
                         callBack();
-                    } else {
+                    }
+                    else {
                         callBack();
                     }
-                }, function(resultado) {
+                }, function (resultado) {
                     errCallback(resultado);
                 });
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al establecer bonificaciones: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerOrdenParaAplicarDescuentos = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerOrdenParaAplicarDescuentos = function (callback, errCallback) {
         var _this = this;
         try {
-            this.descuentoServicio.obtenerOrdeParaAplicarDescuentos(function(listaDeOrdenAplicarDescuentos) {
+            this.descuentoServicio.obtenerOrdeParaAplicarDescuentos(function (listaDeOrdenAplicarDescuentos) {
                 _this.listaDeOrdenAplicarDescuentos = listaDeOrdenAplicarDescuentos;
                 callback();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener orden para aplicar los descuentos: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.obtenerDescuentoPorMontoGeneral = function(total, callback, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerDescuentoPorMontoGeneral = function (total, callback, errCallback) {
         var _this = this;
         try {
-            this.descuentoServicio.obtenerDescuentoPorMontoGeneral(this.cliente, total, function(descuentoPorMontoGeneral) {
+            this.descuentoServicio.obtenerDescuentoPorMontoGeneral(this.cliente, total, function (descuentoPorMontoGeneral) {
                 var resultadoDePromoHistorico = _this
-                    .listaHistoricoDePromos.find(function(promo) {
-                        return promo.promoId === descuentoPorMontoGeneral.promoId;
-                    });
+                    .listaHistoricoDePromos.find(function (promo) {
+                    return promo.promoId === descuentoPorMontoGeneral.promoId;
+                });
                 if (resultadoDePromoHistorico) {
                     var promoDeBonificacion = new Promo();
                     promoDeBonificacion.promoId = descuentoPorMontoGeneral.promoId;
                     promoDeBonificacion.promoName = descuentoPorMontoGeneral.promoName;
                     promoDeBonificacion.frequency = descuentoPorMontoGeneral.frequency;
-                    _this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico, function(aplicaPromo) {
+                    _this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico, function (aplicaPromo) {
                         if (aplicaPromo) {
                             descuentoPorMontoGeneral.apply = true;
                             _this.descuentoPorMontoGeneral = descuentoPorMontoGeneral;
-                        } else {
+                        }
+                        else {
                             _this.descuentoPorMontoGeneral = new DescuentoPorMontoGeneral();
                         }
                         callback();
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                } else {
+                }
+                else {
                     _this.descuentoPorMontoGeneral = descuentoPorMontoGeneral;
                     callback();
                 }
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener el descuento por monto general: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.seAplicaElDescuentoModificado = function(descuentoOriginalDeModificacion, descuentoModificado, descuentoNuevo) {
+    DenominacionSkuControlador.prototype.seAplicaElDescuentoModificado = function (descuentoOriginalDeModificacion, descuentoModificado, descuentoNuevo) {
         return (descuentoOriginalDeModificacion !== 0 &&
             descuentoModificado <= descuentoNuevo);
     };
-    DenominacionSkuControlador.prototype.obtenerHistoricodePromo = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.obtenerHistoricodePromo = function (callBack, errCallback) {
         var _this = this;
         try {
-            this.promoServicio.obtenerHistoricoDePromosParaCliente(this.cliente, function(listaHistoricoDePromos) {
+            this.promoServicio.obtenerHistoricoDePromosParaCliente(this.cliente, function (listaHistoricoDePromos) {
                 _this.listaHistoricoDePromos = listaHistoricoDePromos;
                 callBack();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener historico de promociones: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.validarSiAplicaLaBonificaciones = function(listaDeBonificaciones, indiceDeListaDeBonificaciones, esBonificacionPorEscala, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.validarSiAplicaLaBonificaciones = function (listaDeBonificaciones, indiceDeListaDeBonificaciones, esBonificacionPorEscala, callBack, errCallback) {
         var _this = this;
         try {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeBonificacionesTerminoDeIterar(listaDeBonificaciones, indiceDeListaDeBonificaciones)) {
                     var bonificacionAValidar_1 = listaDeBonificaciones[indiceDeListaDeBonificaciones];
                     var resultadoDePromoHistorico_1 = this
-                        .listaHistoricoDePromos.find(function(promo) {
-                            return (promo.promoId ===
-                                (esBonificacionPorEscala ?
-                                    bonificacionAValidar_1.promoIdScale :
-                                    bonificacionAValidar_1.promoIdMultiple));
-                        });
+                        .listaHistoricoDePromos.find(function (promo) {
+                        return (promo.promoId ===
+                            (esBonificacionPorEscala
+                                ? bonificacionAValidar_1.promoIdScale
+                                : bonificacionAValidar_1.promoIdMultiple));
+                    });
                     if (resultadoDePromoHistorico_1) {
                         var promoDeBonificacion = new Promo();
-                        promoDeBonificacion.promoId = esBonificacionPorEscala ?
-                            bonificacionAValidar_1.promoIdScale :
-                            bonificacionAValidar_1.promoIdMultiple;
-                        promoDeBonificacion.promoName = esBonificacionPorEscala ?
-                            bonificacionAValidar_1.promoNameScale :
-                            bonificacionAValidar_1.promoNameMultiple;
-                        promoDeBonificacion.frequency = esBonificacionPorEscala ?
-                            bonificacionAValidar_1.frequencyScale :
-                            bonificacionAValidar_1.frequencyMultiple;
-                        this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico_1, function(aplicaBonificacion) {
+                        promoDeBonificacion.promoId = esBonificacionPorEscala
+                            ? bonificacionAValidar_1.promoIdScale
+                            : bonificacionAValidar_1.promoIdMultiple;
+                        promoDeBonificacion.promoName = esBonificacionPorEscala
+                            ? bonificacionAValidar_1.promoNameScale
+                            : bonificacionAValidar_1.promoNameMultiple;
+                        promoDeBonificacion.frequency = esBonificacionPorEscala
+                            ? bonificacionAValidar_1.frequencyScale
+                            : bonificacionAValidar_1.frequencyMultiple;
+                        this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico_1, function (aplicaBonificacion) {
                             if (!aplicaBonificacion) {
-                                listaDeBonificaciones = listaDeBonificaciones.filter(function(bonificacion) {
+                                listaDeBonificaciones = listaDeBonificaciones.filter(function (bonificacion) {
                                     return (resultadoDePromoHistorico_1.promoId !==
-                                        (esBonificacionPorEscala ?
-                                            bonificacion.promoIdScale :
-                                            bonificacion.promoIdMultiple));
+                                        (esBonificacionPorEscala
+                                            ? bonificacion.promoIdScale
+                                            : bonificacion.promoIdMultiple));
                                 });
                             }
-                            _this.validarSiAplicaLaBonificaciones(listaDeBonificaciones, indiceDeListaDeBonificaciones + (aplicaBonificacion ? 1 : 0), esBonificacionPorEscala, function(listaDeBonificaciones) {
+                            _this.validarSiAplicaLaBonificaciones(listaDeBonificaciones, indiceDeListaDeBonificaciones + (aplicaBonificacion ? 1 : 0), esBonificacionPorEscala, function (listaDeBonificaciones) {
                                 callBack(listaDeBonificaciones);
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 errCallback(resultado);
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
                         promoDeBonificacion = null;
-                    } else {
-                        this.validarSiAplicaLaBonificaciones(listaDeBonificaciones, indiceDeListaDeBonificaciones + 1, esBonificacionPorEscala, function(listaDeBonificaciones) {
+                    }
+                    else {
+                        this.validarSiAplicaLaBonificaciones(listaDeBonificaciones, indiceDeListaDeBonificaciones + 1, esBonificacionPorEscala, function (listaDeBonificaciones) {
                             callBack(listaDeBonificaciones);
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
                     }
-                } else {
+                }
+                else {
                     callBack(listaDeBonificaciones);
                 }
-            } else {
+            }
+            else {
                 callBack(listaDeBonificaciones);
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar la si aplica la bonificaci\u00F3n: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.listaDeBonificacionesTerminoDeIterar = function(listaDeBonificaciones, indiceDeListaDeBonificaciones) {
+    DenominacionSkuControlador.prototype.listaDeBonificacionesTerminoDeIterar = function (listaDeBonificaciones, indiceDeListaDeBonificaciones) {
         return (listaDeBonificaciones.length > 0 &&
             listaDeBonificaciones.length > indiceDeListaDeBonificaciones);
     };
-    DenominacionSkuControlador.prototype.validarSiAplicaElDescuento = function(listaDeDescuento, indiceDeListaDeDescuento, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.validarSiAplicaElDescuento = function (listaDeDescuento, indiceDeListaDeDescuento, callBack, errCallback) {
         var _this = this;
         try {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeDescuentoTerminoDeIterar(listaDeDescuento, indiceDeListaDeDescuento)) {
                     var descuentoAValidar_1 = listaDeDescuento[indiceDeListaDeDescuento];
                     var resultadoDePromoHistorico_2 = this
-                        .listaHistoricoDePromos.find(function(promo) {
-                            return promo.promoId === descuentoAValidar_1.promoId;
-                        });
+                        .listaHistoricoDePromos.find(function (promo) {
+                        return promo.promoId === descuentoAValidar_1.promoId;
+                    });
                     if (resultadoDePromoHistorico_2) {
                         var promoDeDescuento = new Promo();
                         promoDeDescuento.promoId = descuentoAValidar_1.promoId;
                         promoDeDescuento.promoName = descuentoAValidar_1.promoName;
                         promoDeDescuento.frequency = descuentoAValidar_1.frequency;
-                        this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico_2, function(aplicaDescuento) {
+                        this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico_2, function (aplicaDescuento) {
                             if (!aplicaDescuento) {
-                                listaDeDescuento = listaDeDescuento.filter(function(descuento) {
+                                listaDeDescuento = listaDeDescuento.filter(function (descuento) {
                                     return (resultadoDePromoHistorico_2.promoId !== descuento.promoId);
                                 });
                             }
-                            _this.validarSiAplicaElDescuento(listaDeDescuento, indiceDeListaDeDescuento + (aplicaDescuento ? 1 : 0), function(listaDeDescuento) {
+                            _this.validarSiAplicaElDescuento(listaDeDescuento, indiceDeListaDeDescuento + (aplicaDescuento ? 1 : 0), function (listaDeDescuento) {
                                 callBack(listaDeDescuento);
-                            }, function(resultado) {
+                            }, function (resultado) {
                                 errCallback(resultado);
                             });
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
                         promoDeDescuento = null;
-                    } else {
-                        this.validarSiAplicaElDescuento(listaDeDescuento, indiceDeListaDeDescuento + 1, function(listaDeDescuento) {
+                    }
+                    else {
+                        this.validarSiAplicaElDescuento(listaDeDescuento, indiceDeListaDeDescuento + 1, function (listaDeDescuento) {
                             callBack(listaDeDescuento);
-                        }, function(resultado) {
+                        }, function (resultado) {
                             errCallback(resultado);
                         });
                     }
-                } else {
+                }
+                else {
                     callBack(listaDeDescuento);
                 }
-            } else {
+            }
+            else {
                 callBack(listaDeDescuento);
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar la si aplica el descuento: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.listaDeDescuentoTerminoDeIterar = function(listaDeDescuento, indiceDeListaDeDescuento) {
+    DenominacionSkuControlador.prototype.listaDeDescuentoTerminoDeIterar = function (listaDeDescuento, indiceDeListaDeDescuento) {
         return (listaDeDescuento.length > 0 &&
             listaDeDescuento.length > indiceDeListaDeDescuento);
     };
-    DenominacionSkuControlador.prototype.validarSiAplicaElDescuentoPorMontoGeneralYFamilia = function(descuentoAValidar, indiceDeListaDeDescuento, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.validarSiAplicaElDescuentoPorMontoGeneralYFamilia = function (descuentoAValidar, indiceDeListaDeDescuento, callBack, errCallback) {
         try {
             if (this.listaHistoricoDePromos.length > 0) {
                 var resultadoDePromoHistorico = this
-                    .listaHistoricoDePromos.find(function(promo) {
-                        return promo.promoId === descuentoAValidar.promoId;
-                    });
+                    .listaHistoricoDePromos.find(function (promo) {
+                    return promo.promoId === descuentoAValidar.promoId;
+                });
                 if (resultadoDePromoHistorico) {
                     var promoDeDescuento = new Promo();
                     promoDeDescuento.promoId = descuentoAValidar.promoId;
                     promoDeDescuento.promoName = descuentoAValidar.promoName;
                     promoDeDescuento.frequency = descuentoAValidar.frequency;
-                    this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico, function(aplicaDescuento) {
+                    this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico, function (aplicaDescuento) {
                         if (!aplicaDescuento) {
                             descuentoAValidar = new DescuentoPorMontoGeneralYFamilia();
                         }
                         callBack(descuentoAValidar);
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                } else {
+                }
+                else {
                     callBack(descuentoAValidar);
                 }
-            } else {
+            }
+            else {
                 callBack(descuentoAValidar);
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar la si aplica el descuento por monto general y familia: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.validarSiAplicaElDescuentoPorFamiliaYTipoPago = function(descuentoAValidar, indiceDeListaDeDescuento, callBack, errCallback) {
+    DenominacionSkuControlador.prototype.validarSiAplicaElDescuentoPorFamiliaYTipoPago = function (descuentoAValidar, indiceDeListaDeDescuento, callBack, errCallback) {
         try {
             if (this.listaHistoricoDePromos.length > 0) {
                 var resultadoDePromoHistorico = this
-                    .listaHistoricoDePromos.find(function(promo) {
-                        return promo.promoId === descuentoAValidar.promoId;
-                    });
+                    .listaHistoricoDePromos.find(function (promo) {
+                    return promo.promoId === descuentoAValidar.promoId;
+                });
                 if (resultadoDePromoHistorico) {
                     var promoDeDescuento = new Promo();
                     promoDeDescuento.promoId = descuentoAValidar.promoId;
                     promoDeDescuento.promoName = descuentoAValidar.promoName;
                     promoDeDescuento.frequency = descuentoAValidar.frequency;
-                    this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico, function(aplicaDescuento) {
+                    this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico, function (aplicaDescuento) {
                         if (!aplicaDescuento) {
                             descuentoAValidar = new DescuentoPorFamiliaYTipoPago();
                         }
                         callBack(descuentoAValidar);
-                    }, function(resultado) {
+                    }, function (resultado) {
                         errCallback(resultado);
                     });
-                } else {
+                }
+                else {
                     callBack(descuentoAValidar);
                 }
-            } else {
+            }
+            else {
                 callBack(descuentoAValidar);
             }
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al validar la si aplica el descuento por familia y tipo pago: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.ObtenerTotalDeLaOrden = function(callBack, errCallback) {
+    DenominacionSkuControlador.prototype.ObtenerTotalDeLaOrden = function (callBack, errCallback) {
         try {
             var totalOrden = this.tarea.salesOrderTotal;
             callBack(totalOrden);
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener el total: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.cargarPreciosEspeciales = function(callback, errCallback) {
+    DenominacionSkuControlador.prototype.cargarPreciosEspeciales = function (callback, errCallback) {
         var _this = this;
         try {
             var sku = new Sku();
             sku.sku = this.sku.sku;
-            this.precioEspecialServicio.obtenerPreciosEspecialesPorCliente(0, this.cliente, sku, function(listaDePreciosEspeciales) {
+            this.precioEspecialServicio.obtenerPreciosEspecialesPorCliente(0, this.cliente, sku, function (listaDePreciosEspeciales) {
                 _this.listaDePreciosEspeciales = listaDePreciosEspeciales;
                 callback();
-            }, function(resultado) {
+            }, function (resultado) {
                 errCallback(resultado);
             });
-        } catch (ex) {
+        }
+        catch (ex) {
             errCallback({
                 codigo: -1,
                 mensaje: "Error al obtener descuentos: " + ex.message
             });
         }
     };
-    DenominacionSkuControlador.prototype.limpiarInformacionDeHistoricoDeSku = function() {
+    DenominacionSkuControlador.prototype.limpiarInformacionDeHistoricoDeSku = function () {
         var uiEtiquetaFechaUltimaCompra = $("#UiEtiquetaFechaUltimaCompra");
         uiEtiquetaFechaUltimaCompra.text("");
         uiEtiquetaFechaUltimaCompra = null;
@@ -2396,37 +2473,40 @@ var DenominacionSkuControlador = (function() {
         uiLiUltimoPedidoUnidadMedida.hide();
         uiLiUltimoPedidoUnidadMedida = null;
     };
-    DenominacionSkuControlador.prototype.obtenerAutorizacionDeModificacionDePrecioDeProducto = function(callback) {
+    DenominacionSkuControlador.prototype.obtenerAutorizacionDeModificacionDePrecioDeProducto = function (callback) {
         var _this = this;
         try {
-            ObtenerReglas(ReglaTipo.OperadorPuedeModificarPrecioDeProducto.toString(), function(reglas) {
+            ObtenerReglas(ReglaTipo.OperadorPuedeModificarPrecioDeProducto.toString(), function (reglas) {
                 _this.usuarioPuedeModificarPrecioDeProducto =
                     reglas.rows.length > 0 &&
-                    reglas.rows.item(0).ENABLED.toUpperCase() === "SI";
+                        reglas.rows.item(0).ENABLED.toUpperCase() === "SI";
                 var uiLiPrecioNegociadoConCliente = $("#UiLiPrecioNegociadoConCliente");
                 if (_this.usuarioPuedeModificarPrecioDeProducto) {
                     uiLiPrecioNegociadoConCliente.show();
-                } else {
+                }
+                else {
                     uiLiPrecioNegociadoConCliente.hide();
                 }
                 uiLiPrecioNegociadoConCliente = null;
                 _this.sku.canNegotiatePrice = _this.usuarioPuedeModificarPrecioDeProducto;
                 callback();
-            }, function(error) {
+            }, function (error) {
                 notify(error);
             });
-        } catch (error) {
+        }
+        catch (error) {
             notify(error);
         }
     };
-    DenominacionSkuControlador.prototype.prepararImagenesDeProducto = function(callback) {
+    DenominacionSkuControlador.prototype.prepararImagenesDeProducto = function (callback) {
         var _this = this;
         try {
-            this.imagenDeSkuServicio.obtenerImagenesDeProducto(this.sku, function(imagenesDeProducto) {
+            this.imagenDeSkuServicio.obtenerImagenesDeProducto(this.sku, function (imagenesDeProducto) {
                 _this.listadoDeImagenesDeProductoSeleccionado = imagenesDeProducto;
                 _this.imagenDeSkuServicio.construirListadoDeImagenesParaProductoSeleccionado(imagenesDeProducto, false, callback);
             });
-        } catch (error) {
+        }
+        catch (error) {
             notify(error.message);
         }
     };

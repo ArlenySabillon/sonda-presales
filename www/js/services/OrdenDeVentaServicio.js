@@ -145,7 +145,6 @@ var OrdenDeVentaServicio = (function () {
         sql += ", IS_POSTED_OFFLINE ";
         sql += ", TOTAL_AMOUNT_DISPLAY";
         sql += ", GOAL_HEADER_ID";
-        sql += ", PURCHASE_ORDER_NUMBER";
         sql += ") VALUES(";
         sql += "" + ordenDeVenta.salesOrderId;
         sql += ",'" + ordenDeVenta.terms + "'";
@@ -270,7 +269,6 @@ var OrdenDeVentaServicio = (function () {
         sql += "," + (gIsOnline === SiNo.Si ? 0 : 1);
         sql += "," + (ordenDeVenta.totalAmountDisplay ? ordenDeVenta.totalAmountDisplay : 0);
         sql += "," + ordenDeVenta.goalHeaderId;
-        sql += ordenDeVenta.purchaseOrderNumber && ordenDeVenta.purchaseOrderNumber.length ? ", '" + ordenDeVenta.purchaseOrderNumber + "'" : ", NULL";
         sql += ")";
         return sql;
     };
@@ -1328,6 +1326,16 @@ var OrdenDeVentaServicio = (function () {
                     pRow += 10;
                 }
             }
+            if (ordenDeVenta.comment && ordenDeVenta.comment.length > 0) {
+                var divisionesDeTexto = this.centerText(ordenDeVenta.comment);
+                pRow += 25;
+                ldetail = ldetail + "LEFT 5 T 0 2 0 " + pRow + " COMENTARIO: \r\n";
+                divisionesDeTexto.forEach(function (fragmento) {
+                    pRow += 25;
+                    ldetail =
+                        ldetail + "LEFT 5 T 0 2 0 " + pRow + " " + fragmento + "\r\n";
+                });
+            }
             pRow += 30;
             lfooter +=
                 "CENTER 550 T 0 2 0 " +
@@ -1402,6 +1410,27 @@ var OrdenDeVentaServicio = (function () {
             tiposDeDescuentoAplicadosALineaDeProducto.push("DMG: " + format_number(lineaDeDetalle.discountByGeneralAmount, configuracionDeDecimales.defaultDisplayDecimals));
         }
         return tiposDeDescuentoAplicadosALineaDeProducto.join(" ");
+    };
+    OrdenDeVentaServicio.prototype.centerText = function (text) {
+        var acumulador = "";
+        var acumuladorDeIteracion = 60;
+        var posicionInicial = 0;
+        var divisiones = [];
+        var iterador = "";
+        if (text.length > 60) {
+            while (acumulador !== text) {
+                iterador = text.substring(posicionInicial, acumuladorDeIteracion);
+                acumulador = acumulador + iterador;
+                divisiones.push(iterador);
+                posicionInicial += 60;
+                acumuladorDeIteracion += 60;
+                iterador = "";
+            }
+        }
+        else {
+            divisiones.push(text);
+        }
+        return divisiones;
     };
     return OrdenDeVentaServicio;
 }());

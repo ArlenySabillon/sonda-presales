@@ -1,6 +1,5 @@
 var timerElapsed = false;
 var emitCompleted = false;
-var interval = 0;
 var socketTareaDetalle;
 var tareaDetalleControlador;
 var TareaDetalleControlador = (function () {

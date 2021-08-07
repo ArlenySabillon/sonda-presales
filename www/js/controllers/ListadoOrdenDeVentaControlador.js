@@ -70,7 +70,7 @@ function CargarOrdenesDeVenta() {
                 vLI += '<p><span><span class="medium">No. Doc: </span>';
                 vLI += "<span class='ui-li-count' style='position:absolute; top:67%'>" + ordenesDeVenta[i].DocNum + "</span></p>";
                 vLI += '<p><span><span class="medium">Total: </span>';
-                vLI += "<span class='ui-li-count' style='position:absolute; top:85%'>Q" + format_number(ordenesDeVenta[i].TotalAmount,2) + "</span></p>";
+                vLI += "<span class='ui-li-count' style='position:absolute; top:85%'>" + DarFormatoAlMonto(format_number(ordenesDeVenta[i].TotalAmount,2)) + "</span></p>";
                 vLI += '</a></li>';
 
                 $("#UiListaOrdenDeVenta").append(vLI);

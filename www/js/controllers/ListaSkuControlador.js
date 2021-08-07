@@ -55,7 +55,10 @@ var ListaSkuControlador = (function () {
         });
         $("#skus_list_page").on("pageshow", function () {
             var criterioDeBusquedaSku = $("#uiTxtFilterListSkusPage");
+            criterioDeBusquedaSku.val("");
+            criterioDeBusquedaSku.trigger("click");
             criterioDeBusquedaSku.focus();
+            criterioDeBusquedaSku = null;
             if (este.configuracionDecimales == undefined ||
                 este.configuracionDecimales == null ||
                 !este.configuracionDecimales) {
@@ -77,15 +80,6 @@ var ListaSkuControlador = (function () {
                     notify(resultado.mensaje);
                 });
             }
-
-            setTimeout(() => {
-                var criterioDeBusquedaSku = $("#uiTxtFilterListSkusPage");
-                if (criterioDeBusquedaSku.val() != "") {
-                    var e = $.Event('keypress');
-                    e.keyCode = 13; // Intr
-                    criterioDeBusquedaSku.trigger(e)
-                }
-            }, 1500);
         });
         document.addEventListener("backbutton", function () {
             este.volverAPantallaAnterior();
@@ -114,19 +108,9 @@ var ListaSkuControlador = (function () {
         });
         $("#uiBtnFilterListSkus").on("click", function () {
             var codigoSku = $("#uiTxtFilterListSkusPage");
-            var skusFiltrados = este.listaSkuOriginal.filter(function (skuFiltered) {
-                var n = skuFiltered.sku.toUpperCase().includes(codigoSku.val().toUpperCase());
-                var m = skuFiltered.skuDescription.toUpperCase().includes(codigoSku.val().toUpperCase());
-                if (n || m) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            });
+            _this_1.recargarListaDeSkuPorBusqueda(codigoSku.val().toUpperCase());
+            var skusFiltrados = este.listaSkuOriginal;
             console.log(skusFiltrados.length);
-            _this_1.listaSku = skusFiltrados;
-            _this_1.cargarListaSku(skusFiltrados.slice(0, _this_1.pivotLimit), _this_1.configuracionDecimales);
             _this_1.lastLowLimit = 0;
             _this_1.currentLimit = _this_1.pivotLimit;
         });
@@ -143,19 +127,9 @@ var ListaSkuControlador = (function () {
                     notify("Debe proporcionar un criterio de busqueda, por favor verifique y vuelva a intentar.");
                 }
                 else {
-                    var skusFiltrados = _this_1.listaSkuOriginal.filter(function (skuFiltered) {
-                        var n = skuFiltered.sku.toUpperCase().includes(e.target.value.toUpperCase());
-                        var m = skuFiltered.skuDescription.toUpperCase().includes(e.target.value.toUpperCase());
-                        if (n || m) {
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    });
+                    _this_1.recargarListaDeSkuPorBusqueda(e.target.value.toUpperCase());
+                    var skusFiltrados = _this_1.listaSkuOriginal;
                     console.log(skusFiltrados.length);
-                    _this_1.listaSku = skusFiltrados;
-                    _this_1.cargarListaSku(skusFiltrados.slice(0, _this_1.pivotLimit), _this_1.configuracionDecimales);
                     _this_1.lastLowLimit = 0;
                     _this_1.currentLimit = _this_1.pivotLimit;
                 }
@@ -167,8 +141,8 @@ var ListaSkuControlador = (function () {
         $("#uiTxtFilterListSkusPage").on("keyup", function (e) {
             if (e.keyCode === 8 && e.target.value === "") {
                 e.preventDefault();
+                _this_1.recargarListaDeSkuPorBusqueda(e.target.value.toUpperCase());
                 _this_1.listaSku = _this_1.listaSkuOriginal;
-                _this_1.cargarListaSku(_this_1.listaSku.slice(0, _this_1.pivotLimit), _this_1.configuracionDecimales);
                 _this_1.lastLowLimit = 0;
                 _this_1.currentLimit = _this_1.pivotLimit;
             }
@@ -286,8 +260,12 @@ var ListaSkuControlador = (function () {
                     }, callback);
                 }
                 else if (_this_1.tarea.taskType === TareaTipo.Preventa) {
-                    _this_1.skuServicio.obtenerSkuParaPreVenta(_this_1.cliente, sku, decimales, localStorage.getItem("SORT_BY"), localStorage.getItem("SORT_OPTION"), function (listaSku) {
-                        _this_1.cargarListaSku(listaSku, decimales);
+                    var codigoSku = $("#uiTxtFilterListSkusPage");
+                    _this_1.skuServicio.obtenerSkuParaPreVenta(_this_1.cliente, sku, decimales, localStorage.getItem("SORT_BY"), localStorage.getItem("SORT_OPTION"), codigoSku.val().toUpperCase(), function (listaSku) {
+                        _this_1.listaSku = listaSku;
+                        _this_1.cargarListaSku(_this_1.listaSku.slice(0, _this_1.pivotLimit), decimales);
+                        _this_1.lastLowLimit = 0;
+                        _this_1.currentLimit = _this_1.pivotLimit;
                     }, callback);
                 }
             }, function (resultado) {
@@ -413,7 +391,7 @@ var ListaSkuControlador = (function () {
                 });
             }
             else if (subcriber.tarea.taskType === TareaTipo.Preventa) {
-                subcriber.skuServicio.obtenerSkuParaPreVenta(subcriber.cliente, sku, subcriber.configuracionDecimales, localStorage.getItem("SORT_BY"), localStorage.getItem("SORT_OPTION"), function (listaSku) {
+                subcriber.skuServicio.obtenerSkuParaPreVenta(subcriber.cliente, sku, subcriber.configuracionDecimales, localStorage.getItem("SORT_BY"), localStorage.getItem("SORT_OPTION"), "", function (listaSku) {
                     subcriber.listaSku = listaSku;
                     subcriber.listaSkuOriginal = listaSku;
                     subcriber.listaSkuQueNoSeModifica = (JSON.parse(JSON.stringify(listaSku)));
@@ -735,7 +713,8 @@ var ListaSkuControlador = (function () {
                 localStorage.setItem("LISTA_TIPO_FAMILIA_SKU", "ALL");
             }
             sku.codeFamilySku = localStorage.getItem("LISTA_TIPO_FAMILIA_SKU");
-            this.skuServicio.obtenerSkuParaPreVenta(this.cliente, sku, this.configuracionDecimales, opcionDeOrdenamiento, tipoDeOrdenamiento, function (listaSku) {
+            var codigoSku = $("#uiTxtFilterListSkusPage");
+            this.skuServicio.obtenerSkuParaPreVenta(this.cliente, sku, this.configuracionDecimales, opcionDeOrdenamiento, tipoDeOrdenamiento, codigoSku.val().toUpperCase(), function (listaSku) {
                 _this_1.listaSku = listaSku;
                 _this_1.listaSkuOriginal = listaSku;
                 _this_1.listaSkuQueNoSeModifica = (JSON.parse(JSON.stringify(listaSku)));
@@ -744,6 +723,29 @@ var ListaSkuControlador = (function () {
                 _this_1.currentLimit = _this_1.pivotLimit;
                 localStorage.setItem("SORT_BY", opcionDeOrdenamiento);
                 localStorage.setItem("SORT_OPTION", tipoDeOrdenamiento);
+            }, function (resultado) {
+                notify(resultado.mensaje);
+            });
+        }
+        catch (e) {
+            notify("Error al regarcar el listado de productos: " + e.mensaje);
+        }
+    };
+    ListaSkuControlador.prototype.recargarListaDeSkuPorBusqueda = function (texto) {
+        var _this_1 = this;
+        try {
+            var sku = new Sku();
+            if (localStorage.getItem("LISTA_TIPO_FAMILIA_SKU") === null) {
+                localStorage.setItem("LISTA_TIPO_FAMILIA_SKU", "ALL");
+            }
+            sku.codeFamilySku = localStorage.getItem("LISTA_TIPO_FAMILIA_SKU");
+            this.skuServicio.obtenerSkuParaPreVenta(this.cliente, sku, this.configuracionDecimales, localStorage.getItem("SORT_BY"), localStorage.getItem("SORT_OPTION"), texto, function (listaSku) {
+                _this_1.listaSku = listaSku;
+                _this_1.listaSkuOriginal = listaSku;
+                _this_1.listaSkuQueNoSeModifica = (JSON.parse(JSON.stringify(listaSku)));
+                _this_1.cargarListaSku(listaSku.slice(0, _this_1.pivotLimit), _this_1.configuracionDecimales);
+                _this_1.lastLowLimit = 0;
+                _this_1.currentLimit = _this_1.pivotLimit;
             }, function (resultado) {
                 notify(resultado.mensaje);
             });

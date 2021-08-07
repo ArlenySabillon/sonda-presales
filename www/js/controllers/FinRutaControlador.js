@@ -844,7 +844,7 @@ function GenerarReporteDeClientesDeOrdenesDeVenta(
           vLi +
           " <span class='ui-li-count' style='position:absolute; top:70%'>";
         vLi =
-          vLi + DarFormatoAlMonto(ToDecimal(ordenes.rows.item(i).TOTAL_AMOUNT));
+          vLi + DarFormatoAlMonto(ToDecimal(ordenes.rows.item(i).TOTAL_AMOUNT_DISPLAY));
         vLi = vLi + "  </span></p></li>";
 
         $("#lstReporteClientesOrdenesDeVenta").append(vLi);
@@ -881,12 +881,12 @@ function GenerarReporteDeClientesDeOrdenesDeVenta(
           "RIGHT 550 T 0 2 0 " +
           (_fila - 30) +
           " " +
-          DarFormatoAlMonto(ToDecimal(ordenes.rows.item(i).TOTAL_AMOUNT)) +
+          DarFormatoAlMonto(ToDecimal(ordenes.rows.item(i).TOTAL_AMOUNT_DISPLAY)) +
           "\r\n";
         _fila += parseInt(10);
 
         cantidadTotal += 1;
-        montoTotal += ToDecimal(ordenes.rows.item(i).TOTAL_AMOUNT);
+        montoTotal += ToDecimal(ordenes.rows.item(i).TOTAL_AMOUNT_DISPLAY);
       }
 
       //Se agrega la sumatora

@@ -16,10 +16,10 @@ function NoSkusFound(data) {
 }
 
 function AddToPosSku(data) {
-  var pSql = "DELETE FROM SKUS WHERE SKU = '" + data.row.SKU + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM SKUS WHERE SKU = '" + data.row.SKU + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql =
+  var pSql =
     "INSERT INTO SKUS(SKU, SKU_NAME, SKU_PRICE, SKU_LINK, REQUERIES_SERIE, IS_KIT, ON_HAND, ROUTE_ID, IS_PARENT, PARENT_SKU, EXPOSURE, PRIORITY, QTY_RELATED, LOADED_LAST_UPDATED, CODE_FAMILY_SKU, SALES_PACK_UNIT)";
   pSql +=
     "VALUES('" +
@@ -70,8 +70,8 @@ function PosSkusCompleted(data) {
 }
 
 function RequestedSerie(data) {
-  var pSql = "DELETE FROM SKU_SERIES";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM SKU_SERIES";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoSeriesFound(data) {
@@ -79,14 +79,14 @@ function NoSeriesFound(data) {
 }
 
 function AddToSeries(data) {
+  // var pSql =
+  //   "DELETE FROM SKU_SERIES WHERE SKU = '" +
+  //   data.row.SKU +
+  //   "' AND SERIE = '" +
+  //   data.row.SKU_SERIE +
+  //   "'";
+  // window.gInsertsInitialRoute.push(pSql);
   var pSql =
-    "DELETE FROM SKU_SERIES WHERE SKU = '" +
-    data.row.SKU +
-    "' AND SERIE = '" +
-    data.row.SKU_SERIE +
-    "'";
-  window.gInsertsInitialRoute.push(pSql);
-  pSql =
     "INSERT INTO SKU_SERIES(SKU, IMEI, SERIE, PHONE, ICC, STATUS, LOADED_LAST_UPDATED)";
   pSql +=
     "VALUES('" +
@@ -125,9 +125,11 @@ function GetInitialRouteCompleted(data) {
       window.gInsertsInitialRoute.length = 0;
       localStorage.setItem("APP_IS_READY", "1");
       //cargarListaDeTareas();
-      setTimeout(function() {
+      var to = setTimeout(function() {
         clearInterval(intervalo);
+        clearTimeout(to);
         validarDesbloqueoDePantalla();
+
       }, 5000);
     },
     function(err) {
@@ -138,6 +140,9 @@ function GetInitialRouteCompleted(data) {
 
 function InsertarRegistrosBDCompleta(callBack, errorCallBack) {
   try {
+    console.log(
+      "registros a procesar => " + window.gInsertsInitialRoute.length
+    );
     var iterationNumber = 0;
     var lastQuery = "";
     SONDA_DB_Session.transaction(
@@ -188,14 +193,14 @@ function validarDesbloqueoDePantalla() {
 }
 
 function RequestedSkus(data) {
-  var pSql = "DELETE FROM SKUS WHERE ROUTE_ID = '" + gCurrentRoute + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM SKUS WHERE ROUTE_ID = '" + gCurrentRoute + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 //----------Etiqueta---------//
 function RequestedTags(data) {
-  var pSql = "DELETE FROM TAGS";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM TAGS";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoTagsFound(data) {
@@ -203,10 +208,11 @@ function NoTagsFound(data) {
 }
 
 function AddToTags(data) {
-  var pSql = "DELETE FROM TAGS WHERE TAG_COLOR = '" + data.row.TAG_COLOR + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM TAGS WHERE TAG_COLOR = '" + data.row.TAG_COLOR + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = "INSERT INTO TAGS(TAG_COLOR,TAG_VALUE_TEXT,TAG_PRIORITY,TAG_COMMENTS)";
+  var pSql =
+    "INSERT INTO TAGS(TAG_COLOR,TAG_VALUE_TEXT,TAG_PRIORITY,TAG_COMMENTS)";
   pSql +=
     "VALUES('" +
     data.row.TAG_COLOR +
@@ -228,8 +234,8 @@ function TagsCompleted(data) {
 
 //----------Cliente---------//
 function RequestedGetCustomer(data) {
-  var pSql = "DELETE FROM CLIENTS";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM CLIENTS";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetCustomerFound(data) {
@@ -267,6 +273,7 @@ function AddToCustomer(data) {
   pSql += " , GROUP_NUM";
   pSql += " , OUTSTANDING_BALANCE";
   pSql += " , LAST_PURCHASE_DATE";
+  pSql += " , [DFPT_LIST_ID]";
   pSql += " )VALUES('" + data.row.CODE_CUSTOMER + "'";
   pSql += " , '" + data.row.NAME_CUSTOMER + "'";
   pSql += " , '" + data.row.TAX_ID_NUMBER + "'";
@@ -306,6 +313,7 @@ function AddToCustomer(data) {
   pSql += data.row.LAST_PURCHASE_DATE
     ? " , '" + data.row.LAST_PURCHASE_DATE + "'"
     : ", NULL";
+  pSql += " , " + data.row.DFPT_LIST_ID;
   pSql += " )";
   window.gInsertsInitialRoute.push(pSql);
 }
@@ -318,8 +326,8 @@ function GetCustomerCompleted(data) {
 
 //----------Frecuencia Cliente---------//
 function RequestedGetCustomerFrequency(data) {
-  var pSql = "DELETE FROM CLIENTS_FREQUENCY";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM CLIENTS_FREQUENCY";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetCustomerFrequencyFound(data) {
@@ -361,8 +369,8 @@ function GetCustomerFrequencyCompleted(data) {
 
 //----------Etiquetas por Cliente---------//
 function RequestedGetTagsXCustomer(data) {
-  var pSql = "DELETE FROM TAGS_X_CUSTOMER";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM TAGS_X_CUSTOMER";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetTagsXCustomerFound(data) {
@@ -394,8 +402,8 @@ function GetTagsXCustomerCompleted(data) {
 
 //----------Reglas---------//
 function RequestedGetRules(data) {
-  var pSql = "DELETE FROM RULE";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM RULE";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetRulesFound(data) {
@@ -428,12 +436,6 @@ function AddToRule(data) {
   pSql += " , '" + data.row.CODE + "'";
   pSql += " , '" + data.row.EVENT_ORDER + "'";
   pSql += " )";
-  
-  if(data.row.NAME_EVENT === "Limpiar Filtro Sku" && data.row.ENABLED === "Si"){
-    localStorage.setItem('FILTER_SKU', data.row.ENABLED);
-  }else{
-    localStorage.setItem('FILTER_SKU', "No");
-  }
   window.gInsertsInitialRoute.push(pSql);
 }
 
@@ -445,11 +447,10 @@ function GetRuleCompleted(data) {
 
 //----------Tareas---------//
 function RequestedGetTask(data) {
-  var pSql = "DELETE FROM PRESALES_ROUTE";
-  window.gInsertsInitialRoute.push(pSql);
-
-  pSql = "DELETE FROM TASK";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM PRESALES_ROUTE";
+  // window.gInsertsInitialRoute.push(pSql);
+  // pSql = "DELETE FROM TASK";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetTasksFound(data) {
@@ -645,8 +646,8 @@ function GetTaskCompleted(data) {
 
 //----------SkuPreSale---------//
 function RequestedGetSkuPreSale(data) {
-  var pSql = "DELETE FROM SKU_PRESALE";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM SKU_PRESALE";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetSkuPreSaleFound(data) {
@@ -696,6 +697,7 @@ function AddToSkuPreSale(data) {
   pSql += " , '" + data.row.OWNER + "'";
   pSql += " , '" + data.row.OWNER_ID + "'";
   pSql += " )";
+
   window.gInsertsInitialRoute.push(pSql);
 }
 
@@ -706,8 +708,8 @@ function GetSkuPreSaleCompleted(data) {
 
 //----------Secuencia de Documentos---------//
 function GetDocumentSequenceStart(data) {
-  var pSql = "DELETE FROM DOCUMENT_SEQUENCE";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM DOCUMENT_SEQUENCE";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function GetDocumentSequenceNoFound(data) {
@@ -746,8 +748,8 @@ function GetDocumentSequenceCompleted(data) {
 
 //----------Paquetes---------//
 function GetPackUnitStart(data) {
-  var pSql = "DELETE FROM PACK_UNIT";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM PACK_UNIT";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function GetPackUnitNoFound(data) {
@@ -777,8 +779,8 @@ function GetPackUnitCompleted(data) {
 
 //----------Conversion de Paquetes---------//
 function GetPackConversionStart(data) {
-  var pSql = "DELETE FROM PACK_CONVERSION";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM PACK_CONVERSION";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function GetPackConversionNoFound(data) {
@@ -873,13 +875,15 @@ function AddCompany(data) {
 }
 
 function MostarResolucion(data) {
-  $("#UiLblAutorizacion").text(data.AUTH_ID);
-  $("#UiLblSerie").text(data.AUTH_SERIE);
-  $("#UiLblFechaAutorizacion").text(data.AUTH_POST_DATETIME);
-  $("#UiLblFechaVencimiento").text(data.AUTH_LIMIT_DATETIME);
-  $("#UiLblFacturaInicio").text(data.AUTH_DOC_FROM);
-  $("#UiLblFacturaFinal").text(data.AUTH_DOC_TO);
-  $("#UiLblFacturaActual").text(data.AUTH_CURRENT_DOC);
+  if (data) {
+    $("#UiLblAutorizacion").text(data.AUTH_ID || "N/A");
+    $("#UiLblSerie").text(data.AUTH_SERIE || "N/A");
+    $("#UiLblFechaAutorizacion").text(data.AUTH_POST_DATETIME || "N/A");
+    $("#UiLblFechaVencimiento").text(data.AUTH_LIMIT_DATETIME || "N/A");
+    $("#UiLblFacturaInicio").text(data.AUTH_DOC_FROM || "N/A");
+    $("#UiLblFacturaFinal").text(data.AUTH_DOC_TO || "N/A");
+    $("#UiLblFacturaActual").text(data.AUTH_CURRENT_DOC || "N/A");
+  }
 }
 
 function MostarSecuenciaDeDocumentos(data) {
@@ -922,6 +926,9 @@ function MostarSecuenciaDeDocumentos(data) {
 }
 
 function MostarResumenDeTareas(data) {
+  if (!data) {
+    return;
+  }
   var vLI = "";
   var total_tasks = 0;
   var pElement = $("#UiResumenDeTareas");
@@ -1008,8 +1015,8 @@ function LimpiarInicioDeRuta() {
 //----------Inicio Familia de sku---------//
 
 function RequestedGetFamilySku(data) {
-  var pSql = "DELETE FROM FAMILY_SKU";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM FAMILY_SKU";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function NoGetFamilySkuFound(data) {
@@ -1124,8 +1131,8 @@ function GetInvoiceCompleted(data) {
 
 //----------Inicio de Listas de Precios por Cliente---------//
 function PriceListByCustomerReceived() {
-  var sql = "DELETE FROM PRICE_LIST_BY_CUSTOMER";
-  window.gInsertsInitialRoute.push(sql);
+  // var sql = "DELETE FROM PRICE_LIST_BY_CUSTOMER";
+  // window.gInsertsInitialRoute.push(sql);
 }
 
 function PriceListByCustomerNotFound(data) {
@@ -1155,8 +1162,8 @@ function PriceListByCustomerCompleted() {
 
 //----------Inicio de Listas de Precios por SKU---------//
 function PriceListBySKUReceived() {
-  var pSql = "DELETE FROM PRICE_LIST_BY_SKU";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql = "DELETE FROM PRICE_LIST_BY_SKU";
+  // window.gInsertsInitialRoute.push(pSql);
 }
 
 function PriceListBySKUNotFound(data) {
@@ -1258,17 +1265,17 @@ function GetSalesOrderDraftNotFound() {
 function AddSalesOrderDraft(data) {
   var pSql = null;
 
-  pSql =
-    "DELETE FROM SALES_ORDER_HEADER WHERE SALES_ORDER_ID = " +
-    data.data.SALES_ORDER_ID_HH;
-  pSql += " AND CLIENT_ID = '" + data.data.CLIENT_ID + "'";
-  pSql += " AND IS_DRAFT  = " + data.data.IS_DRAFT;
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql =
+  //   "DELETE FROM SALES_ORDER_HEADER WHERE SALES_ORDER_ID = " +
+  //   data.data.SALES_ORDER_ID_HH;
+  // pSql += " AND CLIENT_ID = '" + data.data.CLIENT_ID + "'";
+  // pSql += " AND IS_DRAFT  = " + data.data.IS_DRAFT;
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql =
-    "DELETE FROM SALES_ORDER_DETAIL WHERE SALES_ORDER_ID = " +
-    data.data.SALES_ORDER_ID_HH;
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql =
+  //   "DELETE FROM SALES_ORDER_DETAIL WHERE SALES_ORDER_ID = " +
+  //   data.data.SALES_ORDER_ID_HH;
+  // window.gInsertsInitialRoute.push(pSql);
 
   pSql = " INSERT INTO SALES_ORDER_HEADER(";
   pSql += " SALES_ORDER_ID";
@@ -1394,16 +1401,16 @@ function GetSalesOrderDraftComplete(data) {
 
 //----------Inicio de Invoice Draft---------//
 function AddInvoiceDraft(data) {
-  var pSql =
-    "DELETE FROM INVOICE_HEADER WHERE INVOICE_NUM = " + data.INVOICE_ID;
-  pSql += " AND CLIENT_ID = '" + data.CLIENT_ID + "'";
-  pSql += " AND IS_DRAFT  = 1";
-  window.gInsertsInitialRoute.push(pSql);
+  // var pSql =
+  //   "DELETE FROM INVOICE_HEADER WHERE INVOICE_NUM = " + data.INVOICE_ID;
+  // pSql += " AND CLIENT_ID = '" + data.CLIENT_ID + "'";
+  // pSql += " AND IS_DRAFT  = 1";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = "DELETE FROM INVOICE_DETAIL WHERE INVOICE_NUM = " + data.INVOICE_ID;
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql = "DELETE FROM INVOICE_DETAIL WHERE INVOICE_NUM = " + data.INVOICE_ID;
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = "INSERT INTO INVOICE_HEADER(INVOICE_NUM";
+  var pSql = "INSERT INTO INVOICE_HEADER(INVOICE_NUM";
   pSql += " ,TERMS";
   pSql += " ,POSTED_DATETIME";
   pSql += " ,CLIENT_ID";
@@ -1502,12 +1509,12 @@ function CalculationRulesCompleted() {
 function AddDefaultPackSku(data) {
   var pSql = null;
 
-  pSql = "DELETE FROM PACK_UNIT_BY_SKU";
-  pSql += " WHERE CODE_SKU = '" + data.row.CODE_SKU + "'";
-  pSql += " AND PACK_UNIT = '" + data.row.CODE_PACK_UNIT + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql = "DELETE FROM PACK_UNIT_BY_SKU";
+  // pSql += " WHERE CODE_SKU = '" + data.row.CODE_SKU + "'";
+  // pSql += " AND PACK_UNIT = '" + data.row.CODE_PACK_UNIT + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = null;
+  // pSql = null;
 
   pSql = " INSERT INTO PACK_UNIT_BY_SKU(";
   pSql += " CODE_SKU";
@@ -1625,14 +1632,14 @@ function BonusListByCustomerNotFound(data) {
 function AddBonusListByCustomer(data) {
   var pSql = null;
 
-  pSql =
-    "DELETE FROM BONUS_LIST_BY_CUSTOMER WHERE BONUS_LIST_ID = '" +
-    data.row.BONUS_LIST_ID +
-    "'";
-  pSql += " AND CODE_CUSTOMER = '" + data.row.CODE_CUSTOMER + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql =
+  //   "DELETE FROM BONUS_LIST_BY_CUSTOMER WHERE BONUS_LIST_ID = '" +
+  //   data.row.BONUS_LIST_ID +
+  //   "'";
+  // pSql += " AND CODE_CUSTOMER = '" + data.row.CODE_CUSTOMER + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = null;
+  // pSql = null;
 
   pSql = " INSERT INTO BONUS_LIST_BY_CUSTOMER(";
   pSql += " BONUS_LIST_ID";
@@ -1664,14 +1671,14 @@ function BonusListBySkuNotFound(data) {
 function AddBonusListBySku(data) {
   var pSql = null;
 
-  pSql =
-    "DELETE FROM BONUS_LIST_BY_SKU WHERE BONUS_LIST_ID = '" +
-    data.row.BONUS_LIST_ID +
-    "'";
-  pSql += " AND CODE_SKU = '" + data.row.CODE_SKU + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql =
+  //   "DELETE FROM BONUS_LIST_BY_SKU WHERE BONUS_LIST_ID = '" +
+  //   data.row.BONUS_LIST_ID +
+  //   "'";
+  // pSql += " AND CODE_SKU = '" + data.row.CODE_SKU + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = null;
+  // pSql = null;
 
   pSql = " INSERT INTO BONUS_LIST_BY_SKU(";
   pSql += " BONUS_LIST_ID";
@@ -1724,14 +1731,14 @@ function DiscountListByCustomerNotFound(data) {
 function AddDiscountListByCustomer(data) {
   var pSql = null;
 
-  pSql =
-    "DELETE FROM DISCOUNT_LIST_BY_CUSTOMER WHERE DISCOUNT_LIST_ID = '" +
-    data.row.DISCOUNT_LIST_ID +
-    "'";
-  pSql += " AND CODE_CUSTOMER = '" + data.row.CODE_CUSTOMER + "'";
-  window.gInsertsInitialRoute.push(pSql);
+  // pSql =
+  //   "DELETE FROM DISCOUNT_LIST_BY_CUSTOMER WHERE DISCOUNT_LIST_ID = '" +
+  //   data.row.DISCOUNT_LIST_ID +
+  //   "'";
+  // pSql += " AND CODE_CUSTOMER = '" + data.row.CODE_CUSTOMER + "'";
+  // window.gInsertsInitialRoute.push(pSql);
 
-  pSql = null;
+  // pSql = null;
 
   pSql = " INSERT INTO DISCOUNT_LIST_BY_CUSTOMER(";
   pSql += " DISCOUNT_LIST_ID";
@@ -1764,17 +1771,17 @@ function DiscountListByGeneralAmountNotFound(data) {
 function AddDiscountListByGeneralAmount(data) {
   var listaParaEjecucion = [];
 
-  listaParaEjecucion.push(
-    "DELETE FROM DISCOUNT_LIST_BY_GENERAL_AMOUNT WHERE DISCOUNT_LIST_ID = '" +
-      data.row.DISCOUNT_LIST_ID +
-      "'"
-  );
-  listaParaEjecucion.push(" AND LOW_AMOUNT = " + data.row.LOW_AMOUNT + " ");
-  listaParaEjecucion.push(" AND HIGH_AMOUNT = " + data.row.HIGH_AMOUNT + " ");
+  // listaParaEjecucion.push(
+  //   "DELETE FROM DISCOUNT_LIST_BY_GENERAL_AMOUNT WHERE DISCOUNT_LIST_ID = '" +
+  //     data.row.DISCOUNT_LIST_ID +
+  //     "'"
+  // );
+  // listaParaEjecucion.push(" AND LOW_AMOUNT = " + data.row.LOW_AMOUNT + " ");
+  // listaParaEjecucion.push(" AND HIGH_AMOUNT = " + data.row.HIGH_AMOUNT + " ");
 
-  window.gInsertsInitialRoute.push(listaParaEjecucion.join(""));
+  // window.gInsertsInitialRoute.push(listaParaEjecucion.join(""));
 
-  listaParaEjecucion = [];
+  // listaParaEjecucion = [];
 
   listaParaEjecucion.push(" INSERT INTO DISCOUNT_LIST_BY_GENERAL_AMOUNT(");
   listaParaEjecucion.push(" DISCOUNT_LIST_ID");
@@ -1820,15 +1827,15 @@ function DiscountListBySkuNotFound(data) {
 function AddDiscountListBySku(data) {
   var listaParaEjecucion = [];
 
-  listaParaEjecucion.push(
-    "DELETE FROM DISCOUNT_LIST_BY_SKU WHERE DISCOUNT_LIST_ID = '" +
-      data.row.DISCOUNT_LIST_ID +
-      "'"
-  );
-  listaParaEjecucion.push(" AND CODE_SKU = '" + data.row.CODE_SKU + "'");
-  window.gInsertsInitialRoute.push(listaParaEjecucion.join(""));
+  // listaParaEjecucion.push(
+  //   "DELETE FROM DISCOUNT_LIST_BY_SKU WHERE DISCOUNT_LIST_ID = '" +
+  //     data.row.DISCOUNT_LIST_ID +
+  //     "'"
+  // );
+  // listaParaEjecucion.push(" AND CODE_SKU = '" + data.row.CODE_SKU + "'");
+  // window.gInsertsInitialRoute.push(listaParaEjecucion.join(""));
 
-  listaParaEjecucion = [];
+  // listaParaEjecucion = [];
 
   listaParaEjecucion.push(" INSERT INTO DISCOUNT_LIST_BY_SKU(");
   listaParaEjecucion.push(" DISCOUNT_LIST_ID");

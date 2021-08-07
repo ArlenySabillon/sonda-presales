@@ -15,7 +15,8 @@ var PromocionesPorClienteControlador = (function () {
         $(document).on("pagebeforechange", function (event, data) {
             if (data.toPage === "PantallaDePromociones") {
                 este.cliente = data.options.data.cliente;
-                este.configuracionDeDecimales = data.options.data.configuracionDecimales;
+                este.configuracionDeDecimales =
+                    data.options.data.configuracionDecimales;
                 este.limpiarControles(function () {
                     este.cargarPantalla(function () {
                         my_dialog("", "", "closed");
@@ -38,19 +39,22 @@ var PromocionesPorClienteControlador = (function () {
     };
     PromocionesPorClienteControlador.prototype.limpiarControles = function (callback, errCallback) {
         try {
-            var uiContenedorDePromociones = $('#UiContenedorDePromociones');
+            var uiContenedorDePromociones = $("#UiContenedorDePromociones");
             uiContenedorDePromociones.empty();
             uiContenedorDePromociones = null;
             callback();
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al limpiar los controles: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al limpiar los controles: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.cargarPantalla = function (callback, errCallback) {
         var _this = this;
         try {
-            my_dialog('Sonda® ' + SondaVersion, "Cargando promociones...", "open");
+            my_dialog("Sonda® " + SondaVersion, "Cargando promociones...", "open");
             this.obtenerHistoricodePromo(function () {
                 _this.generarAcordionDePromoDescuentosPorEscala(function () {
                     _this.generarAcordionDePromoDescuentosPorMontoGeneral(function () {
@@ -90,7 +94,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al cargar los controles: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al cargar los controles: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoDescuentosPorEscala = function (callback, errCallback) {
@@ -100,8 +107,8 @@ var PromocionesPorClienteControlador = (function () {
                 _this.validarSiAplicaElDescuento(listaDeDescuentos, 0, function (listaDeDescuentosDisponibles) {
                     var listaDescuentos = listaDeDescuentosDisponibles;
                     if (listaDescuentos.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_1 = [];
                         listaAcordion_1.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorEscala\">");
                         listaAcordion_1.push("<h5>Descuentos por Escala<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaDescuentos.length + "</span></h5>");
@@ -133,8 +140,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_1.push("</table>");
                         listaAcordion_1.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_1.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_1.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -148,7 +157,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoDescuentosPorMontoGeneral = function (callback, errCallback) {
@@ -158,8 +170,8 @@ var PromocionesPorClienteControlador = (function () {
                 _this.validarSiAplicaElDescuentoPorMontoGeneral(listaDeDescuentos, 0, function (listaDeDescuentosDisponibles) {
                     var listaDescuento = listaDeDescuentosDisponibles;
                     if (listaDescuento.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_2 = [];
                         listaAcordion_2.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorMontoGeneral\">");
                         listaAcordion_2.push("<h5>DMG<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaDescuento.length + "</span></h5>");
@@ -184,8 +196,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_2.push("</table>");
                         listaAcordion_2.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_2.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_2.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -199,7 +213,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoDescuentosPorMontoYFamilia = function (callback, errCallback) {
@@ -209,8 +226,8 @@ var PromocionesPorClienteControlador = (function () {
                 _this.validarSiAplicaElDescuentoPorMontoGeneralYFamilia(listaDeDescuentos, 0, function (listaDeDescuentosDisponibles) {
                     var listaDescuento = listaDeDescuentosDisponibles;
                     if (listaDescuento.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_3 = [];
                         listaAcordion_3.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorMontoYFamilia\">");
                         listaAcordion_3.push("<h5>DMF<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaDescuento.length + "</span></h5>");
@@ -238,7 +255,8 @@ var PromocionesPorClienteControlador = (function () {
                                     listaAcordion_3.push(format_number(descuento.discount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "%");
                                     break;
                                 case TiposDeDescuento.Monetario.toString():
-                                    listaAcordion_3.push("" + DarFormatoAlMonto(format_number(descuento.discount, _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                                    listaAcordion_3.push("" + DarFormatoAlMonto(format_number(descuento.discount, _this.configuracionDeDecimales
+                                        .defaultDisplayDecimals)));
                                     break;
                             }
                             listaAcordion_3.push("</td>");
@@ -246,8 +264,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_3.push("</table>");
                         listaAcordion_3.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_3.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_3.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -261,18 +281,24 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoDescuentosPorFamiliaYTipoPago = function (callback, errCallback) {
         var _this = this;
         try {
+            if (!this.cliente || !this.cliente.discountByFamilyAndPaymentTypeListId) {
+                return callback();
+            }
             this.descuentoServicio.obtenerDescuentoPorFamiliaYTipoPagoPorCliente(this.cliente, function (listaDeDescuentos) {
                 _this.validarSiAplicaElDescuentoPorFamiliaYTipoPago(listaDeDescuentos, 0, function (listaDeDescuentosDisponibles) {
                     var listaDescuento = listaDeDescuentosDisponibles;
                     if (listaDescuento.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_4 = [];
                         listaAcordion_4.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionDescuentoPorFamiliaYTipoPago\">");
                         listaAcordion_4.push("<h5>DTPF<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaDescuento.length + "</span></h5>");
@@ -303,7 +329,8 @@ var PromocionesPorClienteControlador = (function () {
                                     listaAcordion_4.push(format_number(descuento.discount, _this.configuracionDeDecimales.defaultDisplayDecimals) + "%");
                                     break;
                                 case TiposDeDescuento.Monetario.toString():
-                                    listaAcordion_4.push("" + DarFormatoAlMonto(format_number(descuento.discount, _this.configuracionDeDecimales.defaultDisplayDecimals)));
+                                    listaAcordion_4.push("" + DarFormatoAlMonto(format_number(descuento.discount, _this.configuracionDeDecimales
+                                        .defaultDisplayDecimals)));
                                     break;
                             }
                             listaAcordion_4.push("</td>");
@@ -311,8 +338,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_4.push("</table>");
                         listaAcordion_4.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_4.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_4.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -326,7 +355,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoBonificacionPorMontoGeneral = function (callback, errCallback) {
@@ -336,8 +368,8 @@ var PromocionesPorClienteControlador = (function () {
                 _this.validarSiAplicaLaBonificacionesPorMontoGeneral(listaDeBonificacion, 0, function (listaDeBonificacionDisponibles) {
                     var listaBonificacion = listaDeBonificacionDisponibles;
                     if (listaBonificacion.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_5 = [];
                         listaAcordion_5.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionBonificacionPorMontoGeneral\">");
                         listaAcordion_5.push("<h5>BMG<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaBonificacion.length + "</span></h5>");
@@ -358,8 +390,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_5.push("</table>");
                         listaAcordion_5.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_5.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_5.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -373,7 +407,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoBonificacionesPorEscala = function (callback, errCallback) {
@@ -383,8 +420,8 @@ var PromocionesPorClienteControlador = (function () {
                 _this.validarSiAplicaLaBonificacionesPorEscala(listaDeBonificacion, 0, function (listaDeBonificacionDisponibles) {
                     var listaBonificacion = listaDeBonificacionDisponibles;
                     if (listaBonificacion.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_6 = [];
                         listaAcordion_6.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionBonificacionPorEscala\">");
                         listaAcordion_6.push("<h5>Bonificaciones por Escala<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaBonificacion.length + "</span></h5>");
@@ -405,8 +442,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_6.push("</table>");
                         listaAcordion_6.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_6.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_6.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -420,7 +459,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoBonificacionesPorMultiplo = function (callback, errCallback) {
@@ -430,8 +472,8 @@ var PromocionesPorClienteControlador = (function () {
                 _this.validarSiAplicaLaBonificacionesPorMultiplo(listaDeBonificacion, 0, function (listaDeBonificacionDisponbiles) {
                     var listaBonificacion = listaDeBonificacionDisponbiles;
                     if (listaBonificacion.length > 0) {
-                        var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                        uiContenedorDePromociones.collapsibleset().trigger('create');
+                        var uiContenedorDePromociones = ($("#UiContenedorDePromociones"));
+                        uiContenedorDePromociones.collapsibleset().trigger("create");
                         var listaAcordion_7 = [];
                         listaAcordion_7.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionBonificacionPorMultiplo\">");
                         listaAcordion_7.push("<h5>Bonificaciones por Multiplo<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + listaBonificacion.length + "</span></h5>");
@@ -452,8 +494,10 @@ var PromocionesPorClienteControlador = (function () {
                         });
                         listaAcordion_7.push("</table>");
                         listaAcordion_7.push("</div>");
-                        uiContenedorDePromociones.append(listaAcordion_7.join('')).collapsibleset('refresh');
-                        uiContenedorDePromociones.trigger('create');
+                        uiContenedorDePromociones
+                            .append(listaAcordion_7.join(""))
+                            .collapsibleset("refresh");
+                        uiContenedorDePromociones.trigger("create");
                         callback();
                     }
                     else {
@@ -467,7 +511,10 @@ var PromocionesPorClienteControlador = (function () {
             });
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.generarAcordionDePromoBonificacionesPorCombo = function (callback, errCallback) {
@@ -475,7 +522,7 @@ var PromocionesPorClienteControlador = (function () {
         try {
             if (this.cliente.bonoPorCombos.length > 0) {
                 var uiContenedorDePromociones = $("#UiContenedorDePromociones");
-                uiContenedorDePromociones.collapsibleset().trigger('create');
+                uiContenedorDePromociones.collapsibleset().trigger("create");
                 var listaAcordion_8 = [];
                 listaAcordion_8.push("<div is=\"collapsible\" data-role=\"collapsible\" id=\"UiAcordionBonificacionPorMultiplo\">");
                 listaAcordion_8.push("<h5>Combos<span is=\"span\" class=\"ui-li-count\" id=\"Cant\">" + this.cliente.bonoPorCombos.length + "</span></h5>");
@@ -491,9 +538,13 @@ var PromocionesPorClienteControlador = (function () {
                     listaAcordion_8.push("" + bonificacion.descriptionCombo);
                     listaAcordion_8.push("</td>");
                     listaAcordion_8.push("<td class=\"filaPromo\" rowspan=\"" + bonificacion.skusPorCombo.length + "\">");
-                    listaAcordion_8.push(((bonificacion.isBonusByLowPurchase === 1) ? "Compra " + format_number(bonificacion.lowQty, _this.configuracionDeDecimales.defaultDisplayDecimals) + "Min" : "") + "-" + ((bonificacion.isBonusByCombo === 1) ? "Completo" : ""));
+                    listaAcordion_8.push((bonificacion.isBonusByLowPurchase === 1
+                        ? "Compra " +
+                            format_number(bonificacion.lowQty, _this.configuracionDeDecimales.defaultDisplayDecimals) +
+                            "Min"
+                        : "") + "-" + (bonificacion.isBonusByCombo === 1 ? "Completo" : ""));
                     listaAcordion_8.push("<td class=\"filaPromo\">");
-                    listaAcordion_8.push(format_number(bonificacion.skusPorCombo.length ? bonificacion.skusPorCombo[0].qty : 0, _this.configuracionDeDecimales.defaultDisplayDecimals) + " " + (bonificacion.skusPorCombo.length ? bonificacion.skusPorCombo[0].codePackUnit : "N/A") + " " + (bonificacion.skusPorCombo.length ? bonificacion.skusPorCombo[0].codeSku : "N/A"));
+                    listaAcordion_8.push(format_number(bonificacion.skusPorCombo[0].qty, _this.configuracionDeDecimales.defaultDisplayDecimals) + " " + bonificacion.skusPorCombo[0].codePackUnit + " " + bonificacion.skusPorCombo[0].codeSku);
                     listaAcordion_8.push("</td>");
                     listaAcordion_8.push("</td>");
                     listaAcordion_8.push("</tr>");
@@ -513,8 +564,10 @@ var PromocionesPorClienteControlador = (function () {
                 });
                 listaAcordion_8.push("</table>");
                 listaAcordion_8.push("</div>");
-                uiContenedorDePromociones.append(listaAcordion_8.join('')).collapsibleset('refresh');
-                uiContenedorDePromociones.trigger('create');
+                uiContenedorDePromociones
+                    .append(listaAcordion_8.join(""))
+                    .collapsibleset("refresh");
+                uiContenedorDePromociones.trigger("create");
                 callback();
             }
             else {
@@ -522,7 +575,10 @@ var PromocionesPorClienteControlador = (function () {
             }
         }
         catch (ex) {
-            errCallback({ codigo: -1, mensaje: "Error al obtener acordion de promo: " + ex.message });
+            errCallback({
+                codigo: -1,
+                mensaje: "Error al obtener acordion de promo: " + ex.message
+            });
         }
     };
     PromocionesPorClienteControlador.prototype.obtenerHistoricodePromo = function (callBack, errCallback) {
@@ -548,7 +604,8 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeDescuentoTerminoDeIterar(listaDeDescuento, indiceDeListaDeDescuento)) {
                     var descuentoAValidar_1 = listaDeDescuento[indiceDeListaDeDescuento];
-                    var resultadoDePromoHistorico_1 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_1 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === descuentoAValidar_1.promoId;
                     });
                     if (resultadoDePromoHistorico_1) {
@@ -559,7 +616,7 @@ var PromocionesPorClienteControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico_1, function (aplicaDescuento) {
                             if (!aplicaDescuento) {
                                 listaDeDescuento = listaDeDescuento.filter(function (descuento) {
-                                    return resultadoDePromoHistorico_1.promoId !== descuento.promoId;
+                                    return (resultadoDePromoHistorico_1.promoId !== descuento.promoId);
                                 });
                             }
                             _this.validarSiAplicaElDescuento(listaDeDescuento, indiceDeListaDeDescuento + (aplicaDescuento ? 1 : 0), function (listaDeDescuento) {
@@ -596,7 +653,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeDescuentoTerminoDeIterar = function (listaDeDescuento, indiceDeListaDeDescuento) {
-        return (listaDeDescuento.length > 0 && listaDeDescuento.length > indiceDeListaDeDescuento);
+        return (listaDeDescuento.length > 0 &&
+            listaDeDescuento.length > indiceDeListaDeDescuento);
     };
     PromocionesPorClienteControlador.prototype.validarSiAplicaElDescuentoPorMontoGeneral = function (listaDeDescuento, indiceDeListaDeDescuento, callBack, errCallback) {
         var _this = this;
@@ -604,7 +662,8 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeDescuentoPorMontoGeneralTerminoDeIterar(listaDeDescuento, indiceDeListaDeDescuento)) {
                     var descuentoAValidar_2 = listaDeDescuento[indiceDeListaDeDescuento];
-                    var resultadoDePromoHistorico_2 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_2 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === descuentoAValidar_2.promoId;
                     });
                     if (resultadoDePromoHistorico_2) {
@@ -615,7 +674,7 @@ var PromocionesPorClienteControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico_2, function (aplicaDescuento) {
                             if (!aplicaDescuento) {
                                 listaDeDescuento = listaDeDescuento.filter(function (descuento) {
-                                    return resultadoDePromoHistorico_2.promoId !== descuento.promoId;
+                                    return (resultadoDePromoHistorico_2.promoId !== descuento.promoId);
                                 });
                             }
                             _this.validarSiAplicaElDescuentoPorMontoGeneral(listaDeDescuento, indiceDeListaDeDescuento + (aplicaDescuento ? 1 : 0), function (listaDeDescuento) {
@@ -652,7 +711,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeDescuentoPorMontoGeneralTerminoDeIterar = function (listaDeDescuento, indiceDeListaDeDescuento) {
-        return (listaDeDescuento.length > 0 && listaDeDescuento.length > indiceDeListaDeDescuento);
+        return (listaDeDescuento.length > 0 &&
+            listaDeDescuento.length > indiceDeListaDeDescuento);
     };
     PromocionesPorClienteControlador.prototype.validarSiAplicaElDescuentoPorMontoGeneralYFamilia = function (listaDeDescuento, indiceDeListaDeDescuento, callBack, errCallback) {
         var _this = this;
@@ -660,7 +720,8 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeDescuentoPorMontoGeneralYFamiliaTerminoDeIterar(listaDeDescuento, indiceDeListaDeDescuento)) {
                     var descuentoAValidar_3 = listaDeDescuento[indiceDeListaDeDescuento];
-                    var resultadoDePromoHistorico_3 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_3 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === descuentoAValidar_3.promoId;
                     });
                     if (resultadoDePromoHistorico_3) {
@@ -671,7 +732,7 @@ var PromocionesPorClienteControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico_3, function (aplicaDescuento) {
                             if (!aplicaDescuento) {
                                 listaDeDescuento = listaDeDescuento.filter(function (descuento) {
-                                    return resultadoDePromoHistorico_3.promoId !== descuento.promoId;
+                                    return (resultadoDePromoHistorico_3.promoId !== descuento.promoId);
                                 });
                             }
                             _this.validarSiAplicaElDescuentoPorMontoGeneralYFamilia(listaDeDescuento, indiceDeListaDeDescuento + (aplicaDescuento ? 1 : 0), function (listaDeDescuento) {
@@ -708,7 +769,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeDescuentoPorMontoGeneralYFamiliaTerminoDeIterar = function (listaDeDescuento, indiceDeListaDeDescuento) {
-        return (listaDeDescuento.length > 0 && listaDeDescuento.length > indiceDeListaDeDescuento);
+        return (listaDeDescuento.length > 0 &&
+            listaDeDescuento.length > indiceDeListaDeDescuento);
     };
     PromocionesPorClienteControlador.prototype.validarSiAplicaElDescuentoPorFamiliaYTipoPago = function (listaDeDescuento, indiceDeListaDeDescuento, callBack, errCallback) {
         var _this = this;
@@ -716,7 +778,8 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeDescuentoPorFamiliaYTipoPagoTerminoDeIterar(listaDeDescuento, indiceDeListaDeDescuento)) {
                     var descuentoAValidar_4 = listaDeDescuento[indiceDeListaDeDescuento];
-                    var resultadoDePromoHistorico_4 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_4 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === descuentoAValidar_4.promoId;
                     });
                     if (resultadoDePromoHistorico_4) {
@@ -727,7 +790,7 @@ var PromocionesPorClienteControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeDescuento, resultadoDePromoHistorico_4, function (aplicaDescuento) {
                             if (!aplicaDescuento) {
                                 listaDeDescuento = listaDeDescuento.filter(function (descuento) {
-                                    return resultadoDePromoHistorico_4.promoId !== descuento.promoId;
+                                    return (resultadoDePromoHistorico_4.promoId !== descuento.promoId);
                                 });
                             }
                             _this.validarSiAplicaElDescuentoPorFamiliaYTipoPago(listaDeDescuento, indiceDeListaDeDescuento + (aplicaDescuento ? 1 : 0), function (listaDeDescuento) {
@@ -764,7 +827,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeDescuentoPorFamiliaYTipoPagoTerminoDeIterar = function (listaDeDescuento, indiceDeListaDeDescuento) {
-        return (listaDeDescuento.length > 0 && listaDeDescuento.length > indiceDeListaDeDescuento);
+        return (listaDeDescuento.length > 0 &&
+            listaDeDescuento.length > indiceDeListaDeDescuento);
     };
     PromocionesPorClienteControlador.prototype.validarSiAplicaLaBonificacionesPorMontoGeneral = function (listaDeBonificaciones, indiceDeListaDeBonificacion, callBack, errCallback) {
         var _this = this;
@@ -772,7 +836,8 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeBonificacionesTerminoDeIterar(listaDeBonificaciones, indiceDeListaDeBonificacion)) {
                     var bonificacionAValidar_1 = listaDeBonificaciones[indiceDeListaDeBonificacion];
-                    var resultadoDePromoHistorico_5 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_5 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === bonificacionAValidar_1.promoId;
                     });
                     if (resultadoDePromoHistorico_5) {
@@ -783,7 +848,8 @@ var PromocionesPorClienteControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico_5, function (aplicaPromo) {
                             if (!aplicaPromo) {
                                 listaDeBonificaciones = listaDeBonificaciones.filter(function (bonificacion) {
-                                    return resultadoDePromoHistorico_5.promoId !== bonificacion.promoId;
+                                    return (resultadoDePromoHistorico_5.promoId !==
+                                        bonificacion.promoId);
                                 });
                             }
                             _this.validarSiAplicaLaBonificacionesPorMontoGeneral(listaDeBonificaciones, indiceDeListaDeBonificacion + (aplicaPromo ? 1 : 0), function (listaDeBonificaciones) {
@@ -820,7 +886,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeBonificacionesTerminoDeIterar = function (listaDeBonificaciones, indiceDeListaDeBonificacion) {
-        return (listaDeBonificaciones.length > 0 && listaDeBonificaciones.length > indiceDeListaDeBonificacion);
+        return (listaDeBonificaciones.length > 0 &&
+            listaDeBonificaciones.length > indiceDeListaDeBonificacion);
     };
     PromocionesPorClienteControlador.prototype.validarSiAplicaLaBonificacionesPorEscala = function (listaDeBonificaciones, indiceDeListaDeBonificacion, callBack, errCallback) {
         var _this = this;
@@ -828,7 +895,8 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeBonificacionesPorEscalaTerminoDeIterar(listaDeBonificaciones, indiceDeListaDeBonificacion)) {
                     var bonificacionAValidar_2 = listaDeBonificaciones[indiceDeListaDeBonificacion];
-                    var resultadoDePromoHistorico_6 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_6 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === bonificacionAValidar_2.promoIdScale;
                     });
                     if (resultadoDePromoHistorico_6) {
@@ -839,7 +907,8 @@ var PromocionesPorClienteControlador = (function () {
                         this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico_6, function (aplicaPromo) {
                             if (!aplicaPromo) {
                                 listaDeBonificaciones = listaDeBonificaciones.filter(function (bonificacion) {
-                                    return resultadoDePromoHistorico_6.promoId !== bonificacion.promoIdScale;
+                                    return (resultadoDePromoHistorico_6.promoId !==
+                                        bonificacion.promoIdScale);
                                 });
                             }
                             _this.validarSiAplicaLaBonificacionesPorEscala(listaDeBonificaciones, indiceDeListaDeBonificacion + (aplicaPromo ? 1 : 0), function (listaDeBonificaciones) {
@@ -876,7 +945,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeBonificacionesPorEscalaTerminoDeIterar = function (listaDeBonificaciones, indiceDeListaDeBonificacion) {
-        return (listaDeBonificaciones.length > 0 && listaDeBonificaciones.length > indiceDeListaDeBonificacion);
+        return (listaDeBonificaciones.length > 0 &&
+            listaDeBonificaciones.length > indiceDeListaDeBonificacion);
     };
     PromocionesPorClienteControlador.prototype.validarSiAplicaLaBonificacionesPorMultiplo = function (listaDeBonificaciones, indiceDeListaDeBonificacion, callBack, errCallback) {
         var _this = this;
@@ -884,18 +954,22 @@ var PromocionesPorClienteControlador = (function () {
             if (this.listaHistoricoDePromos.length > 0) {
                 if (this.listaDeBonificacionesPorMultiploTerminoDeIterar(listaDeBonificaciones, indiceDeListaDeBonificacion)) {
                     var bonificacionAValidar_3 = listaDeBonificaciones[indiceDeListaDeBonificacion];
-                    var resultadoDePromoHistorico_7 = this.listaHistoricoDePromos.find(function (promo) {
+                    var resultadoDePromoHistorico_7 = this
+                        .listaHistoricoDePromos.find(function (promo) {
                         return promo.promoId === bonificacionAValidar_3.promoIdMultiple;
                     });
                     if (resultadoDePromoHistorico_7) {
                         var promoDeBonificacion = new Promo();
                         promoDeBonificacion.promoId = bonificacionAValidar_3.promoIdMultiple;
-                        promoDeBonificacion.promoName = bonificacionAValidar_3.promoNameMultiple;
-                        promoDeBonificacion.frequency = bonificacionAValidar_3.frequencyMultiple;
+                        promoDeBonificacion.promoName =
+                            bonificacionAValidar_3.promoNameMultiple;
+                        promoDeBonificacion.frequency =
+                            bonificacionAValidar_3.frequencyMultiple;
                         this.promoServicio.validarSiAplicaPromo(promoDeBonificacion, resultadoDePromoHistorico_7, function (aplicaPromo) {
                             if (!aplicaPromo) {
                                 listaDeBonificaciones = listaDeBonificaciones.filter(function (bonificacion) {
-                                    return resultadoDePromoHistorico_7.promoId !== bonificacion.promoIdMultiple;
+                                    return (resultadoDePromoHistorico_7.promoId !==
+                                        bonificacion.promoIdMultiple);
                                 });
                             }
                             _this.validarSiAplicaLaBonificacionesPorEscala(listaDeBonificaciones, indiceDeListaDeBonificacion + (aplicaPromo ? 1 : 0), function (listaDeBonificaciones) {
@@ -932,7 +1006,8 @@ var PromocionesPorClienteControlador = (function () {
         }
     };
     PromocionesPorClienteControlador.prototype.listaDeBonificacionesPorMultiploTerminoDeIterar = function (listaDeBonificaciones, indiceDeListaDeBonificacion) {
-        return (listaDeBonificaciones.length > 0 && listaDeBonificaciones.length > indiceDeListaDeBonificacion);
+        return (listaDeBonificaciones.length > 0 &&
+            listaDeBonificaciones.length > indiceDeListaDeBonificacion);
     };
     return PromocionesPorClienteControlador;
 }());

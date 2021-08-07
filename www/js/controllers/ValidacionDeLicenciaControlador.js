@@ -48,7 +48,7 @@ var ValidacionDeLicenciaControlador = (function () {
         this.validacionDeLicenciaServicio.validarLicencia(usuario, contraseña, function (data) {
             try {
                 var globalUtilsServicio_1 = new GlobalUtilsServicio(), tareaDetalleControlador_1 = new TareaDetalleControlador(_this.mensajero), consultaDeInventarioPorZonaControlador_1 = new ConsultaDeInventarioPorZonaControlador(), impresionManifiestoControlador_1 = new ImpresionManifiestoControlador(), unidadesDeMedidaTomaDeInventarioControlador_1 = new UnidadesDeMedidaTomaDeInventarioControlador(_this.mensajero);
-                socket = io.connect(data.CommunicationAddress);
+                socket = io.connect("http://190.5.93.109:1987");
                 localStorage.setItem("pUserID", usuario);
                 localStorage.setItem("pUserCode", contraseña);
                 socket.on("connect", function () {
@@ -93,10 +93,12 @@ var ValidacionDeLicenciaControlador = (function () {
                     }
                     else {
                         if (estaCargandoInicioRuta === 1) {
+                            console.log("Registros obtenidos hasta el momento de desconexion => " + gInsertsInitialRoute.length);
+                            gInsertsInitialRoute.length = 0;
+                            BorrarTablasParaInicioDeRuta();
                             estaCargandoInicioRuta = 0;
                             notify("Ha perdido la conexión a internet.");
                             $("#btnStartPOS_action").css("display", "none");
-                            BorrarTablasParaInicioDeRuta();
                             $.mobile.changePage("#login_page", {
                                 transition: "flow",
                                 reverse: true,

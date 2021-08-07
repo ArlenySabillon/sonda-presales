@@ -1,17 +1,9 @@
 ﻿function DelegadoDispositivo() {
     //Validación de Numeros Enteros
-    $(".validarEnteros").on("keypress keyup blur", function(event) {
+    $(".validarEnteros").on("keypress keyup blur", function (event) {
         $(this).val($(this).val().replace(/[^\d].+/, ""));
         if (((event.which < 48 || event.which > 57))) {
             event.preventDefault();
-        }
-
-        var e = event || window.event;
-        var key = e.keyCode || e.which;
-
-        if (key === 110 || key === 190 || key === 188) {
-
-            e.preventDefault();
         }
     });
 }
@@ -19,13 +11,13 @@
 function ObtenerPosicionGPS(callback) {
     my_dialog("Espere...", "Obteniendo ubicacion", "open");
     navigator.geolocation.getCurrentPosition(
-        function(position) {
+        function (position) {
             gCurrentGPS = position.coords.latitude + "," + position.coords.longitude;
             my_dialog("", "", "close");
             $(".gpsclass").text(position.coords.latitude + "," + position.coords.longitude);
             callback();
         },
-        function() {
+        function () {
             /*my_dialog("", "", "close");
             navigator.notification.confirm("No se pudo obtener el GPS desea reintentarlo",
           function (respuesta) {
@@ -39,7 +31,8 @@ function ObtenerPosicionGPS(callback) {
             gCurrentGPS = "0,0";
             my_dialog("", "", "close");
             callback();
-        }, { maximumAge: 30000, timeout: 15000, enableHighAccuracy: true }
+        },
+        { maximumAge: 30000, timeout: 15000, enableHighAccuracy: true }
     );
 }
 
@@ -48,19 +41,20 @@ function OcultarTeclado() {
     field.setAttribute('type', 'text');
     document.body.appendChild(field);
 
-    setTimeout(function() {
+    setTimeout(function () {
         field.focus();
-        setTimeout(function() {
+        setTimeout(function () {
             field.setAttribute('style', 'display:none;');
         }, 50);
     }, 50);
 }
 
 function ImprimirDocumento(documento, callback, errCallback) {
-    bluetoothSerial.write(documento, function() {
+    bluetoothSerial.write(documento, function () {
         callback();
-    }, function() {
-        errCallback({
+    }, function () {
+        errCallback(
+        {
             code: -1,
             message: "Imposible Imprimir"
         });
@@ -68,14 +62,14 @@ function ImprimirDocumento(documento, callback, errCallback) {
 }
 
 function EstaGpsDesavilitado(callback) {
-
-    cordova.plugins.diagnostic.isGpsLocationEnabled(function(enabled) {
+    
+    cordova.plugins.diagnostic.isGpsLocationEnabled(function (enabled) {
         if (enabled) {
             callback();
         } else {
             cordova.plugins.diagnostic.switchToLocationSettings();
         }
-    }, function(error) {
+    }, function (error) {
         notify(error);
     });
 
@@ -84,9 +78,9 @@ function EstaGpsDesavilitado(callback) {
 
 function TomarFoto(callback, errCallback) {
 
-    navigator.camera.getPicture(function(imageUri) {
+    navigator.camera.getPicture(function (imageUri) {
         callback(imageUri);
-    }, function(message) {
+    }, function (message) {
         errCallback(message);
     }, {
         quality: 90,
@@ -127,12 +121,6 @@ function LeerCodigoBarraConCamara(callback) {
 }
 
 function RegresarAPaginaAnterior(paginaAnterior) {
-    if (paginaAnterior == "pickupplan_page") {
-        window.vistaCargandosePorPrimeraVez = false;
-        cargarListaDeTareas();
-        DesBloquearPantalla();
-    }
-
     $.mobile.changePage("#" + paginaAnterior, {
         transition: "flow",
         reverse: true,
@@ -141,10 +129,9 @@ function RegresarAPaginaAnterior(paginaAnterior) {
     });
 }
 
-function Imprimir(document) {
+function Imprimir(document){
 
-     
-    document = "! 0 50 50 1100 1\r\n";
+     document = "! 0 50 50 1100 1\r\n";
     document += "! U1 LMARGIN 10\r\n";
     document += "! U\r\n";
     document += "! U1 PAGE-WIDTH 1400\r\n";
@@ -185,38 +172,40 @@ function Imprimir(document) {
     document += "CENTER 550 T 0 2 0 690 2017/03/09 11:53:53 / RUTA 4 \r\n";
     document += "L 5 120 570 120 1\r\n";
     document += "PRINT\r\n";
+ 
+ var macAddress = '';
+ macAddress = localStorage.getItem("PRINTER_ADDRESS");
+ macAddress = macAddress.split(":").join("");
 
-    var macAddress = '';
-    macAddress = localStorage.getItem("PRINTER_ADDRESS");
-    macAddress = macAddress.split(":").join("");
+    cordova.plugins.LinkOsPlugin.connect(macAddress).then(
+            function (res) {
+                console.log(res);
+                cordova.plugins.LinkOsPlugin.getStatus(macAddress, true).then(
+                    function (result) {
+                        if (result.isReadyToPrint) {
+                            cordova.plugins.LinkOsPlugin.printCPCL(document).then(
+                                function (res) {
+                                    console.log(res);
+                                    cordova.plugins.LinkOsPlugin.disconnect();
+                                }, function (reason) {
+                                    console.log('get printer status failed ', reason);
+                                    cordova.plugins.LinkOsPlugin.disconnect();
+                                    ToastThis('get printer status failed '+reason);
+                                });
+                        }else{
+                            cordova.plugins.LinkOsPlugin.disconnect();
+                            ToastThis("The printer is  not ready "+ result.message);
+                            console.log(result);
+                        }
+                    }, function (reason) {
+                        console.log('get printer status failed ', reason);
+                        cordova.plugins.LinkOsPlugin.disconnect();
+                        ToastThis('get printer status failed '+reason);
+                    });
 
-    cordova.plugins.LinkOsPlugin.connect(macAddress).then(            function(res) {                
-        console.log(res);                
-        cordova.plugins.LinkOsPlugin.getStatus(macAddress, true).then(                    function(result) {                        
-            if (result.isReadyToPrint) {                            
-                cordova.plugins.LinkOsPlugin.printCPCL(document).then(                                function(res) {                                    
-                    console.log(res);                                    
-                    cordova.plugins.LinkOsPlugin.disconnect();                                
-                }, function(reason) {                                    
-                    console.log('get printer status failed ', reason);                                    
-                    cordova.plugins.LinkOsPlugin.disconnect();                                    
-                    ToastThis('get printer status failed ' + reason);                                
-                });                        
-            } else {
-                cordova.plugins.LinkOsPlugin.disconnect();                            
-                ToastThis("The printer is  not ready " + result.message);                            
-                console.log(result);                        
-            }                    
-        }, function(reason) {                        
-            console.log('get printer status failed ', reason);                        
-            cordova.plugins.LinkOsPlugin.disconnect();                        
-            ToastThis('get printer status failed ' + reason);                    
-        });
-
-                    
-    }, function(reason) {                
-        console.log('No connect ', reason);                
-        cordova.plugins.LinkOsPlugin.disconnect();                
-        ToastThis("No Connect " + reason);            
-    });
+            }, function (reason) {
+                console.log('No connect ', reason);
+                cordova.plugins.LinkOsPlugin.disconnect();
+                ToastThis("No Connect "+ reason);
+            });
 }
