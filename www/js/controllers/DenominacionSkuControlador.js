@@ -321,6 +321,8 @@ var DenominacionSkuControlador = (function() {
             uiEtiquetaDescuentoSkuMaximo.text("Descuento 0%");
             uiEtiquetaDescuentoSkuMaximo = null;
             var uiTextoDescuentoSku = $("#UiTextoDescuentoSku");
+            uiTextoDescuentoSku.val("")
+            "";
             uiTextoDescuentoSku.text("");
             uiTextoDescuentoSku = null;
             var uiLiDescuentoSkuMaximo = $("#UiLiDescuentoSkuMaximo");

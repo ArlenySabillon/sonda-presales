@@ -94,7 +94,7 @@ var default_image;
 var SondaServerURL = "";
 
 var currentBranch = "cendalzaRoute";
-var SondaVersion = "2021.06.30";
+var SondaVersion = "2021.07.27";
 var SondaServerOptions = {
     reconnect: true,
     "max reconnection attempts": 60000
@@ -658,14 +658,23 @@ function notify(pMessage) {
 }
 
 function MakeACall(pPhoneNumber) {
-    phonedialer.dial(
-        pPhoneNumber,
-        function(err) {
-            if (err === "empty") notify("Unknown phone number");
-            else notify("Dialer Error:" + err);
-        },
-        function(success) {}
-    );
+    window.plugins.CallNumber.callNumber(onSuccess, onError, pPhoneNumber, true);
+    // phonedialer.dial(
+    //     pPhoneNumber,
+    //     function(err) {
+    //         if (err === "empty") notify("Unknown phone number");
+    //         else notify("Dialer Error:" + err);
+    //     },
+    //     function(success) {}
+    // );
+}
+
+function onSuccess(result) {
+    console.log("Success:" + result);
+}
+
+function onError(result) {
+    console.log("Error:" + result);
 }
 
 function gettask(taskid) {
@@ -700,6 +709,10 @@ function gettask(taskid) {
                             );
                             $("#btnMyPickupRoutePhone").unbind("touchstart");
                             $("#btnMyPickupRoutePhone").bind("touchstart", function() {
+                                if (results.rows.item(0).RELATED_CLIENT_PHONE_1 == null || results.rows.item(0).RELATED_CLIENT_PHONE_1 == '' || results.rows.item(0).RELATED_CLIENT_PHONE_1 == "                    ") {
+                                    notify("El cliente actual no tiene un numero de teléfono configurado");
+                                    return;
+                                }
                                 MakeACall(results.rows.item(0).RELATED_CLIENT_PHONE_1);
                             });
 
@@ -4803,12 +4816,16 @@ function finishroute() {
 function navigateto() {
     /*notify(gtaskgps);*/
     try {
+        if (gtaskgps == '0,0' || gtaskgps == null || gtaskgps == '') {
+            notify("Este cliente no tiene configurado un punto GPS");
+            return;
+        }
         var pUrl = gtaskgps.split(",");
 
         //launchnavigator.navigateByLatLon(pUrl[0], pUrl[1], function(){}, function(err){});
-        var pGPS = "waze://?ll=" + pUrl[0] + "," + pUrl[1] + "&navigate=yes";
+        var pGPS = `https://www.waze.com/ul?ll=${pUrl}&navigate=yes`;
 
-        WazeLink.open(pGPS);
+        window.open(encodeURI(pGPS), '_blank', 'location=yes')
     } catch (e) {
         notify(e.message);
     }

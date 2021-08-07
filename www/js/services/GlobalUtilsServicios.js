@@ -1385,7 +1385,7 @@ var GlobalUtilsServicio = (function() {
                 SONDA_DB_Session.transaction(
                     function(tx) {
                         var sql = "UPDATE SALES_ORDER_HEADER";
-                        sql += " SET IS_POSTED = -1";
+                        sql += " SET IS_POSTED = 1";
                         sql += " WHERE"; //se implementó el control de errores dentro del APK
                         sql += " SALES_ORDER_ID =" + data.SalesOrderId;
 
@@ -1404,7 +1404,14 @@ var GlobalUtilsServicio = (function() {
             socketIo.on("SendDocumentSecuence_Request", function(data) {
                 switch (data.option) {
                     case "fail":
-                        notify("Error al actualizar el numero de las secuencias de documentos " + data.message);
+                        var message = data.message;
+                        if (message = 'FINISH_ROUTE') {
+                            notify("Se ha forzado el cierre de ruta");
+                            var controlDeFinDeRutaControlador = new ControlDeFinDeRutaControlador();
+                            controlDeFinDeRutaControlador.onConfirmFinish();
+                        } else {
+                            notify("Error al actualizar el numero de las secuencias de documentos " + data.message);
+                        }
                         break;
                 }
             });
@@ -1610,6 +1617,20 @@ var GlobalUtilsServicio = (function() {
                         break;
                 }
             });
+
+            socketIo.on("invalid_user", function(data) {
+                my_dialog("", "", "close");
+                notify("Usuario no encontrado: " + data.loginid);
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                return;
+            });
+            socketIo.on("invalid_pass", function(data) {
+                my_dialog("", "", "close");
+                notify("contraseña incorrecta para: " + data.loginid);
+                InteraccionConUsuarioServicio.desbloquearPantalla();
+                return;
+            });
+
         } catch (e) {
             notify("Error al intentar delegar sockets: " + e.message);
         }
